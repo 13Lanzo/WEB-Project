@@ -9,15 +9,24 @@ const mongoose = require('mongoose');
 //2. INZIALIZZA EXPRESS
 const app = epxress();
 
-//Middleware per il parsing del JSON
+// Middleware per il parsing del JSON
 app.use(epxress.json());
 
-//3. Definizioen della Rotta di test ("Hello World")
+//3. Definizione della Rotta di test ("Hello World")
 app.get('/', (req, res) => {
-    res.status(200).json({
+    try{
+        res.status(200).json({
         messaggio: "Ciao! Il server è attivo e funzionante."
     });
+    } catch(err){
+        console.error("Errore nella rotta di test:", err.message);
+        res.status(500).json({
+            err: "Si è verificato un errore interno al server.",
+            dettaglio: err.message
+        })
+    };
 });
+
 
 //4. Richiama la variabile di ambiente per la connessione a MongoDB Atlas
 const MONGODB_URI = process.env.MONGODB_URI;
