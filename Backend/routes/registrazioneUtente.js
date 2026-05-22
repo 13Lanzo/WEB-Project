@@ -72,7 +72,7 @@ router.put('/update/:id', async(req,res) => {
 });
 
 //Metodo DELETE per eliminare un utente 
-
+/*
 router.delete('/delete/:id', async(req, res) => {
     try{
         //cerca un utente tramite l'id e lo elimina
@@ -91,5 +91,5 @@ router.delete('/delete/:id', async(req, res) => {
         res.status(500).json({success:false, errore:err.message});
     }
 });
-
+*/
 module.exports = router;
