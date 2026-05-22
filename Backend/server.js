@@ -3,14 +3,14 @@
 //1. carica le variabili dal file .env all'avvio del processo
 require('dotenv').config();
 
-const epxress = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 
 //2. INZIALIZZA EXPRESS
-const app = epxress();
+const app = express();
 
 // Middleware per il parsing del JSON
-app.use(epxress.json());
+app.use(express.json());
 
 //3. Definizione della Rotta di test ("Hello World")
 app.get('/', (req, res) => {
@@ -37,7 +37,12 @@ mongoose.connect(MONGODB_URI)
     })
     .catch((err) => {
         console.error("Errore di connessione a MongoDB Atlas:", err.message)
+        process.exit(1); 
     });
+
+mongoose.connection.on('disconnected', () => {
+    console.error("Il database si è disconnesso momentaneamente! Tentativo di riconnessione ...");
+})
 
 //5. AVVIO DEL SERVER IN ASCOLTO
 const PORT = process.env.PORT || 5000;
