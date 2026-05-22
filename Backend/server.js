@@ -12,6 +12,11 @@ const app = epxress();
 // Middleware per il parsing del JSON
 app.use(epxress.json());
 
+const authRoutes = require('./routes/auth');
+// Questo middleware dice a Express: "Prendi tutte le rotte dentro auth.js 
+// e aggiungi davanti il prefisso /api/auth"
+app.use('/api/auth', authRoutes)
+
 //3. Definizione della Rotta di test ("Hello World")
 app.get('/', (req, res) => {
     try{
