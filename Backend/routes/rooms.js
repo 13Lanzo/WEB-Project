@@ -64,7 +64,7 @@ router.get('/', async (req, res) => {
 
         // Eseguiamo la ricerca e popoliamo i dati del proprietario (mostrando solo nome ed email)
         const stanze = await Room.find(queryFiltri).populate('creatoDa', 'nome email');
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             messaggio: "Stanze trovate con successo!"
         });
@@ -85,7 +85,7 @@ router.get('/:id', async (req, res) => {
             return res.status(404).json({ errore: "Stanza non trovata." });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             messaggio: "Dettagli stanza recuperati con successo!",
             dati: stanza
