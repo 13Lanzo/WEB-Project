@@ -3,29 +3,47 @@ const router = express.Router();
 const Room = require('../models/Room');
 
 // 1. CREA ANNUNCIO STANZA (CREATE) -> POST /api/rooms
-
 router.post('/', async (req, res) => {
     try {
         const { titolo, descrizione, prezzo, citta, indirizzo, creatoDa, serviziInclusi } = req.body;
 
-        //validazione base dei campi obbligatori
+        // 1. Validazione base dei campi obbligatori
         if (!titolo || !descrizione || !prezzo || !citta || !indirizzo || !creatoDa) {
-            return res.status(400).json({ errore: "Tutti i campi obbligatori devono essere compilati." })
+            return res.status(400).json({ 
+                success: false,
+                errore: "Tutti i campi obbligatori devono essere compilati." 
+            });
         }
 
-        //Creazione della nuova stanza del modello
+        // 2. CONTROLLO DUPLICATI: Verifichiamo se questo utente ha già creato questo identico annuncio
+        const stanzaEsistente = await Room.findOne({
+            titolo: titolo,
+            indirizzo: indirizzo,
+            creatoDa: creatoDa
+        });
+
+        if (stanzaEsistente) {
+            // Restituiamo un codice 409 Conflict, che è lo standard HTTP per i duplicati
+            return res.status(409).json({
+                success: false,
+                messaggio: "Hai già pubblicato un annuncio per questa stanza con lo stesso titolo e indirizzo."
+            });
+        }
+
+        // 3. Creazione della nuova stanza se non è un duplicato
         const nuovaStanza = new Room({
             titolo,
             descrizione, 
             prezzo,
             citta,
             indirizzo,
-            creatoDa, //qui passeremo l'ID dell'utente Host che pubblica la stanza
+            creatoDa, 
             serviziInclusi
-        })
+        });
 
-        //Salvataggio della stanza nel DB
-        const stanzaSalvata = await nuovaStnza.save();
+        // 4. Salvataggio della stanza nel DB
+        const stanzaSalvata = await nuovaStanza.save();
+        
         return res.status(201).json({
             success: true,
             messaggio: "Stanza creata con successo!",
