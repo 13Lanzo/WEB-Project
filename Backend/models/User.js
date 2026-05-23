@@ -38,6 +38,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         min: 18, // Età minima per registrarsi
         max: 100, // Età massima per registrarsi
+        // gestire l'errore in caso di età!
     }, 
     ruolo: {
         type: String,
