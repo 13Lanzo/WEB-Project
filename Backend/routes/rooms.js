@@ -6,10 +6,10 @@ const Room = require('../models/Room');
 
 router.post('/', async (req, res) => {
     try {
-        const { titolo, descrizione, prezzo, citta, creatoDa } = req.body;
+        const { titolo, descrizione, prezzo, citta, indirizzo, creatoDa, serviziInclusi } = req.body;
 
         //validazione base dei campi obbligatori
-        if (!titolo || !descrizione || !prezzo || !citta || !creatoDa) {
+        if (!titolo || !descrizione || !prezzo || !citta || !indirizzo || !creatoDa) {
             return res.status(400).json({ errore: "Tutti i campi obbligatori devono essere compilati." })
         }
 
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
     catch (err) {
         res.status(500).json({
             success: false,
-            messaggio: "Si + verificato un errore interno al server",
+            messaggio: "Si è verificato un errore interno al server",
             dettaglio: err.message
         });
     }
