@@ -63,17 +63,17 @@ router.put('/:id', async (req, res) => {
     try {
         const utenteAggiornato = await User.findByIdAndUpdate(req.params.id, req.body, {new: true});
         if(!utenteAggiornato){
-            res.status(404).json({
+            return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile aggiornare l'utente"
             });
-        } else {
-            res.status(200).json({
-                success: true,
-                messaggio: "Utente aggiornato con successo!",
-                dati: utenteAggiornato
-            });
-        }
+        } 
+
+        return res.status(200).json({
+            success: true,
+            messaggio: "Utente aggiornato con successo!",
+            dati: utenteAggiornato
+        });
     } catch (err) {
         res.status(500).json({
             success: false,
@@ -85,20 +85,21 @@ router.put('/:id', async (req, res) => {
 
 //metodo DELETE per eliminare un utente
 
-router.delete('/:id', async (req, res) => {
+/*router.delete('/:id', async (req, res) => {
     try{
-        const utenteEliminato = await User.findByIdAndRemove(req.params.id);
+        const utenteEliminato = await User.findByIdAndDelete(req.params.id);
         if(!utenteEliminato){
-            res.status(404).json({
+            return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile eliminare l'utente"
             });
-        } else {
-            res.status(200).json({
-                success: true,
-                messaggio: "Utente eliminato con successo!"
-            });
-        }
+        } 
+
+        return res.status(200).json({
+            success: true,
+            messaggio: "Utente eliminato con successo!"
+        });
+
     } catch (err) {
         res.status(500).json({
             success: false,
@@ -106,6 +107,6 @@ router.delete('/:id', async (req, res) => {
             dettaglio: err.message
         });
     }
-});
+});*/
 
 module.exports = router;
