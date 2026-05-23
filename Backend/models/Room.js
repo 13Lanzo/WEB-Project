@@ -43,8 +43,7 @@ const RoomSchema = new mongoose.Schema({
     disponibile: {
         type: Boolean,
         default: true
-    },
-    timestamps: true // Aggiunge automaticamente createdAt e updatedAt nel database
-});
+    }
+}, { timestamps: true }); // Aggiunge automaticamente createdAt e updatedAt nel database
 
 module.exports = mongoose.model('Room', RoomSchema);

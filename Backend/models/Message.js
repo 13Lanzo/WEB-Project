@@ -3,11 +3,11 @@
 // Ti permetterà di salvare permanentemente lo storico delle chat gestite tramite Socket.IO.
 
 
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
-const MessageSchema = new.moongose.MessageSchema({
+const MessageSchema = new mongoose.Schema({
     mittente: {
-        type: moongose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
@@ -25,8 +25,7 @@ const MessageSchema = new.moongose.MessageSchema({
     letto: {
         type: Boolean,
         default: false
-    }, 
-    timestamps: true // Specifica data e ora esatta dell'invio del messaggio
-})
+    }
+}, { timestamps: true }); // Specifica data e ora esatta dell'invio del messaggio
 
 module.exports = mongoose.model('Message', MessageSchema);
