@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
         }
 
         //Creazione della nuova stanza del modello
-        const nuovaStnza = new Room({
+        const nuovaStanza = new Room({
             titolo,
             descrizione, 
             prezzo,
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// 2. RECUPERA TUTTI GLI ANNUNCI (READ) -> GET /api/rooms (Bacheca con filtri filtri prezzo/città)
+// 2. RECUPERA TUTTI GLI ANNUNCI (READ) -> GET / (Bacheca con filtri filtri prezzo/città)
 router.get('/', async (req, res) => {
     try {
         // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350)
@@ -66,7 +66,8 @@ router.get('/', async (req, res) => {
         const stanze = await Room.find(queryFiltri).populate('creatoDa', 'nome email');
         res.status(200).json({
             success: true,
-            messaggio: "Stanze trovate con successo!"
+            messaggio: "Stanze trovate con successo!",
+            dati: stanze
         });
 
     }
