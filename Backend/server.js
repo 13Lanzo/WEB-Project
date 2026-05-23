@@ -4,15 +4,16 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const dns = require('dns');
 const express = require('express');
 const mongoose = require('mongoose');
+//const cors = require('cors');
 
 const app = express();
 app.use(express.json());
+//cors.use(cors());
 
-const registerUserRoute = require('./routes/registrazioneUtente');
-const loginUserRoute = require('./routes/login');
-
-app.use('/registrazione', registerUserRoute);
-app.use('/login', loginUserRoute);
+const auth = require('./routes/auth');
+const users = require('./routes/users');
+app.use('/', auth);
+app.use('/', users);
 
 app.get('/', (req, res) => {
     res.status(200).json({ messaggio: 'Server backend attivo e funzionante!' });

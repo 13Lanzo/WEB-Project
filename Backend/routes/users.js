@@ -1,52 +1,40 @@
-//(La rotta Express per la registrazione)
-// Questo file gestirà l'endpoint HTTP POST che il frontend React chiamerà per registrare un nuovo utente.
-
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); //importa il modello User per interagire con il DB
+const User = require('../models/User');
+// const authMiddleware = require('../middleware/auth'); // Ti servirà per proteggere le rotte
 
-//Metodo POST per la registrazione di un nuovo utente
-
-router.post('/', async (req, res) => {
-    try {
-        const {nome, email, password, eta, ruolo, tagPreferenze, bio} = req.body;
-
-        //verifichiamo se l'utente esiste già
-        const utenteEsistente = await User.findOne({email: req.body.email});
-        if(utenteEsistente){
-            return res.status(400).json({
-                success: false,
-                messaggio: "L'email è già registrata."
-            });
-        } 
-        
-        //creiamo un nuovo utente 
-
-        const nuovoUtente = new User({nome, email, password, eta, ruolo, tagPreferenze, bio});
-        await nuovoUtente.save();
-
-        return res.status(201).json({
+//metodo GET per ottenere tutte le informazioni di tutti utenti
+router.get('/', async (req, res) => {
+    try{
+        const utenti= await User.find().select('-password'); //escludiamo la password dalla risposta
+        res.status(200).json({
             success: true,
-            messaggio: "Utente registrato con successo!",
-            dati: nuovoUtente
+            dati: utenti
         });
-
     } catch (err) {
         res.status(500).json({
             success: false,
-            messaggio: "Si è verificato un errore interno al server.",
+            messaggio: "Si è verificato un errore interno al server",
             dettaglio: err.message
         });
     }
 });
 
 //metodo GET per ottenere tutte le informazioni di un utente
-router.get('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try{
-        const utenti= await User.find();
+        const utente = await User.findById(req.params.id).select('-password'); //escludiamo la password dalla risposta
+
+        if(!utente){
+            return res.status(404).json({
+                success: false,
+                messaggio: "Utente non trovato"
+            });
+        }
+
         res.status(200).json({
             success: true,
-            dati: utenti
+            dati: utente
         });
     } catch (err) {
         res.status(500).json({
@@ -85,7 +73,7 @@ router.put('/:id', async (req, res) => {
 
 //metodo DELETE per eliminare un utente
 
-/*router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try{
         const utenteEliminato = await User.findByIdAndDelete(req.params.id);
         if(!utenteEliminato){
@@ -107,6 +95,6 @@ router.put('/:id', async (req, res) => {
             dettaglio: err.message
         });
     }
-});*/
+});
 
 module.exports = router;
