@@ -1,10 +1,14 @@
 //punto di ingresso dell'applicazione
 
 //1. carica le variabili dal file .env all'avvio del processo
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
+const dns = require('dns');
 const epxress = require('express');
 const mongoose = require('mongoose');
+const http = require('http'); //permette di creare un server HTTP mediante il metodo create server
+const httpStatus = require('http-status-codes'); 
 
 //2. INZIALIZZA EXPRESS
 const app = epxress();
@@ -35,13 +39,33 @@ app.get('/', (req, res) => {
 
 //4. Richiama la variabile di ambiente per la connessione a MongoDB Atlas
 const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+    console.error('Errore: MONGODB_URI non è definito. Controlla il file .env nella radice del progetto.');
+    process.exit(1);
+}
 
-mongoose.connect(MONGODB_URI)
+try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+    console.log('Usando DNS pubblici per la risoluzione SRV:', dns.getServers());
+} catch (dnsErr) {
+    console.warn('Impossibile impostare DNS pubblici per SRV:', dnsErr.message);
+}
+
+const mongooseOptions = {
+    serverSelectionTimeoutMS: 10000,
+    connectTimeoutMS: 10000,
+    family: 4,
+};
+
+mongoose.connect(MONGODB_URI, mongooseOptions)
     .then(() => {
         console.log("Connesso correttamente a MongoDB Atlas!")
     })
     .catch((err) => {
-        console.error("Errore di connessione a MongoDB Atlas:", err.message)
+        console.error("Errore di connessione a MongoDB Atlas:", err);
+        if (err.code === 'ECONNREFUSED' || err.name === 'MongoServerSelectionError') {
+            console.error('Verifica la risoluzione DNS SRV per cluster0.fcvqwbl.mongodb.net e la configurazione di Network Access in MongoDB Atlas.');
+        }
     });
 
 //5. AVVIO DEL SERVER IN ASCOLTO
