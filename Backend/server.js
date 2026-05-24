@@ -13,10 +13,12 @@ app.use(express.json());
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 const rooms = require('./routes/rooms');
+const messages = require('./routes/messages');
 
 app.use('/auth', auth);
 app.use('/users', users);
 app.use('/rooms', rooms);
+app.use('/messages', messages);
 
 app.get('/', (req, res) => {
     res.status(200).json({ messaggio: 'Server backend attivo e funzionante!' });

@@ -5,8 +5,22 @@
 - DELETE (opzionale) per eliminare un messaggio (DELETE --> /messages/:id)
 */
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Message = require('../models/Message');
+const User = require('../models/User');
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+const validateObjectId = (id, campo) => {
+    if (!id) {
+        throw { status: 400, message: `${campo} mancante.` };
+    }
+    if (!isValidObjectId(id)) {
+        throw { status: 400, message: `${campo} non è un ObjectId valido: ${id}` };
+    }
+    return id;
+};
 
 
 // =========================================================================
@@ -16,30 +30,56 @@ const Message = require('../models/Message');
 // =========================================================================
 router.post('/', async (req, res) => {
     try {
-        const { mittente, destinatario, testo } = req.body;
+        const { mittente, destinatario, mittenteId, destinatarioId, testo } = req.body;
 
-        // Validazione semplice
-        if (!mittente || !destinatario || !testo) {
-            return res.status(400).json({ errore: 'Tutti i campi sono obbligatori (mittente, destinatario, testo)' });
+        // Validazione semplice: preferiamo ricevere direttamente gli ObjectId
+        if (!testo || (!mittenteId && !mittente) || (!destinatarioId && !destinatario)) {
+            return res.status(400).json({ errore: 'Tutti i campi sono obbligatori. Invia testo, mittenteId e destinatarioId; mittente/destinatario sono supportati solo come fallback.' });
         }
 
-        // Crea un nuovo messaggio
-        const nuovoMesaggio = new Message({
-            mittente, 
-            destinatario,
+        const resolveUserId = async (valore, ruoloCampo) => {
+            if (!valore) {
+                throw new Error(`Valore mancante per ${ruoloCampo}`);
+            }
+
+            if (mongoose.Types.ObjectId.isValid(valore)) {
+                const user = await User.findById(valore);
+                if (user) return user._id;
+            }
+
+            const user = await User.findOne({ nome: valore });
+            if (user) return user._id;
+
+            const userByEmail = await User.findOne({ email: valore.toLowerCase().trim() });
+            if (userByEmail) return userByEmail._id;
+
+            throw new Error(`Utente non trovato per ${ruoloCampo}: ${valore}`);
+        };
+
+        const mittenteObjectId = mittenteId || await resolveUserId(mittente, 'mittente');
+        const destinatarioObjectId = destinatarioId || await resolveUserId(destinatario, 'destinatario');
+
+        const nuovoMessaggio = new Message({
+            mittente: mittenteObjectId,
+            destinatario: destinatarioObjectId,
             testo
-    });
+        });
 
-    const messaggioSalvato = await nuovoMessaggio.save();
+        const messaggioSalvato = await nuovoMessaggio.save();
 
-    // Popoliamo i dettagli essenzialidei profili per l'output frontend
-    const messaggioPopolato = await messaggioSalvato
-        .populate('mittente destinatario', 'nome email');
+        // Popoliamo i dettagli essenziali dei profili per l'output frontend
+        const messaggioPopolato = await messaggioSalvato
+            .populate('mittente destinatario', 'nome email');
 
-    res.status(201).json(messaggioPopolato);
+        res.status(201).json(messaggioPopolato);
     
     } catch (errore) {
-        console.error ("Errore nel salvataggio del messaggio:", errore.message);
+        console.error("Errore nel salvataggio del messaggio:", errore.message);
+
+        if (errore.message.startsWith('Utente non trovato per')) {
+            return res.status(404).json({ errore: errore.message });
+        }
+
         res.status(500).json({ errore: "Impossibile inviare il messaggio."});
     }
 });
@@ -55,8 +95,11 @@ router.get('/conversazione/:conChiId', async(req, res) => {
         const mioId = req.query.mioId;
         const conChiId = req.params.conChiId;
 
-        if (!mioId) {
-            return res.status(400).json({errore : "è necessario specificare il parametro mioId nei filtri query."});
+        try {
+            validateObjectId(mioId, 'mioId');
+            validateObjectId(conChiId, 'conChiId');
+        } catch (erroreVal) {
+            return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
         // Vogliamo trovare i messaggi in cui:
@@ -91,8 +134,11 @@ router.patch('/leggi/:mittenteId', async (req, res) => {
         const mioId = req.body.mioId; // ID dell'utente che sta leggendo la chat
         const mittenteId = req.params.mittenteId; // ID di chi ha inviato i messaggi
 
-        if(!mioId) {
-            return res.status(400).json({ errore: "ID dell'utente lettore non fornito."});
+        try {
+            validateObjectId(mioId, 'mioId');
+            validateObjectId(mittenteId, 'mittenteId');
+        } catch (erroreVal) {
+            return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
         // Aggiorna in massa tutti i messaggi letti inviato dall'altro utente verso di me
@@ -115,10 +161,16 @@ router.patch('/leggi/:mittenteId', async (req, res) => {
 // 4. DELETE: Elimina un singolo messaggio tramite il suo ID
 // ROUTE: DELETE /api/messages/:id
 // =========================================================================
-router.delete('/:Id', async(req, res) => {
+router.delete('/:id', async(req, res) => {
     try {
         // Recuperiamo l'id del messaggio dai parametri dell'URL
         const messaggioId = req.params.id;
+
+        try {
+            validateObjectId(messaggioId, 'id messaggio');
+        } catch (erroreVal) {
+            return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
+        }
 
         // Cerchiamo il messaggio nel DB e lo eliminiamo in un unico passaggio
         const messaggioEliminato = await Message.findByIdAndDelete(messaggioId);
