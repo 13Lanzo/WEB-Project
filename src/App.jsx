@@ -1,20 +1,15 @@
 // src/App.jsx
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
+import Home from './components/Home/Home';
+import Second from './components/SecondHome/SecondHome';
 
 function App() {
   return (
     <div>
-      
       <Header />
-
-      
-      <main style={{ padding: '20px', minHeight: '60vh' }}>
-        <h2>LA TUA NUOVA CASA</h2>
-        <p>Tinder non per scopare è la tua prima piattaforma di co-living con focus sulla compatibilità. Cerca stanze, filtra per interessi e chatta in tempo reale.</p>
-      </main>
-
-
+      <Home />
+      <Second />
       <Footer />
     </div>
   );

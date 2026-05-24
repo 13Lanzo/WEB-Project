@@ -1,0 +1,107 @@
+.home{
+    position: relative;
+    width: 100%;
+    min-height: 80vh; 
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start; 
+    padding: 60px 10%; 
+    box-sizing: border-box;
+    background: 
+    linear-gradient(90deg, rgba(255,255,255,0.95) 30%, rgba(255,255,255,0.7) 100%),
+    url('../image2.png') no-repeat center center;
+    background-size: cover;
+}
+
+.homeContent {
+  max-width: 650px; 
+}
+
+.homeTitle {
+  font-family: var(--heading);
+  color: #002366;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.homeDescription {
+  font-family: var(--sans);
+  color: #4a5568; 
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 36px;
+}
+
+
+.homeButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btnOne, .btnTwo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+
+.btnOne {
+  background-color: #006643; 
+  color: #ffffff;
+  border: none;
+}
+
+.btnOne:hover {
+  background-color: #004d32; 
+}
+
+.btnTwo {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #002366;
+  border: 1.5px solid #002366;
+}
+
+.btnTwo:hover {
+  background-color: #002366;
+  color: #ffffff;
+}
+
+.icon {
+  font-size: 1.1rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .hero {
+    padding: 40px 5%;
+    /* Su mobile il gradiente copre tutto al 100% per garantire la leggibilità del testo */
+    background: linear-gradient(100deg, rgba(255,255,255,0.95) 100%, rgba(255,255,255,0.9) 100%),
+    url('percorso/della-tua-immagine.jpg') no-repeat center center;
+    background-size: cover;
+  }
+
+  .heroTitle {
+    font-size: 2rem; /* Riduce il titolo sui telefoni */
+  }
+
+  .heroActions {
+    flex-direction: column; /* I bottoni si mettono uno sotto l'altro */
+    width: 100%;
+  }
+
+  .btnPrimary, .btnSecondary {
+    justify-content: center; /* Centra il testo nei bottoni a schermo intero */
+    width: 100%;
+  }
+}
