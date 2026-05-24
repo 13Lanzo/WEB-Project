@@ -1,63 +1,144 @@
-import { useState} from 'react';
-import '/src/components/Header/Header.css';
+import {useState} from 'react';
+import './Header.css'
 
+function Modale({ isOpen, onClose, initialTab}) {
+    const [activeTab, setActiveTab] = useState(initialTab);
+    
+    const [name, setName]=useState('');
+    const [lastname, setLastname]=useState('');
+    const [email, setEmail]=useState('');
+    const [password, setPassword]=useState('');
+    const [confirmPassword, setConfirmPassword]=useState('');
+    const [errorMessage, setErrorMessage]= useState('');
 
-function Header() {
-    const [isLoginOpen, setIsLoginOpen] = useState(false);
-    const apriLogin= () => setIsLoginOpen(true);
-    const chiudiLogin=()=> setIsLoginOpen(false);
+    //controllo password
+    const handleSubmit = (e)=> {
+        e.preventDefault();
+        setErrorMessage('');
 
-    const [isRegisterOpen, setIsRegisterOpen] =useState(false);
-    const apriRegister= () => setIsRegisterOpen(true);
-    const chiudiRegister= () => setIsRegisterOpen(false);
+        if(activeTab=== 'registrati') {
+            if(confirmPassword !== password){
+                setErrorMessage('Le password non coincidono. Riprova. ');
+                return;
+            }
+            if(password.length<6){
+                setErrorMessage('La password deve avere almeno 6 caratteri.');
+                return;
+            }    
+        }
+        onClose();
+    }
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setPassword('');
+        setConfirmPassword('');
+        setErrorMessage('');
+    };
+
+    if (!isOpen) return null;
 
     return(
-        <>
-            <header className="main-header">
-                <div className='logo'>
-                    <h1>Tinder</h1>
+        <div className="modal-backdrop font-sas">
+            <div className='modal-bg-click' onClick={onClose}></div>
+            <div className='modal-container'>
+                <button onClick={onClose} className='modal-close-btn'> &times;</button>
+                <div className='modal-tabs'>
+                    <button type='button' onClick={()=> handleTabChange('accedi')} className={`tab-btn ${activeTab === 'accedi' ? 'active' : ''}`}>Accedi</button>
+                    <button type='button' onClick={()=> handleTabChange('registrati')} className={`tab-btn ${activeTab === 'registrati' ? 'active' : ''}`}>Registrati</button>
                 </div>
-                <div className="auth-buttons">
-                    {/*per cambiare stato al click */}
-                    <button onClick={apriLogin} className='login-btn'>Accedi</button>
-                    <button onClick={apriRegister} className='register-btn'>Registrati</button>
-                </div>
-            </header>
 
-            {/*se è true apri il modale*/}
-            {isLoginOpen && (
-                    <div className='modal-overlay'>
-                        <div className='modal-content'>
-                            <h2 color='#64c'> Accedi al tuo account</h2>
-                            <form onSubmit={(e) => e.preventDefault()}>
-                                <input type="email" placeholder='Email' required />
-                                <input type="password" placeholder='Password' required hidden='' />
-                                <button type="submit" className="submit-btn">Accedi</button>
-                            </form>
-                            <button onClick={chiudiLogin} className='close-btn'>Chiudi</button>
+                <form onSubmit={handleSubmit}>
+                    {errorMessage && (
+                        <div className='errore'>{errorMessage}</div>
+                    )}
+                    {activeTab === 'registrati' && (
+                        <>
+                        <div className='form-group'>
+                            <label className='form-label'>Nome</label>
+                            <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={name} onChange={(e)=>setName(e.target.value)} required/>
                         </div>
+                        <div className='form-group'>
+                            <label className='form-label'>Cognome</label>
+                            <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={lastname} onChange={(e)=>setLastname(e.target.value)} required/>
+                        </div>
+                        </>
+                    )}
+                    <div className='form-group'>
+                        <label className='form-label'>Email Universitaria</label>
+                        <input type="email" placeholder='inserisci emali' className='form-input' value={email} onChange={(e)=> setEmail(e.target.value)} required/>
+                        </div>
+                    <div className='form-group'>
+                        <label className='form-label'>Password</label>
+                        <input type='password' placeholder='........' className='form-input' value={password} onChange={(e)=> setPassword(e.target.value)} required/>
                     </div>
+                    {activeTab === 'registrati' && (
+                        <>
+                        <div className='form-group'>
+                            <label className='form-label'>Conferma Password</label>
+                            <input type='password' placeholder='Conferma password' className='form-input' value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} required/>
+                        </div>
+                        </>
+                    )}
+                    <button type='submit' className='btn-submit'>
+                        {activeTab === 'registrati' ? 'Crea il tuo profilo' : 'Accedi al tuo profilo'}
+                    </button>
+                </form>
                 
-            )}
+                <div className='divider-container'>
+                    <div className='divider-line'></div>
+                    <span className='divider-text'>OPPURE</span>
+                    <div className='divider-line'></div>
+                </div>
+                <div className='social-grid'>
+                    <button type='button' className='btn-social'>
+                        <svg className="social-icon" viewBox="0 0 24 24" width="18" height="18">
+                            <path
+                                fill="#EA4335"
+                                d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582l3.51-3.51C17.642 1.091 14.974 0 12 0 7.354 0 3.373 2.667 1.432 6.545l3.834 3.22z"/>
+                            <path
+                                fill="#4285F4"
+                                d="M16.04 15.345c-1.077.736-2.423 1.164-4.04 1.164a7.077 7.077 0 0 1-6.694-4.855l-3.834 3.22C3.373 21.333 7.354 24 12 24c3.127 0 6.082-1.127 8.273-3.218l-4.233-3.437z"/>
+                            <path
+                                fill="#FBBC05"
+                                d="M5.306 11.655a6.974 6.974 0 0 1 0-2.31l-3.834-3.22A11.932 11.932 0 0 0 0 12c0 2.127.564 4.136 1.472 5.873l3.834-3.218z"/>
+                            <path
+                                fill="#34A853"
+                                d="M23.491 9.818H12V14.4h6.618a5.66 5.66 0 0 1-2.455 3.709l4.233 3.437C22.873 19.345 24 15.909 24 12c0-.764-.073-1.49-.218-2.182z"/>
+                        </svg>
+                        <span className='social-label'>Google</span>
+                    </button>
+                    <button type='button' className='btn-social'>
+                        <svg className="social-icon insta-color" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <span className='social-label' style={{ fontWeight:600 }}>Instagram</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+export default function Header(){
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [initialTab, setInitialTab] = useState('registrati');
 
-            {isRegisterOpen && (
-                    <div className='modal-overlay'>
-                        <div className='modal-content'>
-                            <h2 color='viola' >Registrati</h2>
-                            <form onSubmit={(e)=> e.preventDefault()}>
-                                <input type='name' placeholder='Name'/>
-                                <input type='cognome' placeholder='Cognome'/>
-                                <input type='email' placeholder='Email'/>
-                                <input type='password' placeholder='Password' hidden='' />
-                                <input type='password' placeholder='Conferma password' hidden='' />
-                                <button type='submit' className='submit-btn'>Iscrivimi</button>
-                            </form>
-                            <button onClick={chiudiRegister} className='close-btn'>Esci</button>
-                        </div>
-                    </div>
-            )}
+    const openModal = (tab) =>{
+        setInitialTab(tab);
+        setIsModalOpen(true);
+    };
+    return (
+        <>
+        <header className='site-header font-sans'>
+            <div className='header-logo'>LOGO</div>
+            <div className='header-buttons'>
+                <button onClick={()=> openModal('accedi')} className='btn-link'>Accedi</button>
+                <button onClick={()=> openModal('registrati')} className='btn-primary'>Registrati</button>
+            </div>
+        </header>
+        <Modale
+            isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)} initialTab={initialTab} key={`${isModalOpen}-${initialTab}`}/>
         </>
     )
 }
-
-export default Header
