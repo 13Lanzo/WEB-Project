@@ -21,6 +21,26 @@ router.get('/', async (req, res) => {
 });
 
 //metodo GET per ottenere tutte le informazioni di un utente
+
+/**
+ * @openapi
+ * /users/{id}:
+ * get:
+ * summary: Recupera il profilo pubblico di un singolo utente
+ * description: Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * description: L'ID univoco (ObjectId) dell'utente
+ * responses:
+ * 200:
+ * description: Profilo recuperato con successo.
+ * 404:
+ * description: Utente non trovato.
+ */
 router.get('/:id', async (req, res) => {
     try{
         const utente = await User.findById(req.params.id).select('-password'); //escludiamo la password dalla risposta
@@ -46,7 +66,36 @@ router.get('/:id', async (req, res) => {
 });
 
 //metodo UPDATE per modificare le informazioni di un utente
-
+/**
+ * @openapi
+ * /users/{id}:
+ * put:
+ * summary: Aggiorna i dati del profilo di un utente
+ * description: Permette di modificare la bio, l'età o l'array dei tag delle preferenze.
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * requestBody:
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * bio:
+ * type: string
+ * example: "Studente Poliba. Amo l'automazione e cerco casa vicino a Via Re David."
+ * tagPreferenze:
+ * type: array
+ * items:
+ * type: string
+ * example: ["ordinato", "studio-notturno"]
+ * responses:
+ * 200:
+ * description: Profilo aggiornato con successo.
+ */
 router.put('/:id', async (req, res) => {
     try {
         const utenteAggiornato = await User.findByIdAndUpdate(req.params.id, req.body, {new: true});

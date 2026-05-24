@@ -60,6 +60,17 @@ router.post('/', async (req, res) => {
 });
 
 // 2. RECUPERA TUTTI GLI ANNUNCI (READ) -> GET / (Bacheca con filtri filtri prezzo/città)
+
+/**
+ * @openapi
+ * /rooms:
+ * get:
+ * summary: Recupera la bacheca di tutte le stanze disponibili
+ * description: Restituisce un array contenente tutti gli annunci delle stanze.
+ * responses:
+ * 200:
+ * description: Elenco delle stanze recuperato con successo.
+ */
 router.get('/', async (req, res) => {
     try {
         // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350)

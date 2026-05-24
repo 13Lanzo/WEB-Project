@@ -6,9 +6,44 @@ const express = require('express');
 const mongoose = require('mongoose');
 //const cors = require('cors');
 
+
 const app = express();
 app.use(express.json());
 //cors.use(cors());
+
+// -------------------------------------------------------------------------------------------------
+// CONFIGURAZIONE SWAGGER
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Uniroom API Documentazione',
+            version: '1.0.0',
+            description: 'Documentazione ufficiale delle API REST per la piattaforma UniRoom',
+            contact: {
+                name: 'Giuseppe, Francesca e Pierpaolo'
+            }
+        },
+        servers: [
+            {
+                url: 'http://localhost:5000',
+                description: 'Server di Sviluppo Locale'
+            }
+        ]
+    },
+    // indichiamo a swagger dove andare a cercare i commenti da documentare
+    apis: ['./router/*.js']
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+// Creazione dell'endpoint per la dashboard grafica
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// -------------------------------------------------------------------------------------------------
+
 
 const auth = require('./routes/auth');
 const users = require('./routes/users');
@@ -59,3 +94,6 @@ app.listen(PORT, () => {
     console.log(`Il server è in ascolto sulla porta ${PORT}...`);
     console.log(`Testa la rotta su http://localhost:${PORT}/`);
 });
+
+
+
