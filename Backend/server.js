@@ -35,7 +35,7 @@ const swaggerOptions = {
         ]
     },
     // indichiamo a swagger dove andare a cercare i commenti da documentare
-    apis: ['./router/*.js']
+    apis: ['./routes/*.js']
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);

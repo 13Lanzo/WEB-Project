@@ -31,34 +31,34 @@ const validateObjectId = (id, campo) => {
 /**
  * @openapi
  * /messages:
- * post:
- * summary: Salva un nuovo messaggio nella chat
- * description: Registra la transazione del messaggio tra mittente e destinatario.
- * requestBody:
- * required: true
- * content:
- * application/json:
- * schema:
- * type: object
- * required:
- * - mittente
- * - destinatario
- * - testo
- * properties:
- * mittente:
- * type: string
- * description: L'ID o il Nome dell'utente che invia
- * example: "6a12f544c411ee6d0a7b055f"
- * destinatario:
- * type: string
- * description: L'ID o il Nome dell'utente che riceve
- * example: "6a12f623c411ee6d0a7b0560"
- * testo:
- * type: string
- * example: "Ciao! La stanza è ancora disponibile?"
- * responses:
- * 201:
- * description: Messaggio inviato e salvato.
+ *   post:
+ *     summary: Salva un nuovo messaggio nella chat
+ *     description: Registra la transazione del messaggio tra mittente e destinatario.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - mittente
+ *               - destinatario
+ *               - testo
+ *             properties:
+ *               mittente:
+ *                 type: string
+ *                 description: L'ID o il Nome dell'utente che invia
+ *                 example: "6a12f544c411ee6d0a7b055f"
+ *               destinatario:
+ *                 type: string
+ *                 description: L'ID o il Nome dell'utente che riceve
+ *                 example: "6a12f623c411ee6d0a7b0560"
+ *               testo:
+ *                 type: string
+ *                 example: "Ciao! La stanza è ancora disponibile?"
+ *     responses:
+ *       201:
+ *         description: Messaggio inviato e salvato.
  */
 router.post('/', async (req, res) => {
     try {
@@ -123,25 +123,25 @@ router.post('/', async (req, res) => {
 /**
  * @openapi
  * /messages/conversazione/{conChiId}:
- * get:
- * summary: Recupera la cronologia dei messaggi tra due utenti
- * description: Estrae tutti i messaggi scambiati tra l'utente corrente (mioId) e l'interlocutore (conChiId).
- * parameters:
- * - in: path
- * name: conChiId
- * required: true
- * schema:
- * type: string
- * description: ID dell'altro utente della chat
- * - in: query
- * name: mioId
- * required: true
- * schema:
- * type: string
- * description: ID dell'utente attualmente loggato (necessario per i test)
- * responses:
- * 200:
- * description: Storico messaggi recuperato con successo.
+ *   get:
+ *     summary: Recupera la cronologia dei messaggi tra due utenti
+ *     description: Estrae tutti i messaggi scambiati tra l'utente corrente (mioId) e l'interlocutore (conChiId).
+ *     parameters:
+ *       - in: path
+ *         name: conChiId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'altro utente della chat
+ *       - in: query
+ *         name: mioId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente attualmente loggato (necessario per i test)
+ *     responses:
+ *       200:
+ *         description: Storico messaggi recuperato con successo.
  */
 router.get('/conversazione/:conChiId', async(req, res) => {
     try {
@@ -219,21 +219,21 @@ router.patch('/leggi/:mittenteId', async (req, res) => {
 /**
  * @openapi
  * /messages/{id}:
- * delete:
- * summary: Elimina un singolo messaggio tramite il suo ID
- * description: Rimuove permanentemente un messaggio inviato per errore dal database.
- * parameters:
- * - in: path
- * name: id
- * required: true
- * schema:
- * type: string
- * description: ID del messaggio da eliminare
- * responses:
- * 200:
- * description: Messaggio eliminato.
- * 404:
- * description: Messaggio non trovato.
+ *   delete:
+ *     summary: Elimina un singolo messaggio tramite il suo ID
+ *     description: Rimuove permanentemente un messaggio inviato per errore dal database.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del messaggio da eliminare
+ *     responses:
+ *       200:
+ *         description: Messaggio eliminato.
+ *       404:
+ *         description: Messaggio non trovato.
  */
 router.delete('/:id', async(req, res) => {
     try {

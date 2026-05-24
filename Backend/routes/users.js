@@ -5,8 +5,8 @@ const User = require('../models/User');
 
 //metodo GET per ottenere tutte le informazioni di tutti utenti
 router.get('/', async (req, res) => {
-    try{
-        const utenti= await User.find().select('-password'); //escludiamo la password dalla risposta
+    try {
+        const utenti = await User.find().select('-password'); //escludiamo la password dalla risposta
         res.status(200).json({
             success: true,
             dati: utenti
@@ -25,27 +25,27 @@ router.get('/', async (req, res) => {
 /**
  * @openapi
  * /users/{id}:
- * get:
- * summary: Recupera il profilo pubblico di un singolo utente
- * description: Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.
- * parameters:
- * - in: path
- * name: id
- * required: true
- * schema:
- * type: string
- * description: L'ID univoco (ObjectId) dell'utente
- * responses:
- * 200:
- * description: Profilo recuperato con successo.
- * 404:
- * description: Utente non trovato.
+ *  get:
+ *      summary: Recupera il profilo pubblico di un singolo utente
+ *      description: Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.
+ *      parameters:
+ *          - in: path
+ *              name: id
+ *              required: true
+ *              schema:
+ *                  type: string
+ *                  description: L'ID univoco (ObjectId) dell'utente
+ *      responses:
+ *          200:
+ *              description: Profilo recuperato con successo.
+ *          404:
+ *              description: Utente non trovato.
  */
 router.get('/:id', async (req, res) => {
-    try{
+    try {
         const utente = await User.findById(req.params.id).select('-password'); //escludiamo la password dalla risposta
 
-        if(!utente){
+        if (!utente) {
             return res.status(404).json({
                 success: false,
                 messaggio: "Utente non trovato"
@@ -64,6 +64,8 @@ router.get('/:id', async (req, res) => {
         });
     }
 });
+
+
 
 //metodo UPDATE per modificare le informazioni di un utente
 /**
@@ -98,13 +100,13 @@ router.get('/:id', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
     try {
-        const utenteAggiornato = await User.findByIdAndUpdate(req.params.id, req.body, {new: true});
-        if(!utenteAggiornato){
+        const utenteAggiornato = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!utenteAggiornato) {
             return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile aggiornare l'utente"
             });
-        } 
+        }
 
         return res.status(200).json({
             success: true,
@@ -123,14 +125,14 @@ router.put('/:id', async (req, res) => {
 //metodo DELETE per eliminare un utente
 
 router.delete('/:id', async (req, res) => {
-    try{
+    try {
         const utenteEliminato = await User.findByIdAndDelete(req.params.id);
-        if(!utenteEliminato){
+        if (!utenteEliminato) {
             return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile eliminare l'utente"
             });
-        } 
+        }
 
         return res.status(200).json({
             success: true,
