@@ -33,6 +33,21 @@ const swaggerOptions = {
                 url: 'http://localhost:'+(process.env.PORT),
                 description: 'Server di Sviluppo Locale'
             }
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description: "Inserisci il tuo token JWT per autorizzare le chiamate."
+                }
+            }
+        },
+        security: [
+            {
+                bearerAuth: []
+            }
         ]
     },
     // indichiamo a swagger dove andare a cercare i commenti da documentare

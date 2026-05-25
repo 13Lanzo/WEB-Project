@@ -148,17 +148,18 @@ router.post('/login', async(req, res) => {
             });
         }
 
-        //se trova l'utente nel DB, verifichiamo la corrispondenda della password
-        if(utente.password !== password){
+        //se trova l'utente nel DB, verifichiamo la corrispondenda della password cifrata
+        const isMatch = await utente.comparePassword(password);
+        if(!isMatch){
             return res.status(401).json({
                 success: false,
                 messaggio: "Credenziali non valide. Verifica email e password!"
-            })
+            });
         }
 
         //creo le jwt
 
-        const payload = {id: untente._id};
+        const payload = {id: utente._id};
 
         //firmiamo il toker
         const jwtSecretKey = process.env.JWT_SECRET; //prende la chiave segreta per cifrare il token dal file .env

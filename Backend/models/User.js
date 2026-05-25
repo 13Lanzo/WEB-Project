@@ -60,18 +60,16 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Cifratura della password prima del salvataggio nel database
-UserSchema.pre('save', async function (next) {
-    //Esegui la cifratura solo se la password è stata modificata (o è nuova)
-    if (!this.isModified('password')) return next();
+UserSchema.pre('save', async function () {
+    // Esegui la cifratura solo se la password è stata modificata (o è nuova)
+    if (!this.isModified('password')) return;
 
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         // genera hash diverse per utenti che hanno la stessa password
-
-        next();
     } catch (err) {
-        next(err);
+        throw err;
     }
 });
 

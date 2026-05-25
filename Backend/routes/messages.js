@@ -149,9 +149,8 @@ router.post('/', authMiddleware, async (req, res) => {
  */
 router.get('/conversazione/:conChiId', authMiddleware, async(req, res) => {
     try {
-        // NOTA: In produzione, l'ID dell'utente loggato (mioId) si prenderà dal Token JWT (req.user.id)
-        // Per i test iniziali su Thunder Client, passiamo temporaneamente il mioId nella query string (?mioId=...)
-        const mioId = req.query.id;
+        // Leggiamo l'ID dal token JWT decodificato (req.user.id), o facciamo fallback sul parametro query "mioId"
+        const mioId = req.user?.id || req.query.mioId;
         const conChiId = req.params.conChiId;
 
         try {
@@ -190,7 +189,7 @@ router.get('/conversazione/:conChiId', authMiddleware, async(req, res) => {
 
 router.patch('/leggi/:mittenteId', authMiddleware, async (req, res) => {
     try{
-        const mioId = req.body.id; // ID dell'utente che sta leggendo la chat
+        const mioId = req.user?.id || req.body.mioId || req.body.id; // ID dell'utente che sta leggendo la chat
         const mittenteId = req.params.mittenteId; // ID di chi ha inviato i messaggi
 
         try {
