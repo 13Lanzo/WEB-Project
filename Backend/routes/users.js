@@ -40,12 +40,12 @@ router.get('/', async (req, res) => {
  *      summary: Recupera il profilo pubblico di un singolo utente
  *      description: Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.
  *      parameters:
- *          - in: path
- *              name: id
- *              required: true
- *              schema:
- *                  type: string
- *                  description: L'ID univoco (ObjectId) dell'utente
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *            description: L'ID univoco (ObjectId) dell'utente
  *      responses:
  *          200:
  *              description: Profilo recuperato con successo.
