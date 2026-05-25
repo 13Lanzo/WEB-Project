@@ -15,6 +15,7 @@ ref: 'User': Implementa i vincoli di integrità referenziale logica. Comunica a 
 */
 
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     nome:{
@@ -57,5 +58,9 @@ const UserSchema = new mongoose.Schema({
 }, {
     timestamps: true // Aggiunge automaticamente createdAt e updatedAt nel database
 });
+
+//cifratura della password prima del salvataggio nel DB
+
+
 
 module.exports = mongoose.model('User', UserSchema);

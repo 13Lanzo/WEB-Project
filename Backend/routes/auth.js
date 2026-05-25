@@ -24,6 +24,7 @@ router.post('/logout', (req, res) => {
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User'); //importa il modello User per interagire con il DB
+const jwt = require('jsonwebtoken');
 
 //Metodo POST per la registrazione di un nuovo utente
 /**
@@ -155,11 +156,20 @@ router.post('/login', async(req, res) => {
             })
         }
 
+        //creo le jwt
+
+        const payload = {id: untente._id};
+
+        //firmiamo il toker
+        const jwtSecretKey = process.env.JWT_SECRET; //prende la chiave segreta per cifrare il token dal file .env
+        const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '24h'});
+
         //se invece sia email che password sono corretti procediamo
 
         return res.status(200).json({
             success: true,
             messaggio: "Login effettuato con successo!",
+            token: token,
             utente: {
                 id: utente._id,
                 nome: utente.nome,
