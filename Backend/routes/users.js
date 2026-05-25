@@ -82,32 +82,33 @@ router.get('/:id', async (req, res) => {
 /**
  * @openapi
  * /users/{id}:
- * put:
- * summary: Aggiorna i dati del profilo di un utente
- * description: Permette di modificare la bio, l'età o l'array dei tag delle preferenze.
- * parameters:
- * - in: path
- * name: id
- * required: true
- * schema:
- * type: string
- * requestBody:
- * content:
- * application/json:
- * schema:
- * type: object
- * properties:
- * bio:
- * type: string
- * example: "Studente Poliba. Amo l'automazione e cerco casa vicino a Via Re David."
- * tagPreferenze:
- * type: array
- * items:
- * type: string
- * example: ["ordinato", "studio-notturno"]
- * responses:
- * 200:
- * description: Profilo aggiornato con successo.
+ *   put:
+ *     summary: Aggiorna i dati del profilo di un utente
+ *     description: Permette di modificare la bio, l'età o l'array dei tag delle preferenze.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bio:
+ *                 type: string
+ *                 example: "Studente Poliba. Amo l'automazione e cerco casa vicino a Via Re David."
+ *               tagPreferenze:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["ordinato", "studio-notturno"]
+ *     responses:
+ *       200:
+ *         description: Profilo aggiornato con successo.
  */
 router.put('/:id', async (req, res) => {
     try {
