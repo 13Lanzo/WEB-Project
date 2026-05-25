@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Room = require('../models/Room');
+const verificaToken = require('../middleware/authMiddleware');
 
 // 1. CREA ANNUNCIO STANZA (CREATE) -> POST /api/rooms
-router.post('/', async (req, res) => {
+router.post('/', verificaToken, async (req, res) => {
     try {
-        const { titolo, descrizione, prezzo, citta, indirizzo, creatoDa, serviziInclusi } = req.body;
+        const { titolo, descrizione, prezzo, citta, indirizzo, serviziInclusi } = req.body;
+
+        const creatoDa = req.user.id;
 
         // 1. Validazione base dei campi obbligatori
-        if (!titolo || !descrizione || !prezzo || !citta || !indirizzo || !creatoDa) {
+        if (!titolo || !descrizione || !prezzo || !citta || !indirizzo) {
             return res.status(400).json({ 
                 success: false,
                 errore: "Tutti i campi obbligatori devono essere compilati." 
