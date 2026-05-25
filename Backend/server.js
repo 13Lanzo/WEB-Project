@@ -22,14 +22,15 @@ const swaggerOptions = {
         info: {
             title: 'Uniroom API Documentazione',
             version: '1.0.0',
-            description: 'Documentazione ufficiale delle API REST per la piattaforma UniRoom',
+            description: 'Documentazione ufficiale delle API REST per la piattaforma UniRoom' +
+                '\n\nrealizzato da Giuseppe, Francesca e Pierpaolo',
             contact: {
                 name: 'Giuseppe, Francesca e Pierpaolo'
             }
         },
         servers: [
             {
-                url: 'http://localhost:5000',
+                url: 'http://localhost:'+(process.env.PORT),
                 description: 'Server di Sviluppo Locale'
             }
         ]
