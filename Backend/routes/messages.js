@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const Message = require('../models/Message');
 const User = require('../models/User');
+const authMiddleware = require('../middleware/authMiddleware')
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -60,13 +61,14 @@ const validateObjectId = (id, campo) => {
  *       201:
  *         description: Messaggio inviato e salvato.
  */
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
     try {
-        const { mittente, destinatario, mittenteId, destinatarioId, testo } = req.body;
+        const { mittente, destinatario, destinatarioId, testo } = req.body;
 
         // Validazione semplice: preferiamo ricevere direttamente gli ObjectId
-        if (!testo || (!mittenteId && !mittente) || (!destinatarioId && !destinatario)) {
-            return res.status(400).json({ errore: 'Tutti i campi sono obbligatori. Invia testo, mittenteId e destinatarioId; mittente/destinatario sono supportati solo come fallback.' });
+        if (!testo || (!destinatarioId && !destinatario)) {
+            return res.status(400).json({
+                errore: 'Il testo e il destinatario (ID o nome/email) sono obbligatori.' });
         }
 
         const resolveUserId = async (valore, ruoloCampo) => {
@@ -88,7 +90,9 @@ router.post('/', async (req, res) => {
             throw new Error(`Utente non trovato per ${ruoloCampo}: ${valore}`);
         };
 
-        const mittenteObjectId = mittenteId || await resolveUserId(mittente, 'mittente');
+        // Il mittente è ricavato in modo sicuro dall'utente autenticato (dal token)
+        const mittenteObjectId = req.user.id;
+
         const destinatarioObjectId = destinatarioId || await resolveUserId(destinatario, 'destinatario');
 
         const nuovoMessaggio = new Message({
@@ -143,11 +147,11 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Storico messaggi recuperato con successo.
  */
-router.get('/conversazione/:conChiId', async(req, res) => {
+router.get('/conversazione/:conChiId', authMiddleware, async(req, res) => {
     try {
         // NOTA: In produzione, l'ID dell'utente loggato (mioId) si prenderà dal Token JWT (req.user.id)
         // Per i test iniziali su Thunder Client, passiamo temporaneamente il mioId nella query string (?mioId=...)
-        const mioId = req.query.mioId;
+        const mioId = req.query.id;
         const conChiId = req.params.conChiId;
 
         try {
@@ -184,9 +188,9 @@ router.get('/conversazione/:conChiId', async(req, res) => {
 // ROUTE: PATCH /api/messages/leggi/:mittenteId
 // =========================================================================
 
-router.patch('/leggi/:mittenteId', async (req, res) => {
+router.patch('/leggi/:mittenteId', authMiddleware, async (req, res) => {
     try{
-        const mioId = req.body.mioId; // ID dell'utente che sta leggendo la chat
+        const mioId = req.body.id; // ID dell'utente che sta leggendo la chat
         const mittenteId = req.params.mittenteId; // ID di chi ha inviato i messaggi
 
         try {
@@ -235,7 +239,7 @@ router.patch('/leggi/:mittenteId', async (req, res) => {
  *       404:
  *         description: Messaggio non trovato.
  */
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', authMiddleware, async(req, res) => {
     try {
         // Recuperiamo l'id del messaggio dai parametri dell'URL
         const messaggioId = req.params.id;
@@ -246,16 +250,29 @@ router.delete('/:id', async(req, res) => {
             return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
-        // Cerchiamo il messaggio nel DB e lo eliminiamo in un unico passaggio
-        const messaggioEliminato = await Message.findByIdAndDelete(messaggioId);
+        // Recuperiamo il messaggio per verificare chi lo ha inviato
+        const messaggio = await
+        Message.findById(messaggioId);
+        // la delate avviene dopo la verifica che l'utente loggato abbia inviato il messaggio
 
         // Se il messaggio non esiste (o è stato già eliminato), rispondiamo con not found
-        if (!messaggioEliminato){
+        if (!messaggio){
             return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile eliminare: messaggio non trovato"
             });
         }
+
+        // Verifica che lutente loggato sia colui che ha inviato il messaggio
+        if (messaggio.mittente.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                messaggio: "Non sei autorizzato a eliminare questo messaggio"
+            });
+        }
+
+        // Esegui la cancellazione
+        await Message.findByIdAndDelete(messaggioId);
 
         // Messaggio eliminato con successo
         return res.status(200).json({
@@ -271,6 +288,6 @@ router.delete('/:id', async(req, res) => {
             dettaglio: errore.message
         });
     }
-})
+});
 
 module.exports = router;
