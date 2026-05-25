@@ -4,6 +4,17 @@ const User = require('../models/User');
 // const authMiddleware = require('../middleware/auth'); // Ti servirà per proteggere le rotte
 
 //metodo GET per ottenere tutte le informazioni di tutti utenti
+
+/**
+ * @openapi
+ * /users:
+ *   get:
+ *     summary: Recupera la lista di tutti gli utenti
+ *     description: Restituisce un array con tutti i profili degli utenti registrati.
+ *     responses:
+ *       200:
+ *         description: Elenco degli utenti recuperato con successo.
+ */
 router.get('/', async (req, res) => {
     try {
         const utenti = await User.find().select('-password'); //escludiamo la password dalla risposta
