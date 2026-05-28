@@ -25,7 +25,7 @@ export default function Home() {
                             <span className='icon'>🔍</span>
                             Inizia la ricerca
                         </button>
-                        <button className='btnTwo' onClick={()=> navigate('chat')}>
+                        <button className='btnTwo' onClick={()=> navigate('login')}>
                             <span className='icon'>🏠</span>
                             Pubblica annuncio
                         </button>
