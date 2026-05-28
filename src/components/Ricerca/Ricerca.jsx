@@ -1,5 +1,6 @@
 import './Ricerca.css'
 import { useState } from 'react';
+import {useNavigate} from 'react-router-dom'
 
 const ROOMS_DATA=[];
 export default function Ricerca() {
@@ -20,6 +21,7 @@ export default function Ricerca() {
     const handleViewDetails =(room)=>{
         alert('Apertura dettagli per ${roomTitle');
     };
+    const navigate=useNavigate();
     return(
         <div className='search-page-container'>
 
@@ -109,7 +111,7 @@ export default function Ricerca() {
                                         <span key={idx} className='room-spec-tag'>{tag}</span>
                                     ))}
                                 </div>
-                                <button className='btn-view-details' onClick={()=> handleViewDetails(room.title)}>Maggiori dettagli</button>
+                                <button className='btn-view-details' onClick={()=> {handleViewDetails(room.title); navigate('/dettagli');}}>Maggiori dettagli</button>
                             </div>
                         </div> 
                     ))}

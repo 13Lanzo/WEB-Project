@@ -7,6 +7,7 @@ import Profilo from './components/Profilo/Profilo';
 import Chat from './components/Chat/Chat';
 import Ricerca from './components/Ricerca/Ricerca';
 import Login from './components/Login/Login';
+import Dettagli from './components/Dettagli/Dettagli';
 import { useState } from 'react';
 //rendering per lo stato loggato o meno
 
@@ -30,6 +31,7 @@ function App() {
 
           <Route path='/ricerca' element={<Ricerca />}/>
           <Route path='/profilo' element={<Profilo />}/>
+          <Route path='/dettagli' element={<Dettagli />}/>
           <Route path='/chat' element={<Chat />}/>
           <Route path='/login' element={<Login />}/>
         </Routes>
