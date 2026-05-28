@@ -47,9 +47,6 @@ export default function Ricerca() {
     const handleApplyFilters=() =>{
         alert('Filtri applicati!');
     };
-    const handleViewDetails =(room)=>{
-        alert('Apertura dettagli per ${roomTitle');
-    };
     const navigate=useNavigate();
     return(
         <div className='search-page-container'>
@@ -140,7 +137,7 @@ export default function Ricerca() {
                                         <span key={idx} className='room-spec-tag'>{tag}</span>
                                     ))}
                                 </div>
-                                <button className='btn-view-details' onClick={()=> {handleViewDetails(room.title); navigate('/dettagli');}}>Maggiori dettagli</button>
+                                <button className='btn-view-details' onClick={()=>  navigate('/dettagli')}>Maggiori dettagli</button>
                             </div>
                         </div> 
                     ))}
