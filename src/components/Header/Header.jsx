@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import './Header.css'
 
 function Modale({ isOpen, onClose, initialTab}) {
@@ -10,7 +11,7 @@ function Modale({ isOpen, onClose, initialTab}) {
     const [password, setPassword]=useState('');
     const [confirmPassword, setConfirmPassword]=useState('');
     const [errorMessage, setErrorMessage]= useState('');
-
+    
     //controllo password
     const handleSubmit = (e)=> {
         e.preventDefault();
@@ -123,7 +124,7 @@ function Modale({ isOpen, onClose, initialTab}) {
 export default function Header(){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [initialTab, setInitialTab] = useState('registrati');
-
+    const navigate = useNavigate;
     const openModal = (tab) =>{
         setInitialTab(tab);
         setIsModalOpen(true);
@@ -134,8 +135,8 @@ export default function Header(){
             <div className='header-logo'>LOGO</div>
             <div className='header-buttons'>
                 <button onClick={()=> openModal('accedi')} className='btn-link'>Accedi</button>
-                <button onClick={()=> openModal('registrati')} className='btn-primary'>Registrati</button>
-            </div>
+                <button onClick={()=> openModal('registrati')} className='btn-primary'>Registrati</button>        
+            </div>        
         </header>
         <Modale
             isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)} initialTab={initialTab} key={`${isModalOpen}-${initialTab}`}/>
