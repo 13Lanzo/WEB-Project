@@ -7,12 +7,24 @@ import Profilo from './components/Profilo/Profilo';
 import Chat from './components/Chat/Chat';
 import Ricerca from './components/Ricerca/Ricerca';
 import Login from './components/Login/Login';
+import { useState } from 'react';
+//rendering per lo stato loggato o meno
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn]= useState(false);
+  
+  const handleLogout=()=>{
+    setIsLoggedIn(false);
+  };
+  const handleLogin=()=>{
+    setIsLoggedIn(true);
+  };
+
   return (
     <div>
-      <Header />
+      
       <Router>
+        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} onLogin={handleLogin}/>
         <Routes>
           <Route path='/' element={<Home />}/>
 

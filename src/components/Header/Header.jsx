@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import './Header.css'
 
-function Modale({ isOpen, onClose, initialTab}) {
+function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [activeTab, setActiveTab] = useState(initialTab);
     
     const [name, setName]=useState('');
@@ -11,13 +11,23 @@ function Modale({ isOpen, onClose, initialTab}) {
     const [password, setPassword]=useState('');
     const [confirmPassword, setConfirmPassword]=useState('');
     const [errorMessage, setErrorMessage]= useState('');
+    const LoginGoogle =()=>{
+        window.open('https://www.google.com');
+    };
+    const LoginInsta =()=>{
+        window.open('https://www.instagram.com');
+    };
+
+    //credenziali fittizie per visualizzare frontend da eliminare
+    const EMAIL='cioccafra@gmail.com';
+    const PW='password5';
     
     //controllo password
     const handleSubmit = (e)=> {
         e.preventDefault();
         setErrorMessage('');
 
-        if(activeTab=== 'registrati') {
+        if(activeTab === 'registrati') {
             if(confirmPassword !== password){
                 setErrorMessage('Le password non coincidono. Riprova. ');
                 return;
@@ -25,17 +35,28 @@ function Modale({ isOpen, onClose, initialTab}) {
             if(password.length<6){
                 setErrorMessage('La password deve avere almeno 6 caratteri.');
                 return;
-            }    
+            }  
+            alert('Profilo creato con successo!!');
+            onLoginSuccess();
+            onClose();
+            //credenziali fittizie da eliminare  
+        } else{
+            if(email=== EMAIL && password===PW){
+                onLoginSuccess();
+                onClose();
+            }else{
+                setErrorMessage('Email o password errate. Riprova!');
+            }
         }
-        onClose();
-    }
+    };
+
     const handleTabChange = (tab) => {
         setActiveTab(tab);
         setPassword('');
         setConfirmPassword('');
         setErrorMessage('');
     };
-
+    
     if (!isOpen) return null;
 
     return(
@@ -91,7 +112,7 @@ function Modale({ isOpen, onClose, initialTab}) {
                     <div className='divider-line'></div>
                 </div>
                 <div className='social-grid'>
-                    <button type='button' className='btn-social'>
+                    <button type='button' className='btn-social' onClick={LoginGoogle}>
                         <svg className="social-icon" viewBox="0 0 24 24" width="18" height="18">
                             <path
                                 fill="#EA4335"
@@ -108,7 +129,7 @@ function Modale({ isOpen, onClose, initialTab}) {
                         </svg>
                         <span className='social-label'>Google</span>
                     </button>
-                    <button type='button' className='btn-social'>
+                    <button type='button' className='btn-social' onClick={LoginInsta}>
                         <svg className="social-icon insta-color" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -121,25 +142,55 @@ function Modale({ isOpen, onClose, initialTab}) {
         </div>
     );
 }
-export default function Header(){
+
+export default function Header({isLoggedIn, onLogout, onLogin}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [initialTab, setInitialTab] = useState('registrati');
-    const navigate = useNavigate;
+
     const openModal = (tab) =>{
         setInitialTab(tab);
         setIsModalOpen(true);
     };
+    const [activeLink, setActiveLink]=useState('Scopri');
+    const navigate =useNavigate();
+
     return (
-        <>
+        <div>
         <header className='site-header font-sans'>
             <div className='header-logo'>LOGO</div>
-            <div className='header-buttons'>
-                <button onClick={()=> openModal('accedi')} className='btn-link'>Accedi</button>
-                <button onClick={()=> openModal('registrati')} className='btn-primary'>Registrati</button>        
-            </div>        
+            
+                {/*rendering condizionale per vedere lo stato attivo del log*/}
+                {isLoggedIn ? (
+                    <>
+                        <nav className='header-navigation'>
+                            <button className={`nav-item ${activeLink=== 'Scopri' ? 'active' :''}`} onClick={()=> {setActiveLink('Scopri'); navigate('/ricerca');}}>Scopri</button>  
+                            <button className={`nav-item ${activeLink=== 'Messaggi'? 'active':''}`} onClick={()=> {setActiveLink('Messaggi'); navigate('/chat');}}>Messaggi</button>
+                            <button className={`nav-item ${activeLink=== 'Profilo' ? 'active': ''}`} onClick={()=> {setActiveLink('Profilo'); navigate('/login');}}>Profilo</button>
+                        </nav>
+                        
+                        <div className='logged-in-actions'>
+                            <button className="notification-btn" aria-label="Notifiche">
+                                {/*da sostituire con icona*/}
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                            </button>
+                            <button className='btn-logout' onClick={onLogout}>Logout</button>
+                        </div>
+                    </>
+                ):(
+                    <div className='header-buttons'>
+                        <button onClick={()=> openModal('accedi')} className='btn-link'>Accedi</button>
+                        <button onClick={()=> openModal('registrati')} className='btn-primary'>Registrati</button>   
+                    </div>
+                )}          
         </header>
-        <Modale
-            isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)} initialTab={initialTab} key={`${isModalOpen}-${initialTab}`}/>
-        </>
-    )
+        <Modale isOpen={isModalOpen}
+                onClose={()=> setIsModalOpen(false)} 
+                initialTab={initialTab} 
+                key={`${isModalOpen}-${initialTab}`} 
+                onLoginSuccess={onLogin}/>
+        </div>
+    );
 }

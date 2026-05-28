@@ -36,7 +36,7 @@ export default function Chat() {
                     </div>
                 </aside>
 
-                <main className='chat.main'>
+                <main className='chat-main'>
                     <header className='chat-header'>
                         <div className='header-user'>
                             <div className='avatar-medium'></div>
@@ -54,11 +54,11 @@ export default function Chat() {
                     
                     <div className='messages-area'>
                         <div className='date-separator'><span>Oggi</span></div>
-                        <div className='msg-wrapper recived'>
+                        <div className='masg-wrapper received'>
                             <div className='avatar-msg'></div>
                             <div className='msg-bubble'>
                                 <p>Ciao vuoi vivere con me?</p>
-                                <span className='msg-time'>10:30 AM</span>
+                                <span className='masg-time'>10:30 AM</span>
                             </div>
                         </div>
                         <div className='msg-wrapper sent'>

@@ -1,6 +1,6 @@
 import './Home.css'
 import image from './image.png'
-import {useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 
 export default function Home() {
 
