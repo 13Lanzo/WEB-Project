@@ -2,10 +2,39 @@ import './Ricerca.css'
 import { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 
-const ROOMS_DATA=[];
+const ROOMS_DATA = [
+    {
+        id: 1,
+        title: "Bloomsbury Loft",
+        location: "London, WC1",
+        price: 850,
+        match: 98,
+        image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=500&q=80",
+        tags: ["🐾 Pets", "🔇 Quiet"]
+    },
+    {
+        id: 2,
+        title: "Modern Shared Flat",
+        location: "Manchester City Center",
+        price: 620,
+        match: 85,
+        image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=500&q=80",
+        tags: ["🚭 No Smoking", "👥 Mixed Faculty"]
+    },
+    {
+        id: 3,
+        title: "Oxford Central Studio",
+        location: "Oxford, Summertown",
+        price: 950,
+        match: 92,
+        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80",
+        tags: ["📚 Study-first", "🌱 Sustainable"]
+    }
+];
+
 export default function Ricerca() {
     const [selectedPreferences, setSelectedPreferences]=useState([""]);
-
+    
     const[currentPage, setCurrentPage]=useState(1);
 
     const togglePreference=(prefName)=>{
