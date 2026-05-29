@@ -17,7 +17,8 @@ export default function Login({onLoginSuccess}) {
     const LoginInsta =()=>{
         window.open('https://www.instagram.com');
     };
-
+    const [faculty, setFaculty]=useState('');
+    const [role, setRole]=useState('');
     //credenziali fittizie per visualizzare frontend da eliminare
     const EMAIL='cioccafra@gmail.com';
     const PW='password5';
@@ -105,14 +106,37 @@ export default function Login({onLoginSuccess}) {
                     )}
                     {activeTab === 'registrati' && (
                         <>
-                        <div className='form-group'>
-                            <label className='form-label'>Nome</label>
-                            <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={name} onChange={(e)=>setName(e.target.value)} required/>
+                        <div className='form-row-double'>
+                            <div className='form-group'>
+                                <label className='form-label'>Nome</label>
+                                <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={name} onChange={(e)=>setName(e.target.value)} required/>
+                            </div>
+                            <div className='form-group'>
+                                <label className='form-label'>Cognome</label>
+                                <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={lastname} onChange={(e)=>setLastname(e.target.value)} required/>
+                            </div>
                         </div>
-                        <div className='form-group'>
-                            <label className='form-label'>Cognome</label>
-                            <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={lastname} onChange={(e)=>setLastname(e.target.value)} required/>
-                        </div>
+                        <div className={role=== 'Inquilino' ? 'form-row-double': 'form-group'}>
+                            <div className='form-group'>
+                                        <label className='form-label'>Ruolo Utente</label>
+                                        <select className='form-input' value={role} onChange={(e) => {setRole(e.target.value); if(e.target.value==='Proprietario'){setFaculty('');}}} required>
+                                            <option value="Inquilino">Inquilino</option>
+                                            <option value="Proprietario">Proprietario</option>
+                                        </select>
+                                    </div>
+                            {role==='Inquilino' &&(
+                            <div className='form-group'>
+                                <label className='form-label'>Seleziona Facoltà</label>
+                                <select className='form-input' value={faculty} onChange={(e)=> setFaculty(e.target.value)} required>
+                                    <option value='' disabled>Scegli</option>
+                                    <option value='Ingegneria'>Ingegneria</option>
+                                    <option value='Medicina'>Medicina</option>
+                                    <option value='Lavoro'>Lavoro</option>
+                                    <option value='Disoccupato'>Disoccupato</option>
+                                </select>
+                            </div>
+                            )}
+                            </div>
                         </>
                     )}
                     <div className='form-group'>

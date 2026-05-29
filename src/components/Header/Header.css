@@ -209,6 +209,12 @@
   border-bottom: 2px solid #1e3a8a;
 }
 
+.form-row-double {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem; /* Spazio tra le due colonne */
+  width: 100%;
+}
 
 .form-group {
   margin-bottom: 0.85rem;
