@@ -153,7 +153,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
     };
     const [activeLink, setActiveLink]=useState('Scopri');
     const navigate =useNavigate();
-
+    
     return (
         <div>
         <header className='site-header font-sans'>
@@ -176,7 +176,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                 </svg>
                             </button>
-                            <button className='btn-logout' onClick={onLogout}>Logout</button>
+                            <button className='btn-logout' onClick={()=>{onLogout(), navigate('/')}}>Logout</button>
                         </div>
                     </>
                 ):(

@@ -39,7 +39,6 @@ export default function Dettagli({isLoggedIn}) {
         if (isLoggedIn){
             navigate('/chat');
         }else{
-            alert("Devi effettuare l'accesso");
             navigate('/login');
         }
     };
@@ -142,7 +141,7 @@ export default function Dettagli({isLoggedIn}) {
                         ))}
                     </div>
                     <p className='profile-bio-text'>{roomData.host.bio}</p>
-                    <button className='btn-send-message' onClick={()=> {ClickMessaggio, navigate('/chat')}}>➤Invia messaggio</button>
+                    <button className='btn-send-message' onClick={ClickMessaggio}>➤Invia messaggio</button>
                     <div className='host-trust-footer'>
                         <span>🛡️ Verified Host</span>
                         <span>⚡ Responds quickly</span>
