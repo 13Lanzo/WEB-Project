@@ -125,90 +125,65 @@
 }
 
 /* Gestione dei campi form */
-.auth-actual-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.auth-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
 .form-group {
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 0.85rem;
 }
 
 .form-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.815rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
   color: #374151;
 }
 
 .form-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
+  padding: 0.50rem 0.2rem;
+  font-size: 0.9rem;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;
   outline: none;
   background-color: #ffffff;
-  color: #1f2937;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-}
-
-.form-input::placeholder {
-  color: #9ca3af;
+  color: #4b5563;
 }
 
 .form-input:focus {
   border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-.form-input-subtext {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 0.4rem;
-  line-height: 1.4;
-}
-
-/* Bottone di Invio Verde Uniformato */
-.auth-btn-submit {
+.btn-submit {
   width: 100%;
-  background-color: #046a38;
+  background-color: #065f46;
   color: #ffffff;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0.95rem;
+  font-weight: 600;
+  padding: 0.875rem;
   border: none;
   border-radius: 0.75rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
 }
 
-.auth-btn-submit:hover {
-  background-color: #03522c;
+.btn-submit:hover {
+  background-color: #064e3b;
 }
 
-/* Allineamento divisori alternativi */
-.auth-divider-box {
+.divider-container {
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 1.5rem 0;
+  padding: 1.25rem 0;
 }
 
-.auth-divider-line {
+.divider-line {
   flex-grow: 1;
   border-top: 1px solid #e5e7eb;
 }
 
-.auth-divider-text {
+.divider-text {
+  flex-shrink: 0;
   margin: 0 1rem;
   color: #9ca3af;
   font-size: 0.75rem;
@@ -216,45 +191,46 @@
   letter-spacing: 0.05em;
 }
 
-/* Griglia per pulsanti Social */
-.auth-social-row {
+.social-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: -1rem;
 }
 
-.auth-btn-social {
+.btn-social {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  border: 1px solid #cbd5e1;
+  gap: 0.6rem;
+  border: 1px solid #d1d5db;
   border-radius: 0.75rem;
-  padding: 0.75rem;
+  padding: 0.6rem;
   background-color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
+  height: 2.6rem;
 }
 
-.auth-btn-social:hover {
-  background-color: #f8fafc;
-  border-color: #94a3b8;
+.btn-social:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
 }
 
-.social-svg-icon {
+.social-icon{
   flex-shrink: 0;
+  display: block;
 }
 
-.fb-color {
-  color: #1877f2;
+.insta-color{
+  color: #e1306c;
 }
 
-.social-txt {
-  font-size: 0.9rem;
+.social-label {
+  font-size: 0.85rem;
   font-weight: 600;
   color: #374151;
 }
-
 .auth-error-alert {
   background-color: #fef2f2;
   border: 1px solid #fee2e2;
@@ -266,9 +242,6 @@
   margin-bottom: 1.25rem;
 }
 
-/* ==========================================
-   STRUTTURA RESPONSIVA PER MOBILE
-   ========================================== */
 @media (max-width: 900px) {
   .auth-split-card {
     flex-direction: column;

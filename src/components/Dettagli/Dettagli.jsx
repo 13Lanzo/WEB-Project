@@ -2,7 +2,7 @@ import './Dettagli.css'
 import { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 
-export default function Dettagli() {
+export default function Dettagli({isLoggedIn}) {
     const [showAllPhotos, setShowAllPhotos]=useState(false);
     const navigate= useNavigate();
     const SPECS_CONFIG = {
@@ -34,6 +34,15 @@ export default function Dettagli() {
         "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80",
         "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=400&q=80"
     ];
+
+    const ClickMessaggio=()=>{
+        if (isLoggedIn){
+            navigate('/chat');
+        }else{
+            alert("Devi effettuare l'accesso");
+            navigate('/login');
+        }
+    };
 
     return(
         <div className='room-detail-page font-sans'>
@@ -133,7 +142,7 @@ export default function Dettagli() {
                         ))}
                     </div>
                     <p className='profile-bio-text'>{roomData.host.bio}</p>
-                    <button className='btn-send-message' onClick={()=> {alert('Indirizzamento alla chat...'), navigate('/chat')}}>➤Invia messaggio</button>
+                    <button className='btn-send-message' onClick={()=> {ClickMessaggio, navigate('/chat')}}>➤Invia messaggio</button>
                     <div className='host-trust-footer'>
                         <span>🛡️ Verified Host</span>
                         <span>⚡ Responds quickly</span>

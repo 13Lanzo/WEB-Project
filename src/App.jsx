@@ -31,9 +31,9 @@ function App() {
 
           <Route path='/ricerca' element={<Ricerca />}/>
           <Route path='/profilo' element={<Profilo />}/>
-          <Route path='/dettagli' element={<Dettagli />}/>
+          <Route path='/dettagli' element={<Dettagli onLoginSuccess={()=>setIsLoggedIn} />}/>
           <Route path='/chat' element={<Chat />}/>
-          <Route path='/login' element={<Login />}/>
+          <Route path='/login' element={<Login onLoginSuccess={()=>setIsLoggedIn}/>}/>
         </Routes>
       </Router>
       <Footer />
