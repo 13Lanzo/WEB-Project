@@ -1,0 +1,254 @@
+.annunci-page {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem;
+  color: #1f2937;
+  box-sizing: border-box;
+}
+
+.font-sans {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.annunci-container {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.test-controls {
+  margin-bottom: 2rem;
+}
+
+.test-controls button {
+  background-color: #e5e7eb;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.annunci-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+  gap: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 2rem;
+}
+
+.header-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.area-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #065f46; /* Verde Smeraldo Scuro */
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.header-text-block h1 {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.header-text-block p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+.btn-nuovo-annuncio {
+  background-color: #ff5a00; /* Arancione UniRoom del Mockup */
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.85rem 1.5rem;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(255, 90, 0, 0.3);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-nuovo-annuncio:hover {
+  background-color: #044e3a;
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   GRIGLIA E CARD DEGLI ANNUNCI
+   ========================================== */
+.annunci-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+}
+
+.annuncio-card {
+  background-color: #ffffff;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.annuncio-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Immagine della card */
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.annuncio-card:hover .card-image-wrapper img {
+  transform: scale(1.05);
+}
+
+.city-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+}
+
+/* Contenuto testuale */
+.card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.zone-text {
+  margin: 0 0 0.5rem 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.card-content h3 {
+  margin: 0 0 1.25rem 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.3;
+}
+
+/* Specifiche: Prezzo, Spazio, Disp */
+.card-specs-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.spec-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.spec-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.spec-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Footer (Pulsanti Dettagli e Cestino) */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-dettaglio {
+  background: none;
+  border: none;
+  color: #ff5a00; /* Arancione */
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.btn-dettaglio:hover {
+  color: #cc4800;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+
+.btn-delete:hover {
+  color: #ef4444; /* Diventa rosso al passaggio del mouse */
+}
+
+/* ==========================================
+   MEDIA QUERIES (Mobile)
+   ========================================== */
+@media (max-width: 768px) {
+  .annunci-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-nuovo-annuncio {
+    width: 100%;
+  }
+  .annunci-grid {
+    grid-template-columns: 1fr;
+  }
+}

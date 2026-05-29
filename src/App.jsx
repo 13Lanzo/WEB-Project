@@ -8,9 +8,10 @@ import Chat from './components/Chat/Chat';
 import Ricerca from './components/Ricerca/Ricerca';
 import Login from './components/Login/Login';
 import Dettagli from './components/Dettagli/Dettagli';
+import Annunci from './components/Annunci/Annunci';
 import { useState } from 'react';
 //rendering per lo stato loggato o meno
-
+//ICONE: LUCIDE
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
   
@@ -33,6 +34,7 @@ function App() {
           <Route path='/profilo' element={<Profilo onLogout={()=>setIsLoggedIn(false)} />}/>
           <Route path='/dettagli' element={<Dettagli onLoginSuccess={()=>setIsLoggedIn} />}/>
           <Route path='/chat' element={<Chat />}/>
+          <Route path='/annunci' element={<Annunci />}/>
           <Route path='/login' element={<Login onLoginSuccess={()=>setIsLoggedIn}/>}/>
         </Routes>
       </Router>

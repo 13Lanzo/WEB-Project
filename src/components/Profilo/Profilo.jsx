@@ -46,7 +46,7 @@ export default function Profilo({onLogout}) {
             <div className='profile-card-container'>
                 <div className='profilo-header'>
                     <div className='profile-avatar'>
-                    <span>{currentUser.initials}</span>
+                    {/*metti un icona*/}
                     </div>
                     <div className='profilo-info'>
                         <div className='profilo-name-row'>
