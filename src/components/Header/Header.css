@@ -1,0 +1,324 @@
+.font-sans {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+
+.site-header {
+  width: auto;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.header-logo {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #1e3a8a; 
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Contenitore dei menu centrali */
+.header-navigation {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: 2.5rem; 
+  flex-grow: 1;
+}
+
+.nav-item {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #4b5563;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.25rem;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav-item:hover {
+  color: #1e3a8a;
+}
+
+/* Effetto sottolineatura blu solida visibile nelle immagini fornite */
+.nav-item.active {
+  color: #1e3a8a;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem; /* Allinea la linea al bordo inferiore dell'header */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1e3a8a;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Raggruppamento icone di destra */
+.logged-in-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+.btn-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-link:hover {
+  color: #111827;
+}
+
+.btn-primary {
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: #065f46; 
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+  background-color: #064e3b;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.notification-btn:hover {
+  color: #111827;
+}
+
+.btn-logout {
+  background: none;
+  border: 1px solid  #1e3a8a;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+  color:#1e3a8a;
+}
+
+.btn-logout:hover {
+  background-color: #f9fafb;
+  border-color:  #1e3a8a;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 1rem;
+}
+
+.modal-bg-click {
+  position: absolute;
+  inset: 0;
+}
+
+.modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  max-height: 80vh;
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem 2rem;
+  z-index: 10;
+  color: #1f2937;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-close-btn:hover {
+  color: #4b5563;
+}
+
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  width: 50%;
+  padding-bottom: 0.75rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #9ca3af;
+}
+
+.tab-btn.active {
+  color: #1e3a8a;
+  border-bottom: 2px solid #1e3a8a;
+}
+
+.form-row-double {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem; /* Spazio tra le due colonne */
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 0.85rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.815rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #374151;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.50rem 0.2rem;
+  font-size: 0.9rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  outline: none;
+  background-color: #ffffff;
+  color: #4b5563;
+}
+
+.form-input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.btn-submit {
+  width: 100%;
+  background-color: #065f46;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn-submit:hover {
+  background-color: #064e3b;
+}
+
+.divider-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 0;
+}
+
+.divider-line {
+  flex-grow: 1;
+  border-top: 1px solid #e5e7eb;
+}
+
+.divider-text {
+  flex-shrink: 0;
+  margin: 0 1rem;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: -1rem;
+}
+
+.btn-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  padding: 0.6rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 2.6rem;
+}
+
+.btn-social:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.social-icon{
+  flex-shrink: 0;
+  display: block;
+}
+
+.insta-color{
+  color: #e1306c;
+}
+
+.social-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
