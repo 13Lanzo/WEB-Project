@@ -2,8 +2,9 @@
 // con utenti, messaggi e stanze.
 const mongoose = require("mongoose");
 
+const path = require("path");
 // 1. Inserisco la libreria dotenv che contiene le variabili d'ambiente estratte dal file .env (inclusa la stringa di connessione MONGODB_URI)
-require("dotenv").config();
+require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 
 // 2. Importiamo il modello User, Room e Message
 // per poter creare documenti di utenti, stanze e messaggi nel database
@@ -21,10 +22,10 @@ async function seed(){
 
         // Pulire dati esistenti dal User, Room e Message 
         // (opzionale, dipende se vuoi sovrascrivere o aggiungere)
-        await User.deleteMany({});
-        await Room.deleteMany({});
-        await Message.deleteMany({});
-        console.log("Dati esistenti cancellati.");
+        // await User.deleteMany({});
+        // await Room.deleteMany({});
+        // await Message.deleteMany({});
+        // console.log("Dati esistenti cancellati.");
 
         // Creazione di un utente fittizio con dati di esempio specifici 
         // nome, email, password, eta, ruolo, tagPreferenze, bio
@@ -100,7 +101,7 @@ async function seed(){
         ];
 
         // Inseriamo i messaggi fittizi nella collezione Message del database
-        const messaggiCreati = await Message.insertMany(messaggiFittizzi);
+        const messaggiCreati = await Message.insertMany(messaggiFittizi);
         console.log(`Crete ${messaggiCreati.length} messaggi fittizi.`);
 
         // Chiudiamo la connessione al database dopo il seeding
@@ -115,47 +116,3 @@ async function seed(){
 
 seed(); // Avvia la funzione di seeding
 
-
-// // Definiamo lo Schema Mongoose per l'utente fuorisede (come da requisiti del modello dati)
-// const UserSchema = new mongoose.Schema({
-//   email: { type: String, required: true },
-//   nome: { type: String, required: true },
-//   eta: { type: Number },
-//   ruolo: { type: String, default: "studente" },
-//   tagPreferenze: [String],
-// });
-
-// // Creiamo il modello associato alla collezione "users"
-// const User = mongoose.model("User", UserSchema);
-
-// async function simulaRegistrazione() {
-//   try {
-//     console.log("🔄 Connessione a MongoDB Atlas in corso...");
-//     await mongoose.connect(MONGODB_URI);
-//     console.log("✅ Connesso al database cloud!");
-
-//     // Creiamo un finto documento di uno studente fuorisede per il test
-//     const fintoStudente = new User({
-//       email: "collega.test@poliba.it",
-//       nome: "Giuseppe Test",
-//       eta: 22,
-//       ruolo: "studente",
-//       tagPreferenze: ["ordinato", "non fumatore", "ingegneria"],
-//     });
-
-//     console.log("💾 Salvataggio dello studente sul database...");
-//     const utenteSalvato = await fintoStudente.save();
-
-//     console.log("🎉 REGISTRAZIONE SIMULATA CON SUCCESSO!");
-//     console.log("Dati salvati:", utenteSalvato);
-//   } catch (errore) {
-//     console.error("❌ Errore durante la simulazione:", errore.message);
-//   } finally {
-//     // Chiudiamo la connessione alla fine del test
-//     await mongoose.disconnect();
-//     console.log("🔌 Connessione chiusa.");
-//   }
-// }
-
-// // Avvia la simulazione
-// simulaRegistrazione();

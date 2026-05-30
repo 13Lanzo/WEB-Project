@@ -1,6 +1,6 @@
 // punto di ingresso dell'applicazione
 const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 const dns = require("dns");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -66,10 +66,10 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // -------------------------------------------------------------------------------------------------
 
-const auth = require("./routes/authRoutes");
-const users = require("./routes/usersRoutes");
-const rooms = require("./routes/roomsRoutes");
-const messages = require("./routes/messagesRoutes");
+const authRoutes = require("./routes/authRoutes");
+const usersRoutes = require("./routes/usersRoutes");
+const roomsRoutes = require("./routes/roomsRoutes");
+const messagesRoutes = require("./routes/messagesRoutes");
 
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
