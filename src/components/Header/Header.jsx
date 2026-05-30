@@ -191,6 +191,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                             <button className={`nav-item ${activeLink=== 'Scopri' ? 'active' :''}`} onClick={()=> {setActiveLink('Scopri'); navigate('/ricerca');}}>Scopri</button>  
                             <button className={`nav-item ${activeLink=== 'Messaggi'? 'active':''}`} onClick={()=> {setActiveLink('Messaggi'); navigate('/chat');}}>Messaggi</button>
                             <button className={`nav-item ${activeLink=== 'Profilo' ? 'active': ''}`} onClick={()=> {setActiveLink('Profilo'); navigate('/profilo');}}>Profilo</button>
+                            <button className={`nav-item ${activeLink=== 'New'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/annunci');}}>Annunci</button>
                         </nav>
                         
                         <div className='logged-in-actions'>

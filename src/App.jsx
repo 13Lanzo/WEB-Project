@@ -9,6 +9,7 @@ import Ricerca from './components/Ricerca/Ricerca';
 import Login from './components/Login/Login';
 import Dettagli from './components/Dettagli/Dettagli';
 import Annunci from './components/Annunci/Annunci';
+import New from './components/New/New';
 import { useState } from 'react';
 //rendering per lo stato loggato o meno
 //ICONE: LUCIDE
@@ -32,10 +33,11 @@ function App() {
 
           <Route path='/ricerca' element={<Ricerca />}/>
           <Route path='/profilo' element={<Profilo onLogout={()=>setIsLoggedIn(false)} />}/>
-          <Route path='/dettagli' element={<Dettagli onLoginSuccess={()=>setIsLoggedIn} />}/>
+          <Route path='/dettagli' element={<Dettagli onLoginSuccess={handleLogin} />}/>
           <Route path='/chat' element={<Chat />}/>
           <Route path='/annunci' element={<Annunci />}/>
-          <Route path='/login' element={<Login onLoginSuccess={()=>setIsLoggedIn}/>}/>
+          <Route path='/new' element={<New />}/>
+          <Route path='/login' element={<Login onLoginSuccess={handleLogin}/>}/>
         </Routes>
       </Router>
       <Footer />

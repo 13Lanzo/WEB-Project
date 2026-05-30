@@ -42,7 +42,7 @@ export default function Annunci () {
                     <p>{isProprietario ? 'Visualizza, modifica, crea e gestisci in tempo reale le stanze del tuo appartamento.' : 'Visualizza i dettagli della stanza che hai affittato o prenotato.'}</p>
                 </div>
                 {isProprietario && (
-                    <button className='btn-nuovo-annuncio'>+ NUOVO ANNUNCIO</button>
+                    <button className='btn-nuovo-annuncio' onClick={()=>navigate('/new')}>+ NUOVO ANNUNCIO</button>
                 )}
             </div>
 
