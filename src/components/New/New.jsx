@@ -126,7 +126,7 @@ export default function New() {
                                     </div>
                                 </div>
                                 <div className="form-actions">
-                                    <button type="submit" className="btn-pubblica">✨ Pubblica Annuncio</button>
+                                    <button type="submit" className="btn-pubblica" onClick={()=> navigate('/annunci')}>✨ Pubblica Annuncio</button>
                                     <button type="button" className="btn-annulla" onClick={()=> navigate('/annunci')}>Annulla</button>
                                 </div>       
                         </form>
