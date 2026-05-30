@@ -71,9 +71,9 @@ Segui questi passaggi per configurare l'applicazione in locale.
    ```
 3. Il file `.env` è già presente e preconfigurato con una stringa di connessione a un database MongoDB Atlas di test chiamato `uniroom_db`. Controlla che le variabili d'ambiente siano definite nel file `Backend/.env`:
    ```env
-   MONGODB_URI=mongodb+srv://glanzolla2_db_user:uk4tFXJVkBNTjdR3@cluster0.fcvqwbl.mongodb.net/uniroom_db?retryWrites=true&w=majority&appName=Cluster0
+   MONGODB_URI=Recupera_il_tuo_URI_su_MongoDB_Atlas
    PORT=5000
-   JWT_SECRET=MHWw9ARfdW39jsBUY9xSvDS8Qb006ePeuogweoHbZwV
+   JWT_SECRET=Crea_la_tua_JWT_secret
    ```
    > [!NOTE]
    > In un ambiente di produzione reale, si consiglia di sostituire `MONGODB_URI` con il proprio cluster MongoDB Atlas e definire un `JWT_SECRET` sicuro.
