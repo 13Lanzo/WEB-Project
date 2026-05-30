@@ -4,12 +4,15 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const dns = require('dns');
 const express = require('express');
 const mongoose = require('mongoose');
-//const cors = require('cors');
+const cors = require('cors');
 
 
 const app = express();
 app.use(express.json());
-//cors.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 
 // -------------------------------------------------------------------------------------------------
 // CONFIGURAZIONE SWAGGER
