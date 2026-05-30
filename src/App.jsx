@@ -33,7 +33,7 @@ function App() {
 
           <Route path='/ricerca' element={<Ricerca />}/>
           <Route path='/profilo' element={<Profilo onLogout={()=>setIsLoggedIn(false)} />}/>
-          <Route path='/dettagli' element={<Dettagli onLoginSuccess={handleLogin} />}/>
+          <Route path='/dettagli' element={<Dettagli isLoggedIn={isLoggedIn} />}/>
           <Route path='/chat' element={<Chat onLoginSuccess={handleLogin}/>}/>
           <Route path='/annunci' element={<Annunci onLoginSuccess={handleLogin}/>}/>
           <Route path='/new' element={<New onLoginSuccess={handleLogin}/>}/>
