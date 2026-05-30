@@ -3,7 +3,7 @@ const User = require('../models/User'); //importa il modello User per interagire
 
 async function register(req, res) {
     try {
-            const {nome, email, password, eta, ruolo, tagPreferenze, bio} = req.body;
+            const {nome, cognome, email, password, eta, ruolo, tagPreferenze, bio} = req.body;
     
             //verifichiamo se l'utente esiste già
             const utenteEsistente = await User.findOne({email: req.body.email});
@@ -16,7 +16,7 @@ async function register(req, res) {
             
             //creiamo un nuovo utente 
     
-            const nuovoUtente = new User({nome, email, password, eta, ruolo, tagPreferenze, bio});
+            const nuovoUtente = new User({nome, cognome, email, password, eta, ruolo, tagPreferenze, bio});
             await nuovoUtente.save();
     
             return res.status(201).json({

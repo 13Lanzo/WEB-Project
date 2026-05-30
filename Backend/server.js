@@ -17,64 +17,21 @@ app.use(
 
 // -------------------------------------------------------------------------------------------------
 // CONFIGURAZIONE SWAGGER
-const swaggerUi = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");
-
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Uniroom API Documentazione",
-      version: "1.0.0",
-      description:
-        "Documentazione ufficiale delle API REST per la piattaforma UniRoom" +
-        "\n\nrealizzato da Giuseppe, Francesca e Pierpaolo",
-      contact: {
-        name: "Giuseppe, Francesca e Pierpaolo",
-      },
-    },
-    servers: [
-      {
-        url: "http://localhost:" + process.env.PORT,
-        description: "Server di Sviluppo Locale",
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-          description:
-            "Inserisci il tuo token JWT per autorizzare le chiamate.",
-        },
-      },
-    },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-  },
-  // indichiamo a swagger dove andare a cercare i commenti da documentare
-  apis: ["./routes/*.js"],
-};
-
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
-
-// Creazione dell'endpoint per la dashboard grafica
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const setupSwagger = require("./swagger");
+setupSwagger(app);
 // -------------------------------------------------------------------------------------------------
 
 const authRoutes = require("./routes/authRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const roomsRoutes = require("./routes/roomsRoutes");
 const messagesRoutes = require("./routes/messagesRoutes");
+const healthRoutes = require("./routes/healthRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/rooms", roomsRoutes);
 app.use("/api/messages", messagesRoutes);
+app.use("/health", healthRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ messaggio: "Server backend attivo e funzionante!" });

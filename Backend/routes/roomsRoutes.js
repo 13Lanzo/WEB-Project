@@ -8,16 +8,6 @@ router.post('/:id/rooms', verificaToken, RoomsController.createStanza);
 
 // 2. RECUPERA TUTTI GLI ANNUNCI (READ) -> GET / (Bacheca con filtri filtri prezzo/città)
 
-/**
- * @openapi
- * /api/rooms/rooms:
- *   get:
- *     summary: Recupera la bacheca di tutte le stanze disponibili
- *     description: Restituisce un array contenente tutti gli annunci delle stanze.
- *     responses:
- *       200:
- *         description: Elenco delle stanze recuperato con successo.
- */
 router.get('/rooms', RoomsController.getStanze);
 
 // 3. DETTAGLIO singola STANZA SINGOLA (READ) -> GET /api/rooms/:id (Usa .populate('creatoDa'))
