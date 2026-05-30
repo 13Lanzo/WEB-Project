@@ -1,85 +1,179 @@
-<<<<<<< HEAD
-# WEB-Project
+# UniRoom 🏠🎓
 
-## API Messaging
+**UniRoom** è una piattaforma web progettata per facilitare l'incontro tra studenti universitari alla ricerca di un alloggio e proprietari di immobili (o coinquilini) che offrono stanze in affitto. Il sistema include la gestione degli annunci delle stanze, profili utente personalizzati con tag di preferenze per favorire il matchmaking, e un sistema di messaggistica integrato per consentire la comunicazione diretta tra le parti.
 
-Questa API gestisce la chat tra utenti usando Mongoose e Express.
-
-### Regole principali
-
-- `mittente` e `destinatario` sono riferimenti a documenti `User` in MongoDB.
-- L'API accetta preferibilmente gli ID utente (`mittenteId`, `destinatarioId`).
-- Se non si forniscono gli ID, la route POST cerca l'utente per `nome` o `email`.
-- Tutti gli endpoint principali richiedono ObjectId validi per `mioId`, `conChiId`, `mittenteId` e `id`.
+Il progetto si compone di due parti principali:
+1. **Backend**: Un server REST API sviluppato con **Node.js** ed **Express**, interfacciato a **MongoDB Atlas** (tramite Mongoose) e documentato interattivamente con **Swagger**.
+2. **Frontend**: Un'applicazione web sviluppata in **React** e **Vite**, stilizzata in Vanilla CSS con un layout moderno e completamente responsive.
 
 ---
 
-## Endpoints
+## 🛠️ Tecnologie Utilizzate
 
-### 1. POST `/api/messages`
-Crea un nuovo messaggio.
+### Backend
+- **Node.js** & **Express** - Runtime server e framework web.
+- **MongoDB Atlas** & **Mongoose** - Database NoSQL Cloud e ODM per la modellazione dei dati.
+- **JWT (JSON Web Tokens)** & **Bcryptjs** - Autenticazione sicura e cifratura delle password.
+- **Swagger UI Express** & **Swagger-jsdoc** - Documentazione delle API REST interattiva e testabile via browser.
+- **CORS** & **Dotenv** - Sicurezza cross-origin e gestione delle variabili d'ambiente.
 
-Richiesta JSON consigliata:
-```json
-{
-  "mittenteId": "6462f7bf1a2b3c4d5e6f7890",
-  "destinatarioId": "6462f7bf1a2b3c4d5e6f7891",
-  "testo": "ciao"
-}
-```
-
-Fallback supportato:
-```json
-{
-  "mittente": "Marco Viscanti",
-  "destinatario": "Luca Valente",
-  "testo": "ciao"
-}
-```
-
-### 2. GET `/api/messages/conversazione/:conChiId`
-Recupera la conversazione tra l'utente loggato e un altro utente.
-
-Parametri:
-- `:conChiId` → ObjectId dell'altro utente.
-- query `mioId` → ObjectId dell'utente loggato.
-
-### 3. PATCH `/api/messages/leggi/:mittenteId`
-Segna come letti i messaggi ricevuti da un altro utente.
-
-Body JSON:
-```json
-{
-  "mioId": "6462f7bf1a2b3c4d5e6f7890"
-}
-```
-
-### 4. DELETE `/api/messages/:id`
-Elimina un messaggio tramite il suo ObjectId.
+### Frontend
+- **React 19** & **Vite** - Libreria UI e build tool di ultima generazione estremamente performante.
+- **React Router DOM 7** - Gestione avanzata del routing dell'applicazione a livello client.
+- **Vanilla CSS** - Design contemporaneo ed estetico con layout flessibili e micro-animazioni.
 
 ---
 
-## Note
+## 🚀 Requisiti di Sistema
+Prima di procedere all'installazione, assicurati di aver installato sul tuo computer:
+- **Node.js** (versione 18.x o superiore consigliata)
+- **npm** (incluso con l'installazione di Node.js)
+- Connessione a Internet (necessaria per consentire al server locale di connettersi al cluster MongoDB Atlas)
 
-- Se un valore non è un ObjectId valido, il server restituisce un errore di validazione.
-- Per i messaggi la struttura dei dati è basata su `Message` con campi `mittente`, `destinatario`, `testo` e `letto`.
-- In produzione, `mioId` dovrebbe arrivare dal token JWT anziché dalla query o dal body.
+---
 
-=======
-# React + Vite
+## 📂 Struttura delle Directory
+```text
+PROGETTO WEB/
+├── Backend/              # Server-side logic e database
+│   ├── controllers/      # Logica di controllo per utenti, stanze e messaggi
+│   ├── middleware/       # Middleware di autenticazione e autorizzazione (JWT)
+│   ├── models/           # Modelli e schemi Mongoose (User, Room, Message)
+│   ├── routes/           # Definizione delle rotte dell'API REST
+│   ├── seed.js           # Script per inizializzare il DB con dati fittizi
+│   ├── server.js         # Entry point dell'applicazione backend
+│   ├── swagger.js        # Configurazione dettagliata di Swagger UI
+│   └── .env              # Configurazione e chiavi segrete
+├── Frontend/             # Client-side React Application
+│   ├── src/              # Codice sorgente dell'interfaccia grafica
+│   │   ├── components/   # Pagine e componenti (Chat, Home, Login, Ricerca, ecc.)
+│   │   ├── App.jsx       # Gestione dello stato di autenticazione e rotte client
+│   │   └── main.jsx      # Entry point per il rendering di React
+│   ├── index.html        # HTML statico di base
+│   └── vite.config.js    # Configurazione di bundling per Vite
+└── README.md             # Questa documentazione
+```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## ⚙️ Installazione e Configurazione
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Segui questi passaggi per configurare l'applicazione in locale.
 
-## React Compiler
+### 1. Configurazione del Backend
+1. Apri il terminale e spostati all'interno della directory `Backend`:
+   ```bash
+   cd Backend
+   ```
+2. Installa le dipendenze richieste:
+   ```bash
+   npm install
+   ```
+3. Il file `.env` è già presente e preconfigurato con una stringa di connessione a un database MongoDB Atlas di test chiamato `uniroom_db`. Controlla che le variabili d'ambiente siano definite nel file `Backend/.env`:
+   ```env
+   MONGODB_URI=mongodb+srv://glanzolla2_db_user:uk4tFXJVkBNTjdR3@cluster0.fcvqwbl.mongodb.net/uniroom_db?retryWrites=true&w=majority&appName=Cluster0
+   PORT=5000
+   JWT_SECRET=MHWw9ARfdW39jsBUY9xSvDS8Qb006ePeuogweoHbZwV
+   ```
+   > [!NOTE]
+   > In un ambiente di produzione reale, si consiglia di sostituire `MONGODB_URI` con il proprio cluster MongoDB Atlas e definire un `JWT_SECRET` sicuro.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Inizializzazione del Database (Seeding)
+Per popolare il database con dati di test già pronti (utenti, stanze e chat di esempio), esegui lo script di seeding. Dalla cartella `Backend`, esegui:
+```bash
+npm run seed
+```
+Lo script pulirà le collezioni esistenti e caricherà:
+- **10 Studenti** con profili e tag di preferenze impostati.
+- **10 Proprietari** di alloggi.
+- **12 Annunci di Stanze** collegate ai rispettivi proprietari.
+- **Una serie di Messaggi e chat storiche** per testare la messaggistica.
 
-## Expanding the ESLint configuration
+### 3. Configurazione del Frontend
+1. Apri una nuova scheda del terminale e posizionati nella directory `Frontend`:
+   ```bash
+   cd Frontend
+   ```
+2. Installa le dipendenze richieste:
+   ```bash
+   npm install
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
->>>>>>> frontend
+---
+
+## 🏃‍♂️ Avvio dei Servizi
+
+### 1. Avviare il Server Backend
+All'interno della cartella `Backend`, lancia il server in modalità sviluppo (utilizza `nodemon` per il ricaricamento automatico a ogni modifica):
+```bash
+npm run dev
+```
+Dovresti visualizzare un output di conferma:
+```text
+Usando DNS pubblici per la risoluzione SRV: [ '8.8.8.8', '1.1.1.1' ]
+Il server è in ascolto sulla porta 5000...
+Testa la rotta su http://localhost:5000/
+Connesso correttamente a MongoDB Atlas!
+```
+
+### 2. Avviare il Frontend React
+All'interno della cartella `Frontend`, avvia l'interfaccia client con Vite:
+```bash
+npm run dev
+```
+Vite avvierà l'applicazione e indicherà l'indirizzo locale, solitamente:
+```text
+  ➜  Local:   http://localhost:5173/
+```
+Apri [http://localhost:5173/](http://localhost:5173/) nel tuo browser per visualizzare il sito UniRoom.
+
+---
+
+## 🧪 Testing delle API e dei Servizi
+
+### 1. Documentazione e Sandbox API (Swagger UI) 📄
+Il backend espone la documentazione di tutti gli endpoint REST tramite **Swagger**. È possibile effettuare test, esaminare le risposte e chiamare le API direttamente dal browser.
+- **URL di Swagger**: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+
+#### Autenticarsi su Swagger con JWT:
+Molte rotte del backend sono protette da JWT. Per testarle da Swagger:
+1. Effettua una chiamata POST all'endpoint `/api/auth/login` inserendo l'email e la password di un utente di test.
+2. Copia la stringa del token presente nel JSON di risposta (`token`).
+3. Clicca sul pulsante **Authorize** (in alto a destra su Swagger UI).
+4. Nel campo di testo inserisci: `Bearer <INCOLLA_IL_TOKEN_QUI>` (incluso lo spazio dopo Bearer).
+5. Conferma. Ora tutte le successive chiamate effettuate da Swagger invieranno l'header `Authorization: Bearer <token>`.
+
+### 2. Credenziali di Test Preconfigurate 🔑
+Puoi utilizzare questi profili (creati con il comando `npm run seed`) sia per accedere all'interfaccia Frontend sia per testare le API:
+
+* **Profilo Studente (default sul form del frontend):**
+  - **Email:** `cioccafra@gmail.com`
+  - **Password:** `password5`
+* **Profilo Studente (Poliba):**
+  - **Email:** `d.lanzo@studenti.poliba.it`
+  - **Password:** `PasswordSicura123`
+* **Profilo Proprietario:**
+  - **Email:** `roberto.esposito@gmail.com`
+  - **Password:** `PasswordSicura123`
+
+---
+
+## 📬 Gestione dei Messaggi (API Chat)
+Per scambiare messaggi, l'API del backend utilizza i seguenti endpoint principali (tutti richiedono un token JWT valido per l'autorizzazione):
+
+- **Inviare un messaggio**: `POST /api/messages/:id/messages`
+  - *Corpo della richiesta*: `{ "mittente": "ID_MITTENTE", "destinatario": "ID_DESTINATARIO", "testo": "Testo del messaggio..." }`
+- **Recuperare la conversazione**: `GET /api/messages/:id/messages/:conChiId?mioId=ID_LOGGATO`
+  - Estrae lo storico messaggi scambiati tra l'utente loggato (`mioId`) e l'interlocutore (`conChiId`).
+- **Segnare i messaggi come letti**: `PATCH /api/messages/:id/messages/:mittenteId`
+  - Aggiorna a `true` lo stato di lettura di tutti i messaggi ricevuti dal `mittenteId`.
+- **Eliminare un messaggio**: `DELETE /api/messages/:id/messages/:messaggioId`
+  - Rimuove permanentemente un messaggio inviato tramite il suo ID specifico.
+
+---
+
+## 👥 Sviluppatori del Progetto
+Questo progetto è stato realizzato per l'esame di Tecnologie Web da:
+- **Giuseppe**
+- **Francesca**
+- **Pierpaolo**
