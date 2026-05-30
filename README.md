@@ -173,7 +173,7 @@ Per scambiare messaggi, l'API del backend utilizza i seguenti endpoint principal
 ---
 
 ## 👥 Sviluppatori del Progetto
-Questo progetto è stato realizzato per l'esame di Tecnologie Web da:
+Questo progetto è stato realizzato per l'esame di Fondamenti del Web da:
 - **Giuseppe**
 - **Francesca**
 - **Pierpaolo**
