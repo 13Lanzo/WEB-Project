@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-// const authMiddleware = require('../middleware/auth'); // Ti servirà per proteggere le rotte
-const authMiddleware = require('../middleware/authMiddleware')
 
+// Ti servirà per proteggere le rotte
+const verificaToken = require('../middleware/authMiddleware');
+const UserController = require('../controllers/usersController');
 
 //metodo GET per ottenere tutte le informazioni di tutti utenti
 
@@ -17,21 +17,7 @@ const authMiddleware = require('../middleware/authMiddleware')
  *       200:
  *         description: Elenco degli utenti recuperato con successo.
  */
-router.get('/', async (req, res) => {
-    try {
-        const utenti = await User.find().select('-password'); //escludiamo la password dalla risposta
-        res.status(200).json({
-            success: true,
-            dati: utenti
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            messaggio: "Si è verificato un errore interno al server",
-            dettaglio: err.message
-        });
-    }
-});
+router.get('/users', UserController.getAllUsers);
 
 //metodo GET per ottenere tutte le informazioni di un utente
 
@@ -54,29 +40,7 @@ router.get('/', async (req, res) => {
  *       404:
  *         description: Utente non trovato.
  */
-router.get('/:id', async (req, res) => {
-    try {
-        const utente = await User.findById(req.params.id).select('-password'); //escludiamo la password dalla risposta
-
-        if (!utente) {
-            return res.status(404).json({
-                success: false,
-                messaggio: "Utente non trovato"
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            dati: utente
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            messaggio: "Si è verificato un errore interno al server",
-            dettaglio: err.message
-        });
-    }
-});
+router.get('/:id/user', verificaToken, UserController.getUserById);
 
 
 
@@ -110,77 +74,10 @@ router.get('/:id', async (req, res) => {
  *       200:
  *         description: Profilo aggiornato con successo.
  */
-router.put('/:id', authMiddleware, async (req, res) => {
-    try {
-        // Controllo prima se l'utente loggato sta aggiornando il proprio profilo
-        if (req.user.id !== req.params.id) {
-            return res.status(403).json({
-                success: false,
-                messaggio: "Non sei autorizzato ad aggiornare il profilo"
-            });
-        }
-
-        // Escludiamo le password dall'aggiornamento generico del profilo
-        delete req.body.password;
-
-        const utenteAggiornato = await 
-            User.findByIdAndUpdate(req.params.id, req.body, 
-                { new:true, runValidators: true })
-                .select('-password');
-
-        if (!utenteAggiornato) {
-            return res.status(404).json({
-                success: false,
-                messaggio: "Impossibile aggiornare l'utente"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            messaggio: "Utente aggiornato con successo!",
-            dati: utenteAggiornato
-        });
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            messaggio: "Si è verificato un errore interno al server",
-            dettaglio: err.message
-        });
-    }
-});
+router.put('/:id/user', verificaToken, UserController.updateUser);
 
 //metodo DELETE per eliminare un utente
 
-router.delete('/:id', authMiddleware, async (req, res) => {
-    try {
-                // Controllo se l'utente loggato sta eliminando il proprio profilo
-        if (req.user.id !== req.params.id) {
-            return res.status(403).json({
-                success: false,
-                messaggio: "Non sei autorizzato a eliminare il profilo di un altro utente."
-            });
-        }
-
-        const utenteEliminato = await User.findByIdAndDelete(req.params.id);
-        if (!utenteEliminato) {
-            return res.status(404).json({
-                success: false,
-                messaggio: "Impossibile eliminare l'utente"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            messaggio: "Utente eliminato con successo!"
-        });
-
-    } catch (err) {
-        res.status(500).json({
-            success: false,
-            messaggio: "Si è verificato un errore interno al server",
-            dettaglio: err.message
-        });
-    }
-});
+router.delete('/:id/user', verificaToken, UserController.deleteUser);
 
 module.exports = router;
