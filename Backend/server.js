@@ -66,15 +66,15 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // -------------------------------------------------------------------------------------------------
 
-const auth = require("./routes/auth");
-const users = require("./routes/users");
-const rooms = require("./routes/rooms");
-const messages = require("./routes/messages");
+const auth = require("./routes/authRoutes");
+const users = require("./routes/usersRoutes");
+const rooms = require("./routes/roomsRoutes");
+const messages = require("./routes/messagesRoutes");
 
-app.use("/auth", auth);
-app.use("/users", users);
-app.use("/rooms", rooms);
-app.use("/messages", messages);
+app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
+app.use("/rooms", roomsRoutes);
+app.use("/messages", messagesRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ messaggio: "Server backend attivo e funzionante!" });
