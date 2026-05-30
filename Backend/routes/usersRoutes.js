@@ -9,7 +9,7 @@ const UserController = require('../controllers/usersController');
 
 /**
  * @openapi
- * /users:
+ * /api/users/users:
  *   get:
  *     summary: Recupera la lista di tutti gli utenti
  *     description: Restituisce un array con tutti i profili degli utenti registrati.
@@ -23,7 +23,7 @@ router.get('/users', UserController.getAllUsers);
 
 /**
  * @openapi
- * /users/{id}:
+ * /api/users/{id}/user:
  *   get:
  *     summary: Recupera il profilo pubblico di un singolo utente
  *     description: Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.

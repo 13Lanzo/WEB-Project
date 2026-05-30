@@ -28,7 +28,7 @@ const AuthController = require('../controllers/authController');
 //Metodo POST per la registrazione di un nuovo utente
 /**
  * @openapi
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     summary: Registra un nuovo utente (Studente o Host)
  *     description: Crea un account nel database cifrando la password e salvando le preferenze.
@@ -72,10 +72,10 @@ const AuthController = require('../controllers/authController');
  *         description: Campi obbligatori mancanti.
  */
 router.post('/register', AuthController.register);
-
-/**
- * @openapi
- * /auth/login:
+ 
+ /**
+  * @openapi
+  * /api/auth/login:
  *   post:
  *     summary: Effettua il login di un utente
  *     description: Verifica le credenziali dell'utente e restituisce un messaggio di successo (in futuro il Token JWT).

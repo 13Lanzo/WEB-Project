@@ -16,7 +16,7 @@ const MessageController = require('../controllers/messageController');
 // =========================================================================
 /**
  * @openapi
- * /messages:
+ * /api/messages/{id}/messages:
  *   post:
  *     summary: Salva un nuovo messaggio nella chat
  *     description: Registra la transazione del messaggio tra mittente e destinatario.
@@ -54,11 +54,17 @@ router.post('/:id/messages', verificaToken, MessageController.createMessage);
 // =========================================================================
 /**
  * @openapi
- * /messages/conversazione/{conChiId}:
+ * /api/messages/{id}/messages/{conChiId}:
  *   get:
  *     summary: Recupera la cronologia dei messaggi tra due utenti
  *     description: Estrae tutti i messaggi scambiati tra l'utente corrente (mioId) e l'interlocutore (conChiId).
  *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
  *       - in: path
  *         name: conChiId
  *         required: true
@@ -92,7 +98,7 @@ router.patch('/:id/messages/:mittenteId', verificaToken, MessageController.updat
 // =========================================================================
 /**
  * @openapi
- * /messages/{id}:
+ * /api/messages/{id}/messages/{messaggioId}:
  *   delete:
  *     summary: Elimina un singolo messaggio tramite il suo ID
  *     description: Rimuove permanentemente un messaggio inviato per errore dal database.

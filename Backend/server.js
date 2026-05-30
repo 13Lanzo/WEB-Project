@@ -71,10 +71,10 @@ const usersRoutes = require("./routes/usersRoutes");
 const roomsRoutes = require("./routes/roomsRoutes");
 const messagesRoutes = require("./routes/messagesRoutes");
 
-app.use("/auth", authRoutes);
-app.use("/users", usersRoutes);
-app.use("/rooms", roomsRoutes);
-app.use("/messages", messagesRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/rooms", roomsRoutes);
+app.use("/api/messages", messagesRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ messaggio: "Server backend attivo e funzionante!" });

@@ -10,7 +10,7 @@ router.post('/:id/rooms', verificaToken, RoomsController.createStanza);
 
 /**
  * @openapi
- * /rooms:
+ * /api/rooms/rooms:
  *   get:
  *     summary: Recupera la bacheca di tutte le stanze disponibili
  *     description: Restituisce un array contenente tutti gli annunci delle stanze.
