@@ -30,7 +30,7 @@ export default function Home() {
                 </div>
             </section>
             <section className='cardsSection'>
-                <div className='pagecontanier'>
+                <div className='pagecontainer'>
                     <div className='gridcontainer'>
                         {/*Prima card */}
                         <div className='card cardfindroom gridcolspan2'>
@@ -60,23 +60,27 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/*Terza carda*/}
-                    <div className='card cardchat'>
-                        <div>
-                            <div className='iconwrapper chaticon'><MessageCircleHeart/></div>
-                            <h3>Messaggia e Trasferisciti</h3>
-                            <p>Cominica in sicurezza attraverso la nostra chat integrata e organizza il tuo trasloco senza stress.</p>
+                <div className='pagecontainer'>
+                    <div className='gridcontainer'>
+                        {/*Terza carda*/}
+                        <div className='card cardchat'>
+                            <div>
+                                <div className='iconwrapper chaticon'><MessageCircleHeart/></div>
+                                <h3>Messaggia e Trasferisciti</h3>
+                                <p>Cominica in sicurezza attraverso la nostra chat integrata e organizza il tuo trasloco senza stress.</p>
+                            </div>
                         </div>
-                    </div>
 
-                    {/*Quarta carta*/}
-                    <div className='card cardcompatibility gridcolspan2'>
-                        <div className='textside'>
-                            <h3>Penteggio di compatibilità</h3>
-                            <p>Solo su Tinder: vedi quanto sei compatibile con i tuoi potenziali inquilini prima di contattarli.</p>
+                        {/*Quarta carta*/}
+                        <div className='card cardcompatibility gridcolspan2'>
+                            <div className='textside'>
+                                <h3>Penteggio di compatibilità</h3>
+                                <p>Solo su Tinder: vedi quanto sei compatibile con i tuoi potenziali inquilini prima di contattarli.</p>
+                            </div>
+                            <div className='scorecircle'>94%</div>
                         </div>
-                        <div className='scorecircle'>94%</div>
-                    </div>
+                        </div>
+                    </div>    
                 </div>
         </section>
     </div>    

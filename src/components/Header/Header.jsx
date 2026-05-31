@@ -10,7 +10,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [name, setName]=useState('');
     const [lastname, setLastname]=useState('');
     const [faculty, setFaculty]=useState('');
-    const [role, setRole]=useState('');
+    const [role, setRole]=useState('Inquilino');
     const [email, setEmail]=useState('');
     const [password, setPassword]=useState('');
     const [confirmPassword, setConfirmPassword]=useState('');
@@ -64,7 +64,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     if (!isOpen) return null;
 
     return(
-        <div className="modal-backdrop font-sas">
+        <div className="modal-backdrop font-sans">
             <div className='modal-bg-click' onClick={onClose}></div>
             <div className='modal-container'>
                 <button onClick={onClose} className='modal-close-btn'> &times;</button>
@@ -113,7 +113,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                         </>
                     )}
                     <div className='form-group'>
-                        <label className='form-label'>Email Universitaria</label>
+                        <label className='form-label'>Email</label>
                         <input type="email" placeholder='inserisci emali' className='form-input' value={email} onChange={(e)=> setEmail(e.target.value)} required/>
                         </div>
                     <div className='form-group'>
@@ -201,7 +201,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                                     <div className='notif-footer' onClick={()=>{navigate('/chat'); setIsNotifOpen(false);}}>Vai alla Chat <MoveRight size={10}/></div>
                                 </div>
                             )}
-                            <button className='btn-logout' onClick={()=>{onLogout(), navigate('/')}}>Logout</button>
+                            <button className='btn-logout' onClick={()=>{onLogout(); navigate('/')}}>Logout</button>
                         </div>
                     </>
                 ):(
