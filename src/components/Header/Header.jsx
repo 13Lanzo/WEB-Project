@@ -6,7 +6,7 @@ import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight}
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [activeTab, setActiveTab] = useState(initialTab);
-    
+    const navigate=useNavigate();
     const [name, setName]=useState('');
     const [lastname, setLastname]=useState('');
     const [faculty, setFaculty]=useState('');
@@ -42,6 +42,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
             }  
             alert('Profilo creato con successo!!');
             onLoginSuccess();
+            navigate('/profilo');
             onClose();
             //credenziali fittizie da eliminare  
         } else{

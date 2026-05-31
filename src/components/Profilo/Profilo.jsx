@@ -33,11 +33,6 @@ export default function Profilo({onLogout}) {
     //toggle per vedere le due visualizzazioni DA ELIMINARE
     const currentUser=isProprietario ? userProprietario: userStudente;
 
-    const handleLogout=()=>{
-        if(onLogout) onLogout;
-        navigate('/');
-    };
-
     return(
         <div className='profilo-page font-sans'>
             {/*DA ELIMINARE*/}
@@ -90,7 +85,7 @@ export default function Profilo({onLogout}) {
                 </div>
                 <div className="profilo-footer-actions">
                     <button className="btn-modifica"><PencilLine/> MODIFICA DETTAGLI</button>
-                    <button className="btn-disconnetti" onClick={handleLogout}><LogOut/>DISCONNETTI ACCOUNT</button>
+                    <button className="btn-disconnetti" onClick={()=>{onLogout(); navigate('/')}}><LogOut/>DISCONNETTI ACCOUNT</button>
                 </div>
             </div>    
         </div>            
