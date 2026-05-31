@@ -178,6 +178,10 @@
   gap: 20px;
 }
 
+.messages-area::-webkit-scrollbar{
+  display: none;
+}
+
 .date-separator {
   text-align: center;
   border-bottom: 1px solid #e5e7eb;

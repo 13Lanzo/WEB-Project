@@ -1,9 +1,38 @@
 import './Chat.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis  } from 'lucide-react'
+import io from 'socket.io-client'
+
+const myRandomId =Math.floor(Math.random()*1000).toString();
+const socket=io.connect('http://localhost:5000');
 
 export default function Chat() {
-    const [message, setMessace]=useState('');
+    const [message, setMessage]=useState('');
+    //salvataggio messaggi veri
+    const [messageList, setMessageList]=useState([]);
+
+    //per ascoltare i messaggi in arrivo
+    useEffect(()=>{
+        socket.on('ricevi_messaggio',(data)=>{
+            setMessageList((list)=>[...list,data]);
+        });
+        return()=> socket.off('ricevi_messaggio')
+    }, []);
+    //per inviare messaggio
+    const sendMessage= async()=>{
+        if(message!=='') {
+            const messageData={
+                author: myRandomId,
+                text: message,
+                time: new Date(Date.now()).getHours()+ ':' + new Date(Date.now()).getMinutes()
+            };
+            await socket.emit('invia_messaggio', messageData);
+            setMessageList((list)=>[...list, messageData]);
+            setMessage('');
+        }
+    };
+
+
     const contacts = [
     { id: 1, name: "Alex Chen", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
     { id: 2, name: "Sarah Miller", lastMsg: "Are you okay with pets in the apartment?", time: "Yesterday" },
@@ -55,26 +84,17 @@ export default function Chat() {
                     
                     <div className='messages-area'>
                         <div className='date-separator'><span>Oggi</span></div>
-                        <div className='msg-wrapper received'>
-                            <div className='avatar-msg'><User/></div>
-                            <div className='msg-bubble'>
-                                <p>Ciao vuoi vivere con me?</p>
-                                <span className='msg-time'>10:30 AM</span>
-                            </div>
-                        </div>
-                        <div className='msg-wrapper sent'>
-                            <div className='msg-bubble received'>
-                                <p>Ciao ok</p>
-                                <span className='msg-time'>10:42 AM <CheckCheck/></span>
-                            </div>
-                        </div>
-                        <div className='msg-wrapper received'>
-                            <div className='avatar-msg'><User/></div>
-                            <div className='msg-bubble'>
-                                <p>Godo</p>
-                                <span className='msg-time'>10:45 AM</span>
-                            </div>
-                        </div>
+                        {messageList.map((msgContent, index)=>{
+                            const isMe=msgContent.author===myRandomId;
+                            return(
+                                <div key={index} className={`msg-wrapper ${isMe ? 'sent' : 'received'}`}>{isMe && <div className='avatar-msg'><User/></div>}
+                                    <div className='msg-bubble'>
+                                        <p>{msgContent.text}</p>
+                                        <span className='msg-time'>{msgContent.time} {isMe && <CheckCheck size={14}/>}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     <footer className='chat-input-container'>
@@ -82,8 +102,8 @@ export default function Chat() {
                             <button className='action-btn'><Plus/></button>
                             <button className='action-btn'><Laugh/></button>
                         </div>
-                        <input type='text' placeholder='Scrivi un messaggio...' value={message} onChange={(e)=>setMessace(e.target.value)}/>
-                        <button className='send-btn'>{message.length>0 ? <SendHorizonal/> : <Mic />}</button>
+                        <input type='text' placeholder='Scrivi un messaggio...' value={message} onChange={(e)=>setMessage(e.target.value)} onKeyPress={(e)=> {e.key === 'Enter' && sendMessage();} }/>
+                        <button className='send-btn' onClick={sendMessage}>{message.length>0 ? <SendHorizonal/> : <Mic />}</button>
                     </footer>
                 </main>
             </div>
