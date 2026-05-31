@@ -1,7 +1,8 @@
 import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Header.css'
-import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck} from 'lucide-react'
+import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
+
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [activeTab, setActiveTab] = useState(initialTab);
@@ -149,14 +150,18 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
 export default function Header({isLoggedIn, onLogout, onLogin}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [initialTab, setInitialTab] = useState('registrati');
-
+    const [isNotifOpen, setIsNotifOpen]=useState(false);
     const openModal = (tab) =>{
         setInitialTab(tab);
         setIsModalOpen(true);
     };
     const [activeLink, setActiveLink]=useState('Scopri');
     const navigate =useNavigate();
-    
+    const contacts = [
+        { id: 1, name: "Alex Chen", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
+        { id: 2, name: "Sarah Miller", lastMsg: "Are you okay with pets in the apartment?", time: "Yesterday" },
+        { id: 3, name: "Jordan Smith", lastMsg: "I sent the lease agreement over to your...", time: "Tue" },
+    ];
     return (
         <div>
         <header className='site-header font-sans'>
@@ -173,7 +178,29 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                         </nav>
                         
                         <div className='logged-in-actions'>
-                            <button className="notification-btn" aria-label="Notifiche"><BellRing size={20}/></button>
+                            <button className="notification-btn" aria-label="Notifiche" onClick={()=> setIsNotifOpen(!isNotifOpen)}><BellRing size={20}/></button>
+                            {isNotifOpen &&(
+                                <div className='notif-dropdown'>
+                                    <div className='notif-header'>
+                                        <h4>Messaggi Recenti</h4>
+                                    </div>
+                                    <div className='notif-list'>
+                                        {contacts.map(contact =>(
+                                            <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`} onClick={()=>{ navigate('/chat'); setIsNotifOpen(false);}}>
+                                                <div className='notif-avatar'><User size={40}/></div>
+                                                <div className='notif-info'>
+                                                    <div className='notif-top'>
+                                                        <span className='notif-name'>{contact.name}</span>
+                                                        <span className='notif-time'>{contact.time}</span>
+                                                    </div>
+                                                    <p className='notif-msg'>{contact.lastMsg}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className='notif-footer' onClick={()=>{navigate('/chat'); setIsNotifOpen(false);}}>Vai alla Chat <MoveRight size={10}/></div>
+                                </div>
+                            )}
                             <button className='btn-logout' onClick={()=>{onLogout(), navigate('/')}}>Logout</button>
                         </div>
                     </>

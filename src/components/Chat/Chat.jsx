@@ -24,7 +24,7 @@ export default function Chat() {
                     <div className='constacts-list'>
                         {contacts.map(contact =>(
                             <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`}>
-                                <div className='avatar-small'></div>
+                                <div className='avatar-small'><User size={40}/></div>
                                 <div className='contact-info'>
                                     <div className='contact-top'>
                                         <span className='contact-name'>{contact.name}</span>
