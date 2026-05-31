@@ -1,8 +1,10 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Header.css'
 import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
+import { io } from 'socket.io-client'
 
+const socket=io.connect('http://localhost:5000');
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [activeTab, setActiveTab] = useState(initialTab);
@@ -158,11 +160,34 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
     };
     const [activeLink, setActiveLink]=useState('Scopri');
     const navigate =useNavigate();
-    const contacts = [
-        { id: 1, name: "Alex Chen", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-        { id: 2, name: "Sarah Miller", lastMsg: "Are you okay with pets in the apartment?", time: "Yesterday" },
-        { id: 3, name: "Jordan Smith", lastMsg: "I sent the lease agreement over to your...", time: "Tue" },
-    ];
+
+    const [contacts, setContacts] = useState([
+        { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
+        ]);
+
+    const updateLastMessage = (newText, newTime) => {
+        setContacts(prevContacts =>
+            prevContacts.map(contact => {
+                // Aggiorna il contatto attivo
+                if (contact.active) {
+                    return { ...contact, lastMsg: newText, time: newTime };
+                }
+                return contact;
+            })
+        );
+    };
+
+    // 2. Mettiti in ascolto dei nuovi messaggi in arrivo
+    useEffect(() => {
+        socket.on('ricevi_messaggio', (data) => {
+            // Quando arriva un messaggio, aggiorna la finestrina!
+            updateLastMessage(data.text, data.time);
+        });
+
+        // Pulisce l'ascolto se cambi pagina
+        return () => socket.off('ricevi_messaggio');
+    }, []);    
+    
     return (
         <div>
         <header className='site-header font-sans'>
@@ -185,7 +210,8 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                                     <div className='notif-header'>
                                         <h4>Messaggi Recenti</h4>
                                     </div>
-                                    <div className='notif-list'>
+                                    
+                                    <div className='constacts-list'>
                                         {contacts.map(contact =>(
                                             <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`} onClick={()=>{ navigate('/chat'); setIsNotifOpen(false);}}>
                                                 <div className='notif-avatar'><User size={40}/></div>

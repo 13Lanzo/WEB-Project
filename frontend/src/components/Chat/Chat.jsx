@@ -11,33 +11,45 @@ export default function Chat() {
     //salvataggio messaggi veri
     const [messageList, setMessageList]=useState([]);
 
+    const [contacts, setContacts] = useState([
+    { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
+    ]);
+
+    const updateLastMessage=(newText, newTime)=>{
+            setContacts(prevContacts =>
+                prevContacts.map(contact=>{
+                    if (contact.active){
+                        return{...contact, lastMsg: newText, time: newTime};
+                    }
+                return contact;
+                })
+            );
+        };
     //per ascoltare i messaggi in arrivo
     useEffect(()=>{
         socket.on('ricevi_messaggio',(data)=>{
             setMessageList((list)=>[...list,data]);
+            updateLastMessage(data.text, data.time);
         });
         return()=> socket.off('ricevi_messaggio')
     }, []);
+
     //per inviare messaggio
     const sendMessage= async()=>{
         if(message!=='') {
+            const currentTime = new Date(Date.now()).getHours+':'+ new Date(Date.now().getMinutes());
             const messageData={
                 author: myRandomId,
                 text: message,
-                time: new Date(Date.now()).getHours()+ ':' + new Date(Date.now()).getMinutes()
+                time: currentTime
             };
             await socket.emit('invia_messaggio', messageData);
+            setMessageList((list)=>[...list, messageData]);
             setMessageList((list)=>[...list, messageData]);
             setMessage('');
         }
     };
 
-
-    const contacts = [
-    { id: 1, name: "Alex Chen", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-    { id: 2, name: "Sarah Miller", lastMsg: "Are you okay with pets in the apartment?", time: "Yesterday" },
-    { id: 3, name: "Jordan Smith", lastMsg: "I sent the lease agreement over to your...", time: "Tue" },
-  ];
     return(
         <div className='chat-page'>
             <div className='chat-container'>
@@ -71,7 +83,8 @@ export default function Chat() {
                         <div className='header-user'>
                             <div className='avatar-medium'><User size={40}/></div>
                             <div>
-                                <h4>Utente esempio</h4>
+                                {contacts.map(contact =>(
+                                    <h4>{contact.name}</h4>))};
                                 <span className='status'>Online</span>
                             </div>
                         </div>
