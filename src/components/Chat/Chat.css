@@ -34,13 +34,25 @@
 }
 
 .search-bar {
-  background: #f3f4f6;
-  flex: 1;
-  border-radius: 20px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 2rem; /* Bordi ben arrotondati */
+  padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
-  padding: 8px 15px;
- 
+  gap: 0.5rem;
+  flex-grow: 1;
+  transition: border-color 0.2s;
+}
+
+.search-bar:focus-within {
+  border-color: #1e3a8a; /* Bordo blu quando scrivi */
+  box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+}
+
+.search-bar .icon {
+  color: #6b7280;
+  display: flex;
 }
 
 .search-bar input {
@@ -48,9 +60,9 @@
   border: none;
   outline: none;
   margin-left: 10px;
-  font-size: 14px;
+  color: #111827;
   width: 100%;
-  color: black;
+  font-size: 0.9rem;
 }
 
 .contact-item {
@@ -97,9 +109,65 @@
   background: white;
 }
 
-.header-user { display: flex; gap: 12px; align-items: center; }
-.header-user h4 { margin: 0; font-size: 16px; }
-.status { font-size: 12px; color: #10b981; }
+/* Aggiungi questo per mettere in fila i pulsanti! */
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.filter-btn,
+.header-actions button {
+  background-color: #f3f4f6; /* Sfondo neutro chiarissimo */
+  color: #4b5563; /* Icona grigio scuro elegante */
+  border: 1px solid transparent;
+  border-radius: 0.5rem; /* Leggermente arrotondati, non quadrati netti */
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* Effetto Hover Tema UniRoom */
+.filter-btn:hover,
+.header-actions button:hover {
+  background-color: #e0e7ff; /* Sfondo azzurrino chiaro */
+  color: #1e3a8a; /* Icona diventa blu scuro del tuo tema */
+  border-color: #bfdbfe;
+}
+
+.header-user { 
+  display: flex;
+  gap: 0.75rem; 
+  align-items: center; 
+}
+
+.header-user h4 { 
+  color: #1e3a8a; /* Blu scuro del tuo tema per dare importanza */
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 0.15rem 0;
+}
+
+.header-user .status { 
+  color: #10b981; /* Verde brillante smeraldo per lo stato Online */
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; 
+}
+
+.header-user .status::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+}
 
 .messages-area {
   flex: 1;
@@ -121,7 +189,10 @@
 /* MESSAGGI */
 .msg-wrapper { display: flex; gap: 10px; max-width: 70%; }
 .msg-wrapper.received { align-self: flex-start; }
-.msg-wrapper.sent { align-self: flex-end; flex-direction: row-reverse; }
+.msg-wrapper.sent { 
+  align-self: flex-end; 
+  margin-left: auto;
+  flex-direction: row-reverse; }
 
 .msg-bubble {
   padding: 12px 16px;
@@ -131,7 +202,11 @@
 }
 
 .received .msg-bubble { background: white; color: #1f2937; border: 1px solid #e5e7eb; }
-.sent .msg-bubble { background: #1e3a8a; color: white; }
+.sent .msg-bubble { 
+  background: #1e3a8a; 
+  color: white;
+  border: none;
+  border-bottom-right-radius: 4px; }
 
 .msg-time {
   display: block;

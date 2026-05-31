@@ -47,29 +47,29 @@ export default function Chat() {
                             </div>
                         </div>
                         <div className='header-actions'>
-                            <button><PhoneForwarded/></button>
-                            <button><Video/></button>
-                            <button><Ellipsis/></button>
+                            <button className='filter-btn header actions'><PhoneForwarded/></button>
+                            <button className='filter-btn header actions'><Video/></button>
+                            <button className='filter-btn header actions'><Ellipsis/></button>
                         </div>
                     </header>
                     
                     <div className='messages-area'>
                         <div className='date-separator'><span>Oggi</span></div>
-                        <div className='masg-wrapper received'>
-                            <div className='avatar-msg'></div>
+                        <div className='msg-wrapper received'>
+                            <div className='avatar-msg'><User/></div>
                             <div className='msg-bubble'>
                                 <p>Ciao vuoi vivere con me?</p>
-                                <span className='masg-time'>10:30 AM</span>
+                                <span className='msg-time'>10:30 AM</span>
                             </div>
                         </div>
                         <div className='msg-wrapper sent'>
-                            <div className='msg-bubble'>
+                            <div className='msg-bubble received'>
                                 <p>Ciao ok</p>
-                                <span className='masg-time'>10:42 AM <CheckCheck/></span>
+                                <span className='msg-time'>10:42 AM <CheckCheck/></span>
                             </div>
                         </div>
-                        <div className='masg-wrapper recived'>
-                            <div className='avatar-msg'></div>
+                        <div className='msg-wrapper received'>
+                            <div className='avatar-msg'><User/></div>
                             <div className='msg-bubble'>
                                 <p>Godo</p>
                                 <span className='msg-time'>10:45 AM</span>
