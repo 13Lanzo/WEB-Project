@@ -37,14 +37,13 @@ export default function Chat() {
     //per inviare messaggio
     const sendMessage= async()=>{
         if(message!=='') {
-            const currentTime = new Date(Date.now()).getHours+':'+ new Date(Date.now().getMinutes());
+            const currentTime = new Date().getHours() +':'+ new Date().getMinutes();
             const messageData={
                 author: myRandomId,
                 text: message,
                 time: currentTime
             };
             await socket.emit('invia_messaggio', messageData);
-            setMessageList((list)=>[...list, messageData]);
             setMessageList((list)=>[...list, messageData]);
             setMessage('');
         }
@@ -84,7 +83,7 @@ export default function Chat() {
                             <div className='avatar-medium'><User size={40}/></div>
                             <div>
                                 {contacts.map(contact =>(
-                                    <h4>{contact.name}</h4>))};
+                                    <h4>{contact.name}</h4>))}
                                 <span className='status'>Online</span>
                             </div>
                         </div>
