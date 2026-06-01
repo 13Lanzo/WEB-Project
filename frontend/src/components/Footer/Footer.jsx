@@ -8,7 +8,7 @@ const Footer= () => {
     <footer className='siteFooter'>
       <div className='footerContainer'>
         <div className='footerBrand'>
-          <h2 className='Title'>Tinder</h2>
+          <h2 className='Title'>Room4U</h2>
           <p className='brandText'>
             Piattaforma per trovare coinquilini più bella del west
           </p>

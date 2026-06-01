@@ -39,7 +39,7 @@ export default function Annunci () {
             <div className='annunci-container'>
                 <div className='header-text-block'>
                     <span className='area-badge'><Sparkles /> AREA {isProprietario ? 'PROPRIETARIO' : 'INQUILINO'}</span>
-                    <h1>{isProprietario ? 'I Mie Annunci' : 'La Mia Stanza'}</h1>
+                    <h1 color='#1e3a8a'>{isProprietario ? 'I Mie Annunci' : 'La Mia Stanza'}</h1>
                     <p>{isProprietario ? 'Visualizza, modifica, crea e gestisci in tempo reale le stanze del tuo appartamento.' : 'Visualizza i dettagli della stanza che hai affittato o prenotato.'}</p>
                 </div>
                 {isProprietario && (

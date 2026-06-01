@@ -42,7 +42,6 @@ export default function New() {
     }; 
     const userProprietario = {
         name: 'Super Proprietario',
-        initials: 'SU',
         email: 'prop@host.it',
         roleLabel: 'PROPRIETARIO',
         roleType: 'proprietario',
