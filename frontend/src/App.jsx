@@ -10,17 +10,35 @@ import Login from './components/Login/Login';
 import Dettagli from './components/Dettagli/Dettagli';
 import Annunci from './components/Annunci/Annunci';
 import New from './components/New/New';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import socket from './socket';
 //rendering per lo stato loggato o meno
 //ICONE: LUCIDE
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+      socket.auth = { token };
+      socket.connect();
+    }
+  }, []);
   
   const handleLogout=()=>{
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsLoggedIn(false);
+    socket.disconnect();
   };
   const handleLogin=()=>{
     setIsLoggedIn(true);
+    const token = localStorage.getItem('token');
+    if (token) {
+      socket.auth = { token };
+      socket.connect();
+    }
   };
 
   return (
@@ -32,9 +50,9 @@ function App() {
           <Route path='/' element={<Home />}/>
 
           <Route path='/ricerca' element={<Ricerca />}/>
-          <Route path='/profilo' element={<Profilo onLogout={()=>setIsLoggedIn(false)} />}/>
-          <Route path='/dettagli' element={<Dettagli isLoggedIn={isLoggedIn} />}/>
-          <Route path='/chat' element={<Chat onLoginSuccess={handleLogin}/>}/>
+          <Route path='/profilo' element={<Profilo onLogout={handleLogout} />}/>
+          <Route path='/dettagli' element={<Dettagli onLoginSuccess={handleLogin} />}/>
+          <Route path='/chat' element={<Chat />}/>
           <Route path='/annunci' element={<Annunci onLoginSuccess={handleLogin}/>}/>
           <Route path='/new' element={<New onLoginSuccess={handleLogin}/>}/>
           <Route path='/login' element={<Login onLoginSuccess={handleLogin}/>}/>

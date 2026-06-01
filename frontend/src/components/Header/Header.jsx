@@ -2,9 +2,7 @@ import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Header.css'
 import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
-import { io } from 'socket.io-client'
-
-const socket=io.connect('http://localhost:5000');
+import socket from '../../socket'
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [activeTab, setActiveTab] = useState(initialTab);
@@ -17,6 +15,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [password, setPassword]=useState('');
     const [confirmPassword, setConfirmPassword]=useState('');
     const [errorMessage, setErrorMessage]= useState('');
+    const [eta, setEta]=useState(20);
     const LoginGoogle =()=>{
         window.open('https://www.google.com');
     };
@@ -42,18 +41,53 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 setErrorMessage('La password deve avere almeno 6 caratteri.');
                 return;
             }  
-            alert('Profilo creato con successo!!');
-            onLoginSuccess();
-            navigate('/profilo');
-            onClose();
-            //credenziali fittizie da eliminare  
-        } else{
-            if(email=== EMAIL && password===PW){
-                onLoginSuccess();
-                onClose();
-            }else{
-                setErrorMessage('Email o password errate. Riprova!');
-            }
+            
+            fetch('http://localhost:5000/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nome: name,
+                    cognome: lastname,
+                    email: email,
+                    password: password,
+                    eta: eta,
+                    ruolo: role === 'Inquilino' ? 'studente' : 'proprietario',
+                    bio: 'Nessuna biografia inserita. Personalizza il tuo profilo!'
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profilo creato con successo! Ora puoi accedere.');
+                    setActiveTab('accedi');
+                } else {
+                    setErrorMessage(data.messaggio || 'Errore durante la registrazione.');
+                }
+            })
+            .catch(err => {
+                setErrorMessage('Errore di rete durante la registrazione.');
+            });
+        } else {
+            fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.utente));
+                    onLoginSuccess();
+                    onClose();
+                    navigate('/profilo');
+                } else {
+                    setErrorMessage(data.messaggio || 'Credenziali non valide.');
+                }
+            })
+            .catch(err => {
+                setErrorMessage('Errore di rete durante il login.');
+            });
         }
     };
 
@@ -112,7 +146,11 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                                 </select>
                             </div>
                             )}
-                            </div>
+                        </div>
+                        <div className='form-group'>
+                            <label className='form-label'>Età</label>
+                            <input type='number' min='18' max='100' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=>setEta(parseInt(e.target.value) || '')} required/>
+                        </div>
                         </>
                     )}
                     <div className='form-group'>
