@@ -1,9 +1,10 @@
 import './Chat.css'
 import { useEffect, useState } from 'react'
+import {useLocation} from 'react-router-dom'
 import {User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis  } from 'lucide-react'
 import io from 'socket.io-client'
 
-const myRandomId =Math.floor(Math.random()*1000).toString();
+const myRandomId ='mio_id_1';
 const socket=io.connect('http://localhost:5000');
 
 export default function Chat() {
@@ -15,6 +16,16 @@ export default function Chat() {
     { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
     ]);
 
+    const location=useLocation();
+    const contactToChatWith= location.state;
+
+    // 2. Creiamo il nome della Stanza (Room)
+    // Usiamo una logica furba: mettiamo in ordine alfabetico i due ID così
+    // la stanza si chiamerà sempre "room_123_mio_id_1" a prescindere da chi scrive a chi!
+    const room = contactToChatWith 
+        ? [myRandomId, contactToChatWith.contactId].sort().join("_") 
+        : "stanza_globale_default";
+
     const updateLastMessage=(newText, newTime)=>{
             setContacts(prevContacts =>
                 prevContacts.map(contact=>{
@@ -25,14 +36,25 @@ export default function Chat() {
                 })
             );
         };
+
+    useEffect(()=>{
+        if (contactToChatWith){
+            socket.emit('join_room',room);
+        }
+    }, [room, contactToChatWith]);  
+
     //per ascoltare i messaggi in arrivo
     useEffect(()=>{
-        socket.on('ricevi_messaggio',(data)=>{
-            setMessageList((list)=>[...list,data]);
+        const handleReceiveMsg=(data)=>{
+            setMessageList((list)=> [...list,data]);
             updateLastMessage(data.text, data.time);
-        });
-        return()=> socket.off('ricevi_messaggio')
+        };
+
+        socket.on('ricevi_messaggio', handleReceiveMsg);
+        return()=> socket.off('ricevi_messaggio', handleReceiveMsg);
     }, []);
+
+   
 
     //per inviare messaggio
     const sendMessage= async()=>{
@@ -45,6 +67,7 @@ export default function Chat() {
             };
             await socket.emit('invia_messaggio', messageData);
             setMessageList((list)=>[...list, messageData]);
+            updateLastMessage(message, currentTime);
             setMessage('');
         }
     };

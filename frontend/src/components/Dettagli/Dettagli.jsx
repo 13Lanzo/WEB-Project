@@ -23,6 +23,7 @@ export default function Dettagli({isLoggedIn}) {
         available_date: "Sept 1, 2024",
         description: "Spacious and luminous single room located in a recently renovated apartment. Just 5 minutes walking distance from Politecnico di Milano (Leonardo). The room comes fully equipped with a double bed, large wardrobe, ergonomic desk, and designer lamp.",
         host: {
+            id:123,
             name: "Marco",
             age: 24,
             bio: '"Looking for a quiet roommate who values clean common spaces and occasional shared dinners. Currently finishing my Master\'s at Polimi."',
@@ -38,7 +39,12 @@ export default function Dettagli({isLoggedIn}) {
 
     const ClickMessaggio=()=>{
         if (isLoggedIn){
-            navigate('/chat');
+            navigate('/chat', {
+                state:{
+                    contactId:123,
+                    contactName: 'Lol'
+                }
+            });
         }else{
             navigate('/login');
         }

@@ -3,7 +3,7 @@ const path = require("path");
 //require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 const dns = require("dns");
 const express = require("express");
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
@@ -96,8 +96,14 @@ const io = new Server( server, {
 
 io.on('connection', (socket)=>{
     console.log(`Utente connesso: ${socket.id}`);
+
+    socket.on('join_room', (roomName)=>{
+        socket.join(roomName);
+        console.log(`Utente con ID: ${socket.id} è entrato nella stanza: ${roomName}`);
+    })
+
     socket.on('invia_messaggio', (data)=>{
-        socket.broadcast.emit('ricevi_messaggio', data);
+        socket.to(data.room).emit('ricevi_messaggio', data);
     });
 
     socket.on('disconnect',()=>{
