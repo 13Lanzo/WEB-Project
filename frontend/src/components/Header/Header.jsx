@@ -23,10 +23,6 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
         window.open('https://www.instagram.com');
     };
 
-    //credenziali fittizie per visualizzare frontend da eliminare
-    const EMAIL='cioccafra@gmail.com';
-    const PW='password5';
-    
     //controllo password
     const handleSubmit = (e)=> {
         e.preventDefault();
@@ -199,37 +195,86 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
     const [activeLink, setActiveLink]=useState('Scopri');
     const navigate =useNavigate();
 
-    const [contacts, setContacts] = useState([
-        { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-        ]);
+    const [contacts, setContacts] = useState([]);
 
-    const updateLastMessage = (newText, newTime) => {
-        setContacts(prevContacts =>
-            prevContacts.map(contact => {
-                // Aggiorna il contatto attivo
-                if (contact.active) {
-                    return { ...contact, lastMsg: newText, time: newTime };
-                }
-                return contact;
-            })
-        );
-    };
+    // 1. Carica le conversazioni reali dal backend all'avvio o al cambiamento del login
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setContacts([]);
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        fetch('http://localhost:5000/api/messages/conversations', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (Array.isArray(data)) {
+                setContacts(data);
+            }
+        })
+        .catch(err => console.error("Errore caricamento conversazioni:", err));
+    }, [isLoggedIn]);
 
     // 2. Mettiti in ascolto dei nuovi messaggi in arrivo
     useEffect(() => {
-        socket.on('ricevi_messaggio', (data) => {
-            // Quando arriva un messaggio, aggiorna la finestrina!
-            updateLastMessage(data.text, data.time);
-        });
+        const handleReceiveMessage = (msg) => {
+            const sender = msg.mittente;
+            const receiver = msg.destinatario;
+            const senderId = typeof sender === 'object' ? sender._id : sender;
+            const receiverId = typeof receiver === 'object' ? receiver._id : receiver;
 
-        // Pulisce l'ascolto se cambi pagina
-        return () => socket.off('ricevi_messaggio');
+            const currentUserStr = localStorage.getItem('user');
+            const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+            if (!currentUser) return;
+            const myId = currentUser.id;
+
+            const isMittenteMe = senderId === myId;
+            const interlocutore = isMittenteMe ? receiver : sender;
+            const interlocutoreId = isMittenteMe ? receiverId : senderId;
+
+            setContacts(prevContacts => {
+                const index = prevContacts.findIndex(c => c.id === interlocutoreId);
+                const timeStr = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                let updatedContact;
+                if (index !== -1) {
+                    updatedContact = {
+                        ...prevContacts[index],
+                        lastMsg: msg.testo,
+                        time: timeStr,
+                        letto: msg.letto
+                    };
+                    const nextContacts = [...prevContacts];
+                    nextContacts.splice(index, 1);
+                    return [updatedContact, ...nextContacts];
+                } else {
+                    const name = typeof interlocutore === 'object' 
+                        ? `${interlocutore.nome} ${interlocutore.cognome}` 
+                        : "Utente";
+                    updatedContact = {
+                        id: interlocutoreId,
+                        name: name,
+                        lastMsg: msg.testo,
+                        time: timeStr,
+                        letto: msg.letto
+                    };
+                    return [updatedContact, ...prevContacts];
+                }
+            });
+        };
+
+        socket.on('ricevi_messaggio', handleReceiveMessage);
+        return () => socket.off('ricevi_messaggio', handleReceiveMessage);
     }, []);    
     
     return (
         <div>
         <header className='site-header font-sans'>
-            <div className='header-logo'><HouseHeartIcon/></div>
+            <div className='header-logo' onClick={() => { setActiveLink('Scopri'); navigate('/'); }} style={{ cursor: 'pointer' }}><HouseHeartIcon/></div>
             
                 {/*rendering condizionale per vedere lo stato attivo del log*/}
                 {isLoggedIn ? (
@@ -250,18 +295,24 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                                     </div>
                                     
                                     <div className='constacts-list'>
-                                        {contacts.map(contact =>(
-                                            <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`} onClick={()=>{ navigate('/chat'); setIsNotifOpen(false);}}>
-                                                <div className='notif-avatar'><User size={40}/></div>
-                                                <div className='notif-info'>
-                                                    <div className='notif-top'>
-                                                        <span className='notif-name'>{contact.name}</span>
-                                                        <span className='notif-time'>{contact.time}</span>
-                                                    </div>
-                                                    <p className='notif-msg'>{contact.lastMsg}</p>
-                                                </div>
+                                        {contacts.length === 0 ? (
+                                            <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280', fontSize: '13px' }}>
+                                                Nessun messaggio recente
                                             </div>
-                                        ))}
+                                        ) : (
+                                            contacts.map(contact =>(
+                                                <div key={contact.id} className="contact-item" onClick={()=>{ navigate('/chat', { state: { contactId: contact.id, contactName: contact.name } }); setIsNotifOpen(false);}}>
+                                                    <div className='notif-avatar'><User size={40}/></div>
+                                                    <div className='notif-info'>
+                                                        <div className='notif-top'>
+                                                            <span className='notif-name'>{contact.name}</span>
+                                                            <span className='notif-time'>{contact.time}</span>
+                                                        </div>
+                                                        <p className='notif-msg'>{contact.lastMsg}</p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                     <div className='notif-footer' onClick={()=>{navigate('/chat'); setIsNotifOpen(false);}}>Vai alla Chat <MoveRight size={10}/></div>
                                 </div>

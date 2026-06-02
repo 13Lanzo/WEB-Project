@@ -18,13 +18,13 @@ const RoomSchema = new mongoose.Schema({
     prezzo: {
         type: Number,
         required: true,
-        min: 0 
+        min: 0
     },
     citta: {
         type: String,
         required: true,
         trim: true
-    }, 
+    },
     indirizzo: {
         type: String,
         required: true,
@@ -39,6 +39,11 @@ const RoomSchema = new mongoose.Schema({
     serviziInclusi: {
         type: [String], // (es. "Wi-Fi", "Aria Condizionata")
         default: []
+    },
+    //immagini passate lato frontend
+    immagine: {
+        type: String,
+        default: ""
     },
     disponibile: {
         type: Boolean,

@@ -1,14 +1,27 @@
 const express = require('express');
 const Room = require('../models/Room');
+const User = require('../models/User');
 
 async function createStanza(req, res){
         try {
-        const { titolo, descrizione, prezzo, citta, indirizzo, serviziInclusi } = req.body;
+        const { titolo, descrizione, prezzo, citta, indirizzo, serviziInclusi, immagine } = req.body;
 
         const creatoDa = req.user.id;
 
+        // Verifichiamo che l'utente sia un proprietario
+        const utente = await User.findById(creatoDa);
+        if (!utente || utente.ruolo !== 'proprietario') {
+            return res.status(403).json({
+                success: false,
+                errore: "Accesso negato: solo i proprietari possono caricare annunci."
+            });
+        }
+
+        // Se descrizione manca, impostiamo un valore di fallback
+        const descNormalizzata = descrizione || "Stanza in appartamento condiviso.";
+
         // 1. Validazione base dei campi obbligatori
-        if (!titolo || !descrizione || !prezzo || !citta || !indirizzo) {
+        if (!titolo || !prezzo || !citta || !indirizzo) {
             return res.status(400).json({ 
                 success: false,
                 errore: "Tutti i campi obbligatori devono essere compilati." 
@@ -33,12 +46,13 @@ async function createStanza(req, res){
         // 3. Creazione della nuova stanza se non è un duplicato
         const nuovaStanza = new Room({
             titolo,
-            descrizione, 
+            descrizione: descNormalizzata, 
             prezzo,
             citta,
             indirizzo,
             creatoDa, 
-            serviziInclusi
+            serviziInclusi,
+            immagine
         });
 
         // 4. Salvataggio della stanza nel DB
@@ -61,22 +75,24 @@ async function createStanza(req, res){
 
 async function getStanze (req, res){
     try {
-        // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350)
-        const { citta, prezzoMin, prezzoMax } = req.query;
-        let queryFiltri = {disponibile: true}; //mettiamo soltanto le stanze disponibili
+        // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350&creatoDa=...)
+        const { citta, prezzoMin, prezzoMax, creatoDa } = req.query;
+        let queryFiltri = {}; 
+
+        if (creatoDa) {
+            queryFiltri.creatoDa = creatoDa;
+        } else {
+            queryFiltri.disponibile = true; // Di default mostriamo solo le stanze disponibili
+        }
 
         if (citta) {
-            queryFiltri.citta = citta;
+            queryFiltri.citta = { $regex: '^' + citta.trim() + '$', $options: 'i' };
         }
         if (prezzoMin) {
             queryFiltri.prezzo = { ...queryFiltri.prezzo, $gte: parseFloat(prezzoMin) };
-            // gte = Grater than or equal (maggiore o uguale) - 
-            // usiamo parseFloat per convertire la stringa in numero decimale
-            
         }
         if (prezzoMax) {
             queryFiltri.prezzo = { ...queryFiltri.prezzo, $lte: parseFloat(prezzoMax) };
-            // lte = Less than or equal (minore o uguale)
         }
 
         // Eseguiamo la ricerca e popoliamo i dati del proprietario (mostrando solo nome ed email)
@@ -96,7 +112,7 @@ async function getStanze (req, res){
 
 async function getStanza(req, res){
     try {
-        const stanza = await Room.findById(req.params.id).populate('creatoDa', 'nome email bio tagPreferenziale');
+        const stanza = await Room.findById(req.params.stanzaId).populate('creatoDa', 'nome email bio tagPreferenze');
 
         if (!stanza) {
             return res.status(404).json({ errore: "Stanza non trovata." });
@@ -117,7 +133,7 @@ async function getStanza(req, res){
 async function updateStanza(req, res){
     try {
 
-        const stanza = await Room.findById(req.params.id);
+        const stanza = await Room.findById(req.params.stanzaId);
 
         if(!stanza){
             return res.status(404).json({
@@ -139,7 +155,7 @@ async function updateStanza(req, res){
         //se il controllo è autorizzato allora modifichiamo l'annuncio
         // { new: true } serve a restituire il documento aggiornato anziché quello vecchio
         const stanzaAggiornata = await Room.findByIdAndUpdate(
-            req.params.id,
+            req.params.stanzaId,
             req.body,
             { new: true, runValidators: true }
             // runValidators: true serve a far rispettare le regole di validazione 
@@ -160,9 +176,9 @@ async function updateStanza(req, res){
 
 async function deleteStanza (req, res){
     try {
-        //const stanzaCancellata = await Room.findByIdAndDelete(req.params.id);
+        //const stanzaCancellata = await Room.findByIdAndDelete(req.params.stanzaId);
         //cerchiamo la stanza all'interno del DB + relativo controllo 
-        const stanza = await Room.findById(req.params.id);
+        const stanza = await Room.findById(req.params.stanzaId);
         if(!stanza) {
             return res.status(404).json({
                 success: false,
@@ -178,7 +194,7 @@ async function deleteStanza (req, res){
         }
 
         //nel caso i controlli passano, elimino l'annuncio 
-        await Room.findByIdAndDelete(req.params.id);
+        await Room.findByIdAndDelete(req.params.stanzaId);
 
         return res.status(200).json({
             success: true,

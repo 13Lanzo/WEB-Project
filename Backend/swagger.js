@@ -247,7 +247,8 @@ const swaggerOptions = {
                     prezzo: { type: "number", example: 300 },
                     citta: { type: "string", example: "Bari" },
                     indirizzo: { type: "string", example: "Via Re David 10" },
-                    serviziInclusi: { type: "array", items: { type: "string" }, example: ["Wi-Fi", "Aria Condizionata"] }
+                    serviziInclusi: { type: "array", items: { type: "string" }, example: ["Wi-Fi", "Aria Condizionata"] },
+                    immagine: { type: "string", example: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80" }
                   }
                 }
               }
@@ -365,6 +366,44 @@ const swaggerOptions = {
           responses: {
             200: {
               description: "Stanza eliminata con successo."
+            }
+          }
+        }
+      },
+      "/api/messages/conversations": {
+        get: {
+          tags: ["MessageController"],
+          summary: "Recupera conversazioni attive",
+          description: "Ottiene la lista delle chat attive (interlocutori) per l'utente loggato, con l'ultimo messaggio inviato o ricevuto.",
+          security: [
+            {
+              bearerAuth: []
+            }
+          ],
+          responses: {
+            200: {
+              description: "Elenco delle conversazioni recuperato con successo.",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string", example: "6a12f623c411ee6d0a7b0560" },
+                        name: { type: "string", example: "Francesca Ciocca" },
+                        email: { type: "string", example: "cioccafra@gmail.com" },
+                        lastMsg: { type: "string", example: "Ciao! La stanza è ancora disponibile?" },
+                        time: { type: "string", example: "18:45" },
+                        letto: { type: "boolean", example: false }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            401: {
+              description: "Token mancante o non valido."
             }
           }
         }
@@ -531,6 +570,7 @@ const swaggerOptions = {
             indirizzo: { type: "string" },
             creatoDa: { type: "string", description: "ID dell'utente proprietario" },
             serviziInclusi: { type: "array", items: { type: "string" } },
+            immagine: { type: "string" },
             disponibile: { type: "boolean" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" }

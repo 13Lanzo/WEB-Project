@@ -189,9 +189,53 @@ async function deleteMessage(req, res) {
     }
 }
 
+async function getConversations(req, res) {
+    try {
+        const mioId = req.user.id;
+        
+        // Trova tutti i messaggi in cui l'utente loggato è mittente o destinatario
+        const messaggi = await Message.find({
+            $or: [{ mittente: mioId }, { destinatario: mioId }]
+        })
+        .sort({ createdAt: -1 }) // Dal più recente al più vecchio
+        .populate('mittente destinatario', 'nome cognome email');
+
+        // Raggruppa per interlocutore
+        const conversazioni = [];
+        const visto = new Set();
+
+        for (const msg of messaggi) {
+            const interlocutore = msg.mittente && msg.mittente._id.toString() === mioId 
+                ? msg.destinatario 
+                : msg.mittente;
+
+            if (!interlocutore) continue;
+            
+            const interlocutoreId = interlocutore._id.toString();
+            if (!visto.has(interlocutoreId)) {
+                visto.add(interlocutoreId);
+                conversazioni.push({
+                    id: interlocutoreId,
+                    name: `${interlocutore.nome} ${interlocutore.cognome}`,
+                    email: interlocutore.email,
+                    lastMsg: msg.testo,
+                    time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    letto: msg.letto
+                });
+            }
+        }
+
+        res.status(200).json(conversazioni);
+    } catch (errore) {
+        console.error("Errore nel caricamento delle conversazioni:", errore.message);
+        res.status(500).json({ errore: "Errore nel caricamento delle conversazioni." });
+    }
+}
+
 module.exports = {
     createMessage, 
     getMessages,
     updateMessage,
-    deleteMessage
+    deleteMessage,
+    getConversations
 }

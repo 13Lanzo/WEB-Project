@@ -9,6 +9,9 @@ const router = express.Router();
 const verificaToken = require('../middleware/authMiddleware');
 const MessageController = require('../controllers/messageController');
 
+// 0. READ: Recupera l'elenco di tutte le conversazioni attive dell'utente loggato
+router.get('/conversations', verificaToken, MessageController.getConversations);
+
 // 1. CREATE: Salva un nuovo messaggio nel DB
 router.post('/:id/messages', verificaToken, MessageController.createMessage);
 
