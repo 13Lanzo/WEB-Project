@@ -16,6 +16,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [confirmPassword, setConfirmPassword]=useState('');
     const [errorMessage, setErrorMessage]= useState('');
     const [eta, setEta]=useState(20);
+
     const LoginGoogle =()=>{
         window.open('https://www.google.com');
     };
@@ -23,7 +24,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
         window.open('https://www.instagram.com');
     };
 
-    //controllo password
+    
     const handleSubmit = (e)=> {
         e.preventDefault();
         setErrorMessage('');
@@ -38,7 +39,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 return;
             }  
             
-            fetch('http://10.31.99.48:5000/api/auth/register', {
+            fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -64,7 +65,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 setErrorMessage('Errore di rete durante la registrazione.');
             });
         } else {
-            fetch('http://10.31.99.48:5000/api/auth/login', {
+            fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
