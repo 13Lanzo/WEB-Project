@@ -14,6 +14,7 @@ export default function Ricerca() {
     const [prezzoMax, setPrezzoMax] = useState('');
     const [selectedPreferences, setSelectedPreferences] = useState(["Non fumatori"]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     const togglePreference = (prefName) => {
         if (selectedPreferences.includes(prefName)) {
@@ -25,11 +26,13 @@ export default function Ricerca() {
 
     const fetchRooms = () => {
         setLoading(true);
-        let url = 'http://localhost:5000/api/rooms/rooms';
+        let url = 'http://10.31.99.48:5000/api/rooms/rooms';
         const params = [];
         if (cittaFiltro) params.push(`citta=${cittaFiltro.trim()}`);
         if (prezzoMin) params.push(`prezzoMin=${prezzoMin}`);
         if (prezzoMax) params.push(`prezzoMax=${prezzoMax}`);
+        params.push(`page=${currentPage}`);
+        params.push(`limit=6`);
         
         if (params.length > 0) {
             url += '?' + params.join('&');
@@ -40,6 +43,7 @@ export default function Ricerca() {
         .then(resData => {
             if (resData.success) {
                 setRooms(resData.dati);
+                setTotalPages(resData.totalPages || 1);
             }
             setLoading(false);
         })
@@ -51,11 +55,15 @@ export default function Ricerca() {
 
     useEffect(() => {
         fetchRooms();
-    }, []);
+    }, [currentPage]);
 
     const handleApplyFilters = (e) => {
         e.preventDefault();
-        fetchRooms();
+        if (currentPage !== 1) {
+            setCurrentPage(1);
+        } else {
+            fetchRooms();
+        }
     };
 
     return (
@@ -176,11 +184,17 @@ export default function Ricerca() {
                 )}
 
                 <footer className="pagination-container" style={{ marginTop: '30px' }}>
-                    <button className="pag-btn" onClick={() => setCurrentPage(prev => Math.max(prev-1,1))}>‹</button>
-                    <button className={`pag-btn ${currentPage === 1 ? 'active' : ""}`} onClick={() => setCurrentPage(1)}>1</button>
-                    <button className={`pag-btn ${currentPage === 2 ? 'active' : ''}`} onClick={() => setCurrentPage(2)}>2</button>
-                    <button className={`pag-btn ${currentPage === 3 ? 'active' : ''}`} onClick={() => setCurrentPage(3)}>3</button>
-                    <button className='pag-btn' onClick={() => setCurrentPage(prev => Math.min(prev+1,3))}>›</button>
+                    <button className="pag-btn" onClick={() => setCurrentPage(prev => Math.max(prev-1,1))} disabled={currentPage === 1}>‹</button>
+                    {Array.from({ length: totalPages }, (_, idx) => idx + 1).map(p => (
+                        <button 
+                            key={p} 
+                            className={`pag-btn ${currentPage === p ? 'active' : ''}`} 
+                            onClick={() => setCurrentPage(p)}
+                        >
+                            {p}
+                        </button>
+                    ))}
+                    <button className='pag-btn' onClick={() => setCurrentPage(prev => Math.min(prev+1,totalPages))} disabled={currentPage === totalPages}>›</button>
                 </footer>
             </main>    
         </div>

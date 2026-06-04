@@ -60,7 +60,7 @@ export default function New() {
         const token = localStorage.getItem('token');
         const descCompilata = `Stanza di ${formData.superficie}mq con arredamento ${formData.arredamento}. Disponibilità: ${formData.disponibilita}.`;
 
-        fetch(`http://localhost:5000/api/rooms/${currentUser.id}/rooms`, {
+        fetch(`http://10.31.99.48:5000/api/rooms/${currentUser.id}/rooms`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

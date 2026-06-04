@@ -20,7 +20,7 @@ export default function Annunci () {
         const token = localStorage.getItem('token');
         
         // Chiamata all'API per recuperare gli annunci dell'host
-        fetch(`http://localhost:5000/api/rooms/rooms?creatoDa=${currentUser.id}`, {
+        fetch(`http://10.31.99.48:5000/api/rooms/rooms?creatoDa=${currentUser.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())
@@ -44,7 +44,7 @@ export default function Annunci () {
         if (!window.confirm("Sei sicuro di voler eliminare questo annuncio?")) return;
         const token = localStorage.getItem('token');
         
-        fetch(`http://localhost:5000/api/rooms/${currentUser.id}/rooms/${stanzaId}`, {
+        fetch(`http://10.31.99.48:5000/api/rooms/${currentUser.id}/rooms/${stanzaId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         })

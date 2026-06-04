@@ -76,7 +76,7 @@ async function createStanza(req, res){
 async function getStanze (req, res){
     try {
         // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350&creatoDa=...)
-        const { citta, prezzoMin, prezzoMax, creatoDa } = req.query;
+        const { citta, prezzoMin, prezzoMax, creatoDa, page, limit } = req.query;
         let queryFiltri = {}; 
 
         if (creatoDa) {
@@ -95,12 +95,33 @@ async function getStanze (req, res){
             queryFiltri.prezzo = { ...queryFiltri.prezzo, $lte: parseFloat(prezzoMax) };
         }
 
-        // Eseguiamo la ricerca e popoliamo i dati del proprietario (mostrando solo nome ed email)
-        const stanze = await Room.find(queryFiltri).populate('creatoDa', 'nome email');
+        // Gestione paginazione
+        let stanze;
+        let totalRooms = 0;
+        let totalPages = 1;
+        let pageNum = 1;
+
+        if (page) {
+            pageNum = parseInt(page) || 1;
+            const limitNum = parseInt(limit) || 6;
+            totalRooms = await Room.countDocuments(queryFiltri);
+            totalPages = Math.ceil(totalRooms / limitNum) || 1;
+            stanze = await Room.find(queryFiltri)
+                .populate('creatoDa', 'nome email')
+                .skip((pageNum - 1) * limitNum)
+                .limit(limitNum);
+        } else {
+            stanze = await Room.find(queryFiltri).populate('creatoDa', 'nome email');
+            totalRooms = stanze.length;
+        }
+
         return res.status(200).json({
             success: true,
             messaggio: "Stanze trovate con successo!",
-            dati: stanze
+            dati: stanze,
+            totalPages,
+            currentPage: pageNum,
+            totalRooms
         });
 
     }

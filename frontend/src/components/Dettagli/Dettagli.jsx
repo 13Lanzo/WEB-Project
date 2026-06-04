@@ -27,7 +27,7 @@ export default function Dettagli() {
         }
 
         const fetchDetails = (id) => {
-            fetch(`http://localhost:5000/api/rooms/${myId}/rooms/${id}`, {
+            fetch(`http://10.31.99.48:5000/api/rooms/${myId}/rooms/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
             .then(res => res.json())
@@ -47,7 +47,7 @@ export default function Dettagli() {
             fetchDetails(stanzaId);
         } else {
             // Fallback: carica la prima stanza disponibile nel sistema
-            fetch('http://localhost:5000/api/rooms/rooms')
+            fetch('http://10.31.99.48:5000/api/rooms/rooms')
             .then(res => res.json())
             .then(resData => {
                 if (resData.success && resData.dati.length > 0) {

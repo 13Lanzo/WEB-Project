@@ -20,7 +20,7 @@ export default function Profilo({onLogout}) {
         }
 
         const token = localStorage.getItem('token');
-        fetch(`http://localhost:5000/api/users/${currentUser.id}/user`, {
+        fetch(`http://10.31.99.48:5000/api/users/${currentUser.id}/user`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())

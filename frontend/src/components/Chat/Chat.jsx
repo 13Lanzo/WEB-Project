@@ -26,7 +26,7 @@ export default function Chat() {
         if (!myId) return;
 
         const token = localStorage.getItem('token');
-        fetch('http://localhost:5000/api/users/users', {
+        fetch('http://10.31.99.48:5000/api/users/users', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())
@@ -79,7 +79,7 @@ export default function Chat() {
         if (!activeContact || !myId) return;
 
         const token = localStorage.getItem('token');
-        fetch(`http://localhost:5000/api/messages/${myId}/messages/${activeContact.id}`, {
+        fetch(`http://10.31.99.48:5000/api/messages/${myId}/messages/${activeContact.id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())
