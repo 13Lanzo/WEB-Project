@@ -75,7 +75,7 @@ export default function Home() {
                         <div className='card cardcompatibility gridcolspan2'>
                             <div className='textside'>
                                 <h3>Penteggio di compatibilità</h3>
-                                <p>Solo su Tinder: vedi quanto sei compatibile con i tuoi potenziali inquilini prima di contattarli.</p>
+                                <p>Solo su Room4U: vedi quanto sei compatibile con i tuoi potenziali inquilini prima di contattarli.</p>
                             </div>
                             <div className='scorecircle'>94%</div>
                         </div>
