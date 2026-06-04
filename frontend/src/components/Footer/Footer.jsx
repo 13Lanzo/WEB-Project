@@ -32,7 +32,7 @@ const Footer= () => {
         </div>
 
         <div className='footerCopyright'>
-          <p>&copy; {currentYear} Piattaforma Tinder. Migliora la ricerca della stanza perfetta.</p>
+          <p>&copy; {currentYear} Piattaforma Room4U. Migliora la ricerca della stanza perfetta.</p>
         </div>
       </div>
     </footer>

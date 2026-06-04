@@ -1,9 +1,9 @@
 // punto di ingresso dell'applicazione
 const path = require("path");
-//require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
+require("dotenv").config({ path: path.resolve(__dirname, "./.env") });
 const dns = require("dns");
 const express = require("express");
-//const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
@@ -33,30 +33,30 @@ app.use("/api/rooms", roomsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/health", healthRoutes);
 
-//app.get("/", (req, res) => {
-//  res.status(200).json({ messaggio: "Server backend attivo e funzionante!" });
-//});
+app.get("/", (req, res) => {
+  res.status(200).json({ messaggio: "Server backend attivo e funzionante!" });
+});
 
-//const MONGODB_URI = process.env.MONGODB_URI;
-//if (!MONGODB_URI) {
-//  console.error(
-//    "Errore: MONGODB_URI non è definito. Controlla il file .env nella radice del progetto.",
-//  );
-//  process.exit(1);
-//}
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  console.error(
+    "Errore: MONGODB_URI non è definito. Controlla il file .env nella radice del progetto.",
+  );
+  process.exit(1);
+}
 
-//try {
-//  dns.setServers(["8.8.8.8", "1.1.1.1"]);
-//  console.log("Usando DNS pubblici per la risoluzione SRV:", dns.getServers());
-//} catch (dnsErr) {
-//  console.warn("Impossibile impostare DNS pubblici per SRV:", dnsErr.message);
-//}
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+  console.log("Usando DNS pubblici per la risoluzione SRV:", dns.getServers());
+} catch (dnsErr) {
+  console.warn("Impossibile impostare DNS pubblici per SRV:", dnsErr.message);
+}
 
-//const mongooseOptions = {
-//  serverSelectionTimeoutMS: 10000,
-//  connectTimeoutMS: 10000,
-//  family: 4,
-//};
+const mongooseOptions = {
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS: 10000,
+  family: 4,
+};
 
 //mongoose
 //  .connect(MONGODB_URI, mongooseOptions)
