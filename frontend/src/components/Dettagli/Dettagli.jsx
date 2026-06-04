@@ -1,35 +1,104 @@
+// Questo è un componente React che mostra i dettagli di una stanza, inclusi immagini, descrizione, caratteristiche e informazioni sull'host. 
+// Utilizza lo stato per gestire la visualizzazione delle foto e le informazioni della stanza. 
+// Inoltre, include un pulsante per inviare un messaggio all'host e mostra alcune linee guida di sicurezza.
+
 import './Dettagli.css'
 import { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 import {MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check } from 'lucide-react'
 
-export default function Dettagli({isLoggedIn}) {
-    const [showAllPhotos, setShowAllPhotos]=useState(false);
-    const navigate= useNavigate();
-    const SPECS_CONFIG = {
-        size: { icon:<TriangleRight color='green'/>, label: "Size", suffix: " m²" },
-        furniture: { icon: <BedDouble color='green'/>, label: "Furniture", suffix: "" },
-        internet: { icon: <HouseWifi color='green'/>, label: "Internet", suffix: "" },
-        available_date: { icon: <CalendarArrowUp color='green'></CalendarArrowUp>, label: "Available", suffix: "" }
-    };
-    const roomData={
-        title: "Modern Single Room near Politecnico",
-        location: "Zona Città Studi, Milano",
-        price: 650,
-        matchScore: 80,
-        size: 18,
-        furniture: "Full Set",
-        internet: "Gigabit Fiber",
-        available_date: "Sept 1, 2024",
-        description: "Spacious and luminous single room located in a recently renovated apartment. Just 5 minutes walking distance from Politecnico di Milano (Leonardo). The room comes fully equipped with a double bed, large wardrobe, ergonomic desk, and designer lamp.",
-        host: {
-            id:123,
-            name: "Marco",
-            age: 24,
-            bio: '"Looking for a quiet roommate who values clean common spaces and occasional shared dinners. Currently finishing my Master\'s at Polimi."',
-            tags: ["Ingegneria", "Amante dei gatti", "Vegano", "Palestra"]
+export default function Dettagli() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Recupera l'utente loggato
+    const currentUserStr = localStorage.getItem('user');
+    const currentUser = currentUserStr ? JSON.parse(currentUserStr): null;
+    const myId = currentUser ? currentUser.id : "default";
+
+    const [room, setRoom] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [showAllPhotos, setShowAllPhotos] = useState(false);
+
+    const stanzaId = location.state?.stanzaId;
+
+       useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Effettua il login per visualizzare i dettagli dell'annuncio.");
+            navigate('/login');
+            return;
         }
+
+        const fetchDetails = (id) => {
+            fetch(`http://localhost:5000/api/rooms/${myId}/rooms/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if (resData.success) {
+                    setRoom(resData.dati);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Errore nel caricamento dei dettagli:", err);
+                setLoading(false);
+            });
+        };
+
+        if (stanzaId) {
+            fetchDetails(stanzaId);
+        } else {
+            // Fallback: carica la prima stanza disponibile nel sistema
+            fetch('http://localhost:5000/api/rooms/rooms')
+            .then(res => res.json())
+            .then(resData => {
+                if (resData.success && resData.dati.length > 0) {
+                    fetchDetails(resData.dati[0]._id);
+                } else {
+                    setLoading(false);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+        }
+    }, [stanzaId, myId, navigate]);
+    
+
+    const clickMessaggio = () => {
+        if (!room || !room.creatoDa) return;
+        
+        // Vai alla chat e passa l'ID e il nome dell'host come stato
+        navigate('/chat', {
+            state: {
+                contactId: room.creatoDa._id,
+                contactName: `${room.creatoDa.nome}`
+            }
+        });
     };
+
+    if (loading) {
+        return (
+            <div className='room-detail-page font-sans' style={{ textAlign: 'center', padding: '100px 20px', color: '#6b7280' }}>
+                <h2>Caricamento dettagli stanza...</h2>
+            </div>
+        );
+    }
+
+    if (!room) {
+        return (
+            <div className='room-detail-page font-sans' style={{ textAlign: 'center', padding: '100px 20px' }}>
+                <h2>Annuncio non trovato o non disponibile.</h2>
+                <button className='btn-dettaglio' onClick={() => navigate('/ricerca')} style={{ marginTop: '20px' }}>Torna alla Ricerca</button>
+            </div>
+        );
+    }
+
+
+    // const fotoPrincipale = room.immagine || "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80";
     const tutteLeFoto=[
         "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80",
@@ -37,38 +106,26 @@ export default function Dettagli({isLoggedIn}) {
         "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=400&q=80"
     ];
 
-    const ClickMessaggio=()=>{
-        if (isLoggedIn){
-            navigate('/chat', {
-                state:{
-                    contactId:123,
-                    contactName: 'Lol'
-                }
-            });
-        }else{
-            navigate('/login');
-        }
-    };
-
-    return(
+     return (
         <div className='room-detail-page font-sans'>
             <section className='image-gallery-grid'>
                 <div className='main-image'>
-                    <img src={tutteLeFoto[0]} alt="Detail 2"/>
+                    <img src={tutteLeFoto[0]} alt="Camera principale"/>
                 </div>
                 <div className='sub-images'>
                     <div className='sub-image'>
-                        <img src={tutteLeFoto[1]} alt="Detail 1"/>
+                        <img src={tutteLeFoto[1]} alt="Particolare camera 1"/>
                     </div>
                     <div className='sub-image'>
-                        <img src={tutteLeFoto[2]} alt="Detail 2"/>
+                        <img src={tutteLeFoto[2]} alt="Particolare camera 2"/>
                     </div>
                     <div className='sub-image relative-box'>
-                        <img src={tutteLeFoto[3]} alt="Detail 3"/>
-                        <button className='btn-all-photos' onClick={()=>setShowAllPhotos(true)}>Mostra tutto</button>
+                        <img src={tutteLeFoto[3]} alt="Particolare camera 3"/>
+                        <button className='btn-all-photos' onClick={() => setShowAllPhotos(true)}>Mostra tutto</button>
                     </div>
                 </div>
             </section>
+
             {showAllPhotos && (
                 <div className="gallery-overlay">
                     <div className="gallery-backdrop" onClick={() => setShowAllPhotos(false)}>
@@ -91,39 +148,46 @@ export default function Dettagli({isLoggedIn}) {
                     </div>
                 </div>
             )}
+
             <div className='room-layout-container'>
                 <main className='room-main-info'>
                     <div className='title-header-box'>
                         <div>
-                            <h1>{roomData.title}</h1>
-                            <p className='geo-location'><MapPinHouse/>{roomData.location}</p>
+                            <h1 style={{ color: '#1e3a8a', fontWeight: '700' }}>{room.titolo}</h1>
+                            <p className='geo-location'><MapPinHouse/>{room.citta}, {room.indirizzo}</p>
                             <div className='match-score-badge'>
-                                <span className='checkmark'><Check/></span>{roomData.matchScore}% Affinità con il tuo modo di vivere
+                                <span className='checkmark'><Check/></span>98% Affinità con il tuo modo di vivere
                             </div>
                         </div>
                         <div className='price-tag-box'>
                             <span className='price-label'>A PARTIRE DA</span>
-                            <span className='price-value'>€{roomData.price}<small>/mese</small></span>
+                            <span className='price-value'>€{room.prezzo}<small>/mese</small></span>
                         </div>
                     </div>
+
                     <div className='features-specs-grid'>
-                        {Object.keys(SPECS_CONFIG).map((key)=> {
-                            const config=SPECS_CONFIG[key];
-                            const dbValue=roomData[key];
-                            if(!dbValue) return null;
-                            return(
-                                <div key={key} className='spec-item-card'>
-                                    <span className='spec-icon'>{config.icon}</span>
-                                    <span className='spec-label'>{config.label}</span>
-                                    <span className='spec-value'>{dbValue}{config.suffix}</span>
-                                </div>
-                            );
-                        })}
+                        <div className='spec-item-card'>
+                            <span className='spec-icon'><CalendarArrowUp color='green'/></span>
+                            <span className='spec-label'>Stato</span>
+                            <span className='spec-value'>{room.disponibile ? 'Libera subito' : 'Occupata'}</span>
+                        </div>
+                        <div className='spec-item-card'>
+                            <span className='spec-icon'><BedDouble color='green'/></span>
+                            <span className='spec-label'>Arredamento</span>
+                            <span className='spec-value'>Completo</span>
+                        </div>
+                        <div className='spec-item-card'>
+                            <span className='spec-icon'><HouseWifi color='green'/></span>
+                            <span className='spec-label'>Internet</span>
+                            <span className='spec-value'>Fibra Wi-Fi</span>
+                        </div>
                     </div>
+
                     <section className='description-section'>
-                        <h2>Descrizione</h2>
-                        <p>{roomData.description}</p>
+                        <h2>Descrizione Stanza</h2>
+                        <p>{room.descrizione}</p>
                     </section>
+
                     <section className='location-section'>
                         <h2>Locazione</h2>
                         <div className='mock-map-wrapper'>
@@ -136,29 +200,28 @@ export default function Dettagli({isLoggedIn}) {
                         </div>
                     </section>
                 </main>
+
                 <aside className='room-sidebar-profile'>
                     <div className='profile-card-sticky'>
-                        <h3>Chi vive qui</h3>
-                        <h4>{roomData.host.name}, {roomData.host.age} years old</h4>
+                        <h3>Proprietario / Host</h3>
+                        <h4>{room.creatoDa ? `${room.creatoDa.nome}` : "Host verificato"}</h4>
                         <span className='verified-badge'><Dot size={10}/> Verified Host</span>
                     </div>
+                    {room.creatoDa && room.creatoDa.email && (
+                        <p style={{ fontSize: '13px', color: '#6b7280', margin: '5px 0' }}>✉ {room.creatoDa.email}</p>
+                    )}
                     <div className='profile-tags-flex'>
-                        {roomData.host.tags.map((tag,idx)=>(
+                        {room.serviziInclusi && room.serviziInclusi.map((tag, idx) => (
                             <span key={idx} className='profile-spec-tag'>{tag}</span>
                         ))}
                     </div>
-                    <p className='profile-bio-text'>{roomData.host.bio}</p>
-                    <button className='btn-send-message' onClick={ClickMessaggio}><SendHorizontal/>Invia messaggio</button>
+                    {room.creatoDa && room.creatoDa.bio && (
+                        <p className='profile-bio-text'>"{room.creatoDa.bio}"</p>
+                    )}
+                    <button className='btn-send-message' onClick={clickMessaggio}><SendHorizontal/>Invia messaggio</button>
                     <div className='host-trust-footer'>
                         <span><ShieldCheck/> Verified Host</span>
-                        <span><Zap/> Responds quickly</span>
-                    </div>
-                    <div className='safety-guidelines-box'>
-                        <span className='safety-icon'><Lock/></span>
-                        <div>
-                            <h5>Guidelinea Sicurezza</h5>
-                            <p>Diffida da chi vuole parlarti all'esterno. Non pagare al di fuori di contratti certificati da questa piattaforma.</p>
-                        </div>
+                        <span><Zap/> Risponde rapidamente</span>
                     </div>
                 </aside>
             </div>
