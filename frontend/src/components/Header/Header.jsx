@@ -38,7 +38,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 return;
             }  
             
-            fetch('http://10.31.99.48:5000/api/auth/register', {
+            fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -64,7 +64,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 setErrorMessage('Errore di rete durante la registrazione.');
             });
         } else {
-            fetch('http://10.31.99.48:5000/api/auth/login', {
+            fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -207,7 +207,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        fetch('http://10.31.99.48:5000/api/messages/conversations', {
+        fetch('http://localhost:5000/api/messages/conversations', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())
