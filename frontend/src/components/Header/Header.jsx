@@ -208,7 +208,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        fetch('http://10.31.99.48:5000/api/messages/conversations', {
+        fetch('http://localhost:5000/api/messages/conversations', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())
