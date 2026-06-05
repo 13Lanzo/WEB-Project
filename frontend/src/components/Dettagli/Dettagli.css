@@ -490,7 +490,128 @@
 
 @media (max-width: 600px) {
   .image-gallery-grid { grid-template-columns: 1fr; }
-  .sub-images { display: none; } /* Nasconde le foto piccole su mobile per pulizia */
+  .sub-images { display: none; }
   .title-header-box { flex-direction: column; align-items: flex-start; }
   .features-specs-grid { grid-template-columns: 1fr; }
 }
+
+/* Compatibilità sub-image (alias di sub-img) */
+.sub-image {
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sub-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.sub-image img:hover {
+  transform: scale(1.02);
+}
+
+.sub-image.relative-box {
+  position: relative;
+}
+
+/* ==========================================
+   "CHI VIVE QUI" ASIDE
+   ========================================== */
+.chi-vive-aside {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.inquilino-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.non-registered-card {
+  opacity: 0.7;
+}
+
+.inquilino-avatar {
+  width: 40px;
+  height: 40px;
+  background: #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #6b7280;
+}
+
+.non-registered-avatar {
+  background: #e5e7eb;
+}
+
+.inquilino-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.inquilino-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.inquilino-faculty {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.inquilino-tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.mini-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.btn-msg-inquilino {
+  background: #065f46;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.btn-msg-inquilino:hover {
+  background: #044e3a;
+}
+
+.profile-card-sticky h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #0f172a;
+}

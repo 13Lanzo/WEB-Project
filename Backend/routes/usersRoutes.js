@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
-
-// Ti servirà per proteggere le rotte
 const verificaToken = require('../middleware/authMiddleware');
-const UserController = require('../controllers/usersController');
+const UsersController = require('../controllers/usersController');
 
-//metodo GET per ottenere tutte le informazioni di tutti utenti
-router.get('/users', UserController.getAllUsers);
+// GET /api/users — Tutti gli utenti
+router.get('/', verificaToken, UsersController.getAllUsers);
 
-//metodo GET per ottenere tutte le informazioni di un utente
-router.get('/:id/user', verificaToken, UserController.getUserById);
+// GET /api/users/search?q=... — Ricerca utenti per nome/email (per "chi vive qui" nel /new)
+router.get('/search', verificaToken, UsersController.searchUsers);
 
-//metodo UPDATE per modificare le informazioni di un utente
-router.put('/:id/user', verificaToken, UserController.updateUser);
+// GET /api/users/:id — Utente per ID
+router.get('/:id', verificaToken, UsersController.getUserById);
 
-//metodo DELETE per eliminare un utente
-router.delete('/:id/user', verificaToken, UserController.deleteUser);
+// PUT /api/users/:id — Aggiorna profilo (solo il proprio)
+router.put('/:id', verificaToken, UsersController.updateUser);
+
+// DELETE /api/users/:id — Elimina account (solo il proprio)
+router.delete('/:id', verificaToken, UsersController.deleteUser);
 
 module.exports = router;

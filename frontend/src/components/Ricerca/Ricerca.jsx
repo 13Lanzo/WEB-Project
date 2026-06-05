@@ -1,157 +1,163 @@
-import './Ricerca.css'
-import { useState } from 'react';
-import {useNavigate} from 'react-router-dom'
-import {MapPinHouse, Zap} from 'lucide-react'
+import './Ricerca.css';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MapPinHouse, Zap, SlidersHorizontal } from 'lucide-react';
 
-const ROOMS_DATA = [
-    {
-        id: 1,
-        title: "Bloomsbury Loft",
-        location: "London, WC1",
-        price: 850,
-        match: 98,
-        image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=500&q=80",
-        tags: [" Pets", " Quiet"]
-    },
-    {
-        id: 2,
-        title: "Modern Shared Flat",
-        location: "Manchester City Center",
-        price: 620,
-        match: 85,
-        image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=500&q=80",
-        tags: [" No Smoking", " Mixed Faculty"]
-    },
-    {
-        id: 3,
-        title: "Oxford Central Studio",
-        location: "Oxford, Summertown",
-        price: 950,
-        match: 92,
-        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80",
-        tags: [" Study-first", " Sustainable"]
-    }
-];
+const API = 'http://localhost:5000/api';
 
 export default function Ricerca() {
-    const [selectedPreferences, setSelectedPreferences]=useState(["Non fumatori"]);
-    
-    const[currentPage, setCurrentPage]=useState(1);
+    const navigate = useNavigate();
+    const [rooms, setRooms] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [filters, setFilters] = useState({ citta: '', prezzoMin: '', prezzoMax: '' });
+    const [selectedPreferences, setSelectedPreferences] = useState([]);
 
-    const togglePreference=(prefName)=>{
-        if (selectedPreferences.includes(prefName)){
-            setSelectedPreferences(selectedPreferences.filter(p=>p !==prefName));
-        } else {
-            setSelectedPreferences([...selectedPreferences, prefName]);
+    const fetchRooms = async () => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams();
+            if (filters.citta) params.append('citta', filters.citta);
+            if (filters.prezzoMin) params.append('prezzoMin', filters.prezzoMin);
+            if (filters.prezzoMax) params.append('prezzoMax', filters.prezzoMax);
+
+            const res = await fetch(`${API}/rooms?${params.toString()}`);
+            const data = await res.json();
+            if (data.success) setRooms(data.dati || []);
+        } catch {
+            setRooms([]);
+        } finally {
+            setLoading(false);
         }
     };
-    const handleApplyFilters=() =>{
-        alert('Filtri applicati!');
-    };
-    const navigate=useNavigate();
-    return(
-        <div className='search-page-container'>
 
+    useEffect(() => {
+        fetchRooms();
+    }, []);
+
+    const togglePreference = (pref) => {
+        setSelectedPreferences(prev =>
+            prev.includes(pref) ? prev.filter(p => p !== pref) : [...prev, pref]
+        );
+    };
+
+    // Filtraggio tag lato client (i tag sono serviziTags)
+    const roomsFiltrate = rooms.filter(room => {
+        if (selectedPreferences.length === 0) return true;
+        return selectedPreferences.every(pref =>
+            room.serviziTags?.some(t => t.toLowerCase().includes(pref.toLowerCase())) ||
+            room.serviziInclusi?.some(t => t.toLowerCase().includes(pref.toLowerCase()))
+        );
+    });
+
+    return (
+        <div className='search-page-container'>
             <aside className='filters-sidebar'>
                 <h2>Filtri</h2>
 
                 <div className='filter-group'>
                     <label>Città o Quartiere</label>
                     <div className='input-with-icon'>
-                        <span className='input-icon'><MapPinHouse/></span>
-                        <input type='text' placeholder='Bari...'/>
+                        <span className='input-icon'><MapPinHouse /></span>
+                        <input type='text' placeholder='Bari...'
+                            value={filters.citta}
+                            onChange={e => setFilters(prev => ({ ...prev, citta: e.target.value }))} />
                     </div>
                 </div>
 
                 <div className='filter-group'>
-                    <label>Università</label>
-                    <select defaultValue='all'>
-                        <option value='all'>Tutte le facoltà</option>
-                        <option value='ing'>Ingegneria</option>
-                        <option value='med'>Medicine</option>
-                        <option value='lav'>Lavoro</option>
-                    </select>
-                </div>
-
-                <div className='filter-group'>
-                    <label>Range di prezzo</label>
+                    <label>Range di prezzo (€/mese)</label>
                     <div className='price-range-inputs'>
-                        <input type='number' placeholder='Min'/>
+                        <input type='number' placeholder='Min'
+                            value={filters.prezzoMin}
+                            onChange={e => setFilters(prev => ({ ...prev, prezzoMin: e.target.value }))} />
                         <span className='range-divider'>-</span>
-                        <input type='number' placeholder='Max'/>
+                        <input type='number' placeholder='Max'
+                            value={filters.prezzoMax}
+                            onChange={e => setFilters(prev => ({ ...prev, prezzoMax: e.target.value }))} />
                     </div>
                 </div>
 
                 <div className='filter-group'>
-                    <label>Preferenza Coinquilini</label>
+                    <label>Preferenza Servizi</label>
                     <div className='preferences-tag'>
-                        <button className={`pref-tag ${selectedPreferences.includes('Non fumatori') ? 'active': ''}`} onClick={()=>togglePreference('Non fumatori')}>Non fumatori</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Pet-friendly') ? 'active': ''}`} onClick={()=>togglePreference('Pet-frindly')}>Pet-friendly</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Sileziosi') ? 'active':''}`} onClick={()=>togglePreference('Silenziosi')}>Silenziosi</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Studenti') ? 'active':''} `} onClick={()=> togglePreference('Studenti')}>Studenti</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Lavoratori') ? 'active': ''}`} onClick={()=> togglePreference('Lavoratori')}>Lavoratori</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Non coppie') ? 'active': ''}`} onClick={()=> togglePreference('Non coppie')}>Non coppie</button>
+                        {['Non fumatore', 'Pet friendly', 'Tranquillo', 'Aria Condizionata', 'Terrazzo', 'Luminoso'].map(pref => (
+                            <button key={pref}
+                                className={`pref-tag ${selectedPreferences.includes(pref) ? 'active' : ''}`}
+                                onClick={() => togglePreference(pref)}>
+                                {pref}
+                            </button>
+                        ))}
                     </div>
                 </div>
-                
-                <button className='btn-apply-filters' onClick={handleApplyFilters}>Applica filtri</button>
+
+                <button className='btn-apply-filters' onClick={fetchRooms}>
+                    <SlidersHorizontal size={15} /> Applica filtri
+                </button>
             </aside>
 
             <main className='results-container'>
-                <header className='results-container'>
+                <header className='results-header'>
                     <div className='header-left'>
-                        <h1>Stanza disponibile</h1>
-                        <p className='results-count'>Trova match con il tuo profilo</p>
-                    </div>
-                    <div className='header-right'>
-                        <span>Ordina per:</span>
-                        <select className='sort-select'>
-                            <option>Punteggio compatibile</option>
-                            <option>Prezzo: Crescente</option>
-                            <option>Prezzo: Descrescente</option>
-                        </select>
+                        <h1>Stanze disponibili</h1>
+                        <p className='results-count'>
+                            {loading ? 'Caricamento...' : `${roomsFiltrate.length} stanz${roomsFiltrate.length === 1 ? 'a trovata' : 'e trovate'}`}
+                        </p>
                     </div>
                 </header>
 
-                <div className='rooms-grid'>
-                    {ROOMS_DATA.map((room)=>(
-                        <div key={room.id} className='room-card'>
-                            <div className='room-image-wrapper'>
-                                <img src={room.image} alt={room.title} className='room-img'/>
-                                <span className='match-badge'><Zap/>{room.match}% Match</span>
-                            </div>
-                        
-                            <div className='room-card-content'>
-                                <div className='room-card-main-info'>
-                                    <div className='title-and-geo'>
-                                        <h3>{room.title}</h3>
-                                        <p className='room-location'><MapPinHouse/>{room.location}</p>
-                                    </div>
-                                    <div className='room-price-box'>
-                                        <span className='price-amount'> €{room.price}</span>
-                                        <span claaName='price-period'>/mese</span>
-                                    </div>
+                {loading ? (
+                    <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>Caricamento stanze...</div>
+                ) : roomsFiltrate.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '3rem', color: '#888' }}>
+                        <h3>Nessuna stanza trovata</h3>
+                        <p>Prova a cambiare i filtri di ricerca.</p>
+                    </div>
+                ) : (
+                    <div className='rooms-grid'>
+                        {roomsFiltrate.map((room) => (
+                            <div key={room._id} className='room-card'>
+                                <div className='room-image-wrapper'>
+                                    <img
+                                        src={room.immagineUrl || 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=500&q=80'}
+                                        alt={room.titolo}
+                                        className='room-img'
+                                    />
+                                    {room.postiLettoDisponibili > 0 && (
+                                        <span className='match-badge'><Zap /> Disponibile</span>
+                                    )}
                                 </div>
 
-                                <div className='room-tags-container'>
-                                    {room.tags.map((tag, idx)=>(
-                                        <span key={idx} className='room-spec-tag'>{tag}</span>
-                                    ))}
-                                </div>
-                                <button className='btn-view-details' onClick={()=>  navigate('/dettagli')}>Maggiori dettagli</button>
-                            </div>
-                        </div> 
-                    ))}
-                </div>
+                                <div className='room-card-content'>
+                                    <div className='room-card-main-info'>
+                                        <div className='title-and-geo'>
+                                            <h3>{room.titolo}</h3>
+                                            <p className='room-location'>
+                                                <MapPinHouse /> {room.citta} — {room.indirizzo}
+                                            </p>
+                                        </div>
+                                        <div className='room-price-box'>
+                                            <span className='price-amount'>€{room.prezzo}</span>
+                                            <span className='price-period'>/mese</span>
+                                        </div>
+                                    </div>
 
-                <footer className="pagination-container">
-                    <button className="pag-btn" onClick={()=> setCurrentPage(prev => Math.max(prev-1,1))}>‹</button>
-                    <button className={`pag-btn ${currentPage=== 1 ? 'active':""}`} onClick={()=> setCurrentPage(1)}>1</button>
-                    <button className={`pag-btn ${currentPage ===2 ? 'active': ''}`} onClick={()=> setCurrentPage(2)}>2</button>
-                    <button className={`pag-btn ${currentPage === 3 ? 'active': ''}`} onClick={()=> setCurrentPage(3)}>3</button>
-                    <button className='pag-btn' onClick={()=> setCurrentPage(prev=>Math.min(prev+1,3))}>›</button>
-                </footer>
-            </main>    
+                                    <div className='room-tags-container'>
+                                        {[...(room.serviziTags || []), ...(room.serviziInclusi || [])].slice(0, 3).map((tag, idx) => (
+                                            <span key={idx} className='room-spec-tag'>{tag}</span>
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        className='btn-view-details'
+                                        onClick={() => navigate(`/dettagli/${room._id}`)}>
+                                        Maggiori dettagli
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </main>
         </div>
     );
 }

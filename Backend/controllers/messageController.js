@@ -1,85 +1,64 @@
-const express = require('express');
-const User = require('../models/User');
 const mongoose = require('mongoose');
+const User = require('../models/User');
 const Message = require('../models/Message');
-
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const validateObjectId = (id, campo) => {
-    if (!id) {
-        throw { status: 400, message: `${campo} mancante.` };
-    }
-    if (!isValidObjectId(id)) {
-        throw { status: 400, message: `${campo} non è un ObjectId valido: ${id}` };
-    }
+    if (!id) throw { status: 400, message: `${campo} mancante.` };
+    if (!isValidObjectId(id)) throw { status: 400, message: `${campo} non è un ObjectId valido: ${id}` };
     return id;
 };
 
-//controllare gedione authMiddleware
+// INVIA MESSAGGIO
 async function createMessage(req, res) {
-try {
-        const { mittente, destinatario, destinatarioId, testo } = req.body;
+    try {
+        const { destinatarioId, testo } = req.body;
 
-        // Validazione semplice: preferiamo ricevere direttamente gli ObjectId
-        if (!testo || (!destinatarioId && !destinatario)) {
+        if (!testo || !destinatarioId) {
             return res.status(400).json({
-                errore: 'Il testo e il destinatario (ID o nome/email) sono obbligatori.' });
+                errore: 'Il testo e il destinatario (ID) sono obbligatori.'
+            });
         }
 
-        const resolveUserId = async (valore, ruoloCampo) => {
-            if (!valore) {
-                throw new Error(`Valore mancante per ${ruoloCampo}`);
-            }
+        try {
+            validateObjectId(destinatarioId, 'destinatarioId');
+        } catch (erroreVal) {
+            return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
+        }
 
-            if (mongoose.Types.ObjectId.isValid(valore)) {
-                const user = await User.findById(valore);
-                if (user) return user._id;
-            }
-
-            const user = await User.findOne({ nome: valore });
-            if (user) return user._id;
-
-            const userByEmail = await User.findOne({ email: valore.toLowerCase().trim() });
-            if (userByEmail) return userByEmail._id;
-
-            throw new Error(`Utente non trovato per ${ruoloCampo}: ${valore}`);
-        };
-
-        // Il mittente è ricavato in modo sicuro dall'utente autenticato (dal token)
         const mittenteObjectId = req.user.id;
 
-        const destinatarioObjectId = destinatarioId || await resolveUserId(destinatario, 'destinatario');
+        // Verifica che il destinatario esista
+        const destinatario = await User.findById(destinatarioId);
+        if (!destinatario) {
+            return res.status(404).json({ errore: 'Destinatario non trovato.' });
+        }
 
         const nuovoMessaggio = new Message({
             mittente: mittenteObjectId,
-            destinatario: destinatarioObjectId,
+            destinatario: destinatarioId,
             testo
         });
 
         const messaggioSalvato = await nuovoMessaggio.save();
+        const messaggioPopolato = await messaggioSalvato.populate('mittente destinatario', 'nome cognome email');
 
-        // Popoliamo i dettagli essenziali dei profili per l'output frontend
-        const messaggioPopolato = await messaggioSalvato
-            .populate('mittente destinatario', 'nome email');
+        res.status(201).json({
+            success: true,
+            dati: messaggioPopolato
+        });
 
-        res.status(201).json(messaggioPopolato);
-    
     } catch (errore) {
         console.error("Errore nel salvataggio del messaggio:", errore.message);
-
-        if (errore.message.startsWith('Utente non trovato per')) {
-            return res.status(404).json({ errore: errore.message });
-        }
-
-        res.status(500).json({ errore: "Impossibile inviare il messaggio."});
+        res.status(500).json({ errore: "Impossibile inviare il messaggio." });
     }
 }
 
+// STORICO MESSAGGI CON UN UTENTE SPECIFICO
 async function getMessages(req, res) {
-try {
-        // Leggiamo l'ID dal token JWT decodificato (req.user.id), o facciamo fallback sul parametro query "mioId"
-        const mioId = req.user?.id || req.query.mioId;
+    try {
+        const mioId = req.user.id;
         const conChiId = req.params.conChiId;
 
         try {
@@ -89,20 +68,16 @@ try {
             return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
-        // Vogliamo trovare i messaggi in cui:
-        // (Io sono il mittente E l'altro è il destinatario) 
-        // OPPURE (L'altro è il mittente E io sono il destinatario)
         const storicoChat = await Message.find({
             $or: [
-                { mittente: mioId, destinatario: conChiId},
-                { mittente: conChiId, destinatario: mioId}
+                { mittente: mioId, destinatario: conChiId },
+                { mittente: conChiId, destinatario: mioId }
             ]
         })
-        .sort({ createdAt: 1}) // Ordinamento cronologico dal più vecchio al più recente
-        .populate('mittente destinatario', 'nome');
+        .sort({ createdAt: 1 })
+        .populate('mittente destinatario', 'nome cognome');
 
-        res.status(200).json(storicoChat)
-
+        res.status(200).json(storicoChat);
 
     } catch (errore) {
         console.error("Errore nel recupero della chat:", errore.message);
@@ -110,10 +85,102 @@ try {
     }
 }
 
+// LISTA CONVERSAZIONI — mostra solo chi ha scritto o ricevuto messaggi dall'utente loggato
+async function getConversations(req, res) {
+    try {
+        const mioId = new mongoose.Types.ObjectId(req.user.id);
+
+        // Trova tutti i messaggi in cui sono coinvolto
+        const messaggi = await Message.find({
+            $or: [{ mittente: mioId }, { destinatario: mioId }]
+        })
+        .sort({ createdAt: -1 })
+        .populate('mittente', 'nome cognome email')
+        .populate('destinatario', 'nome cognome email');
+
+        // Raccoglie gli interlocutori unici con l'ultimo messaggio
+        const interlocutoriMap = {};
+        messaggi.forEach(msg => {
+            const altroUtente = msg.mittente._id.toString() === req.user.id
+                ? msg.destinatario
+                : msg.mittente;
+
+            const uid = altroUtente._id.toString();
+            if (!interlocutoriMap[uid]) {
+                interlocutoriMap[uid] = {
+                    utente: altroUtente,
+                    ultimoMessaggio: msg.testo,
+                    ultimoOrario: msg.createdAt,
+                    nonLetti: 0
+                };
+            }
+        });
+
+        // Conta i non letti per ogni interlocutore
+        for (const uid of Object.keys(interlocutoriMap)) {
+            const count = await Message.countDocuments({
+                mittente: uid,
+                destinatario: mioId,
+                letto: false
+            });
+            interlocutoriMap[uid].nonLetti = count;
+        }
+
+        res.status(200).json({
+            success: true,
+            dati: Object.values(interlocutoriMap)
+        });
+
+    } catch (errore) {
+        console.error("Errore nel recupero delle conversazioni:", errore.message);
+        res.status(500).json({ errore: "Errore nel caricamento delle conversazioni." });
+    }
+}
+
+// MESSAGGI NON LETTI — per le notifiche nella campana
+async function getUnread(req, res) {
+    try {
+        const mioId = req.user.id;
+
+        const nonLetti = await Message.find({
+            destinatario: mioId,
+            letto: false
+        })
+        .populate('mittente', 'nome cognome email')
+        .sort({ createdAt: -1 });
+
+        // Raggruppa per mittente per evitare duplicati
+        const mittenteMap = {};
+        nonLetti.forEach(msg => {
+            const uid = msg.mittente._id.toString();
+            if (!mittenteMap[uid]) {
+                mittenteMap[uid] = {
+                    mittente: msg.mittente,
+                    ultimoMessaggio: msg.testo,
+                    ultimoOrario: msg.createdAt,
+                    count: 0
+                };
+            }
+            mittenteMap[uid].count++;
+        });
+
+        res.status(200).json({
+            success: true,
+            dati: Object.values(mittenteMap),
+            totalCount: nonLetti.length
+        });
+
+    } catch (errore) {
+        console.error("Errore nel recupero dei messaggi non letti:", errore.message);
+        res.status(500).json({ errore: "Errore nel caricamento delle notifiche." });
+    }
+}
+
+// SEGNA MESSAGGI COME LETTI
 async function updateMessage(req, res) {
-    try{
-        const mioId = req.user?.id || req.body.mioId || req.body.id; // ID dell'utente che sta leggendo la chat
-        const mittenteId = req.params.mittenteId; // ID di chi ha inviato i messaggi
+    try {
+        const mioId = req.user.id;
+        const mittenteId = req.params.mittenteId;
 
         try {
             validateObjectId(mioId, 'mioId');
@@ -122,9 +189,8 @@ async function updateMessage(req, res) {
             return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
-        // Aggiorna in massa tutti i messaggi letti inviato dall'altro utente verso di me
         const risultato = await Message.updateMany(
-            { mittente: mittenteId, destinatario: mioId, letto: false},
+            { mittente: mittenteId, destinatario: mioId, letto: false },
             { $set: { letto: true } }
         );
 
@@ -132,15 +198,16 @@ async function updateMessage(req, res) {
             messaggio: "Messaggi segnati come letti con successo.",
             messaggiAggiornati: risultato.modifiedCount
         });
+
     } catch (errore) {
         console.error("Errore nell'aggiornamento dello stato di lettura:", errore.message);
-        res.status(500).json({ errore: "Impossibile aggiornare lo stato di lettura."});
+        res.status(500).json({ errore: "Impossibile aggiornare lo stato di lettura." });
     }
 }
 
+// ELIMINA MESSAGGIO
 async function deleteMessage(req, res) {
     try {
-        // Recuperiamo l'id del messaggio dai parametri dell'URL
         const messaggioId = req.params.id;
 
         try {
@@ -149,20 +216,15 @@ async function deleteMessage(req, res) {
             return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
-        // Recuperiamo il messaggio per verificare chi lo ha inviato
-        const messaggio = await
-        Message.findById(messaggioId);
-        // la delate avviene dopo la verifica che l'utente loggato abbia inviato il messaggio
+        const messaggio = await Message.findById(messaggioId);
 
-        // Se il messaggio non esiste (o è stato già eliminato), rispondiamo con not found
-        if (!messaggio){
+        if (!messaggio) {
             return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile eliminare: messaggio non trovato"
             });
         }
 
-        // Verifica che lutente loggato sia colui che ha inviato il messaggio
         if (messaggio.mittente.toString() !== req.user.id) {
             return res.status(403).json({
                 success: false,
@@ -170,15 +232,14 @@ async function deleteMessage(req, res) {
             });
         }
 
-        // Esegui la cancellazione
         await Message.findByIdAndDelete(messaggioId);
 
-        // Messaggio eliminato con successo
         return res.status(200).json({
             success: true,
             messaggio: "Messaggio eliminato con successo",
             idEliminato: messaggioId
         });
+
     } catch (errore) {
         console.error("Errore nella cancellazione del messaggio:", errore.message);
         return res.status(500).json({
@@ -190,8 +251,10 @@ async function deleteMessage(req, res) {
 }
 
 module.exports = {
-    createMessage, 
+    createMessage,
     getMessages,
+    getConversations,
+    getUnread,
     updateMessage,
     deleteMessage
-}
+};

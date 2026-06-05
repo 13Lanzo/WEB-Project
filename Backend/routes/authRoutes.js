@@ -1,33 +1,15 @@
-/* routes/auth.js
-
-// 1. REGISTRAZIONE UTENTE -> POST /api/auth/register
-router.post('/register', async (req, res) => { ... });
-
-// 2. LOGIN UTENTE -> POST /api/auth/login
-router.post('/login', async (req, res) => { ... });
-
-// 3. LOGOUT UTENTE -> POST /api/auth/logout
-router.post('/logout', (req, res) => {
-    // Se usi i cookie sicuri httpOnly per salvare il JWT, qui li cancelli:
-    // res.clearCookie('token');
-    
-    res.status(200).json({ 
-        messaggio: "Logout effettuato con successo. Sessione terminata." 
-    });
-});*/
-
-
-
-//(La rotta Express per la registrazione)
-// Questo file gestirà l'endpoint HTTP POST che il frontend React chiamerà per registrare un nuovo utente.
-
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/authController');
+const verificaToken = require('../middleware/authMiddleware');
 
-//Metodo POST per la registrazione di un nuovo utente
+// POST /api/auth/register — Registrazione
 router.post('/register', AuthController.register);
- 
+
+// POST /api/auth/login — Login
 router.post('/login', AuthController.login);
+
+// GET /api/auth/me — Dati utente loggato (richiede token)
+router.get('/me', verificaToken, AuthController.getMe);
 
 module.exports = router;

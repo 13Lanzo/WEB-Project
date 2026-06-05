@@ -1,23 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const verificaToken = require('../middleware/authMiddleware');
+const soloProprietario = require('../middleware/roleMiddleware');
 const RoomsController = require('../controllers/roomsController');
 
-// 1. CREA ANNUNCIO STANZA (CREATE) -> POST /api/rooms
-router.post('/:id/rooms', verificaToken, RoomsController.createStanza);
+// GET /api/rooms — Tutte le stanze disponibili (pubblico, con filtri)
+router.get('/', RoomsController.getStanze);
 
-// 2. RECUPERA TUTTI GLI ANNUNCI (READ) -> GET / (Bacheca con filtri filtri prezzo/città)
+// GET /api/rooms/mine — Solo le stanze del proprietario loggato
+router.get('/mine', verificaToken, soloProprietario, RoomsController.getMyStanze);
 
-router.get('/rooms', RoomsController.getStanze);
+// GET /api/rooms/my-room — La stanza dell'inquilino loggato (se assegnata)
+router.get('/my-room', verificaToken, RoomsController.getMyRoom);
 
-// 3. DETTAGLIO singola STANZA SINGOLA (READ) -> GET /api/rooms/:id (Usa .populate('creatoDa'))
-router.get('/:id/rooms/:stanzaId', verificaToken, RoomsController.getStanza);
+// GET /api/rooms/:id — Dettaglio singola stanza
+router.get('/:id', RoomsController.getStanza);
 
+// POST /api/rooms — Crea annuncio (solo proprietari)
+router.post('/', verificaToken, soloProprietario, RoomsController.createStanza);
 
-// 4. MODIFICA ANNUNCIO (UPDATE) -> PUT /api/rooms/:id
-router.put('/:id/rooms/:stanzaId', verificaToken, RoomsController.updateStanza);
+// PUT /api/rooms/:id — Modifica annuncio (solo il proprietario della stanza)
+router.put('/:id', verificaToken, soloProprietario, RoomsController.updateStanza);
 
-// 5. CANCELLA ANNUNCIO (DELETE) -> DELETE /api/rooms/:id
-router.delete('/:id/rooms/:stanzaId', verificaToken, RoomsController.deleteStanza);
+// DELETE /api/rooms/:id — Elimina annuncio (solo il proprietario della stanza)
+router.delete('/:id', verificaToken, soloProprietario, RoomsController.deleteStanza);
 
 module.exports = router;

@@ -1,7 +1,3 @@
-// Questo modello definisce gli annunci delle stanze in affitto. 
-// Nota l'uso di mongoose.Schema.Types.ObjectId con il riferimento (ref) a User: 
-// serve a creare una relazione UML 1-a-Molti, 
-// legando indissolubilmente ogni stanza all'utente proprietario o coinquilino che l'ha pubblicata.
 const mongoose = require('mongoose');
 
 const RoomSchema = new mongoose.Schema({
@@ -18,32 +14,74 @@ const RoomSchema = new mongoose.Schema({
     prezzo: {
         type: Number,
         required: true,
-        min: 0 
+        min: 0
     },
     citta: {
         type: String,
         required: true,
         trim: true
-    }, 
+    },
     indirizzo: {
         type: String,
         required: true,
         trim: true
     },
-    // Relazione: Ogni stanza appartiene a un Utente specifico (Proprietario/Host)
+    superficie: {
+        type: Number,
+        default: 0
+    },
+    arredamento: {
+        type: String,
+        enum: ['Completo', 'Parziale', 'Vuoto'],
+        default: 'Completo'
+    },
+    postiLettoTotali: {
+        type: Number,
+        default: 1
+    },
+    postiLettoDisponibili: {
+        type: Number,
+        default: 1
+    },
+    disponibilita: {
+        type: String,
+        default: 'Immediata'
+    },
+    // URL immagine scelta dal proprietario (una delle 4 di default del frontend)
+    immagineUrl: {
+        type: String,
+        default: ''
+    },
+    // Relazione: ogni stanza appartiene a un proprietario
     creatoDa: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Riferisce al modello User per creare la relazione
+        ref: 'User',
         required: true
     },
+    // Servizi inclusi (es. Wi-Fi, Aria Condizionata)
     serviziInclusi: {
-        type: [String], // (es. "Wi-Fi", "Aria Condizionata")
+        type: [String],
+        default: []
+    },
+    // Tag caratteristiche (es. Non fumatore, Pet friendly)
+    serviziTags: {
+        type: [String],
+        default: []
+    },
+    // Utenti registrati sul sito che vivono nella stanza
+    inquiliniAssegnati: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    // Nomi fittizi di persone non registrate che vivono nella stanza
+    abitantiNonRegistrati: {
+        type: [String],
         default: []
     },
     disponibile: {
         type: Boolean,
         default: true
     }
-}, { timestamps: true }); // Aggiunge automaticamente createdAt e updatedAt nel database
+}, { timestamps: true });
 
 module.exports = mongoose.model('Room', RoomSchema);

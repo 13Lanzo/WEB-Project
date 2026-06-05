@@ -1,18 +1,3 @@
-// (Il modello Mongoose dell'utente)
-// //Questo file gestisce i profili degli studenti fuorisede o dei proprietari
-// e include l'array di stringhe per memorizzare i tag di preferenza (es. "non fumatore", "ordinato")
-// che serviranno per la logica di accoppiamento dei coinquilini.
-
-/* 🧠 Spiegazione della sintassi Mongoose (Fondamentale per l'orale)
-Se il Prof. Ferrara dovesse chiedervi all'orale o durante la discussione del codice: "Perché usate i Modelli se MongoDB è un database NoSQL senza schemi fissi?", la risposta consapevole da dare è:
-
-mongoose.Schema: Definisce la struttura logica del documento lato codice applicativo. Sebbene MongoDB sia flessibile e privo di schemi rigidi, Mongoose ci permette di applicare una validazione dei dati (come required: true o unique: true) prima che i dati vengano effettivamente inviati e scritti su MongoDB Atlas.
-
-timestamps: true: Genera automaticamente i campi createdAt e updatedAt. È utilissimo per ordinare gli annunci dei coinquilini dai più recenti ai più vecchi o per mostrare i messaggi della chat in ordine cronologico esatto.
-
-ref: 'User': Implementa i vincoli di integrità referenziale logica. Comunica a Mongoose che quel campo contiene l'ID di un documento presente nella collezione degli utenti, permettendoti in futuro di usare la funzione .populate() per recuperare con una sola riga di codice tutti i dettagli del proprietario (nome, email) quando visualizzi una stanza.
-*/
-
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
@@ -21,18 +6,18 @@ const UserSchema = new mongoose.Schema(
     nome: {
       type: String,
       required: true,
-      trim: true, // Rimuove spazi bianchi all'inizio e alla fine del nome
+      trim: true,
     },
     cognome: {
-        type: String,
-        required: true,
-        trim: true, 
+      type: String,
+      required: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true, // Converte l'email in minuscolo per evitare duplicati
+      lowercase: true,
       trim: true,
     },
     password: {
@@ -42,15 +27,19 @@ const UserSchema = new mongoose.Schema(
     eta: {
       type: Number,
       required: true,
-      min: 18, // Età minima per registrarsi
-      max: 100, // Età massima per registrarsi
-      // gestire l'errore in caso di età!
+      min: 18,
+      max: 100,
     },
     ruolo: {
       type: String,
       required: true,
-      enum: ["studente", "lavotatore", "proprietario"], // Accetta solo uno di questi  valori
-      default: "studente", // Se non specificato, assume che sia uno studente
+      enum: ["inquilino", "proprietario"],
+      default: "inquilino",
+    },
+    // Solo per inquilini: facoltà universitaria o tipo di impiego
+    facolta: {
+      type: String,
+      default: "",
     },
     tagPreferenze: {
       type: [String],
@@ -58,29 +47,27 @@ const UserSchema = new mongoose.Schema(
     },
     bio: {
       type: String,
-      maxlength: 500, // Limita la lunghezza della biografia
+      maxlength: 500,
+      default: "",
     },
   },
   {
-    timestamps: true, // Aggiunge automaticamente createdAt e updatedAt nel database
-  },
+    timestamps: true,
+  }
 );
 
-// Cifratura della password prima del salvataggio nel database
+// Cifratura della password prima del salvataggio
 UserSchema.pre("save", async function () {
-  // Esegui la cifratura solo se la password è stata modificata (o è nuova)
   if (!this.isModified("password")) return;
-
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    // genera hash diverse per utenti che hanno la stessa password
   } catch (err) {
     throw err;
   }
 });
 
-// Metodo di istanza per verificare la password inserita con quella cifrata
+// Metodo per verificare la password
 UserSchema.methods.comparePassword = async function (passwordInserita) {
   return await bcrypt.compare(passwordInserita, this.password);
 };
