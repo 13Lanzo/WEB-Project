@@ -8,7 +8,7 @@ const Footer= () => {
     <footer className='siteFooter'>
       <div className='footerContainer'>
         <div className='footerBrand'>
-          <h2 className='Title'>Tinder</h2>
+          <h2 className='Title'>Room4U</h2>
           <p className='brandText'>
             Piattaforma per trovare coinquilini più bella del west
           </p>
@@ -32,7 +32,7 @@ const Footer= () => {
         </div>
 
         <div className='footerCopyright'>
-          <p>&copy; {currentYear} Piattaforma Tinder. Migliora la ricerca della stanza perfetta.</p>
+          <p>&copy; {currentYear} Piattaform Room4U. Migliora la ricerca della stanza perfetta.</p>
         </div>
       </div>
     </footer>

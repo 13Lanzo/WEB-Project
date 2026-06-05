@@ -29,7 +29,7 @@ function App() {
       <Router>
         <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} onLogin={handleLogin}/>
         <Routes>
-          <Route path='/' element={<Home />}/>
+          <Route path='/' element={<Home isLoggedIn={isLoggedIn}/>}/>
 
           <Route path='/ricerca' element={<Ricerca />}/>
           <Route path='/profilo' element={<Profilo onLogout={()=>setIsLoggedIn(false)} />}/>

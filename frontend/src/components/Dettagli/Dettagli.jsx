@@ -51,13 +51,13 @@ export default function Dettagli({isLoggedIn}) {
                     <img src={tutteLeFoto[0]} alt="Detail 2"/>
                 </div>
                 <div className='sub-images'>
-                    <div className='sub-image'>
+                    <div className='sub-img'>
                         <img src={tutteLeFoto[1]} alt="Detail 1"/>
                     </div>
-                    <div className='sub-image'>
+                    <div className='sub-img'>
                         <img src={tutteLeFoto[2]} alt="Detail 2"/>
                     </div>
-                    <div className='sub-image relative-box'>
+                    <div className='sub-img relative-box'>
                         <img src={tutteLeFoto[3]} alt="Detail 3"/>
                         <button className='btn-all-photos' onClick={()=>setShowAllPhotos(true)}>Mostra tutto</button>
                     </div>
@@ -89,7 +89,7 @@ export default function Dettagli({isLoggedIn}) {
                 <main className='room-main-info'>
                     <div className='title-header-box'>
                         <div>
-                            <h1>{roomData.title}</h1>
+                            <h1 className='room-main-info'>{roomData.title}</h1>
                             <p className='geo-location'><MapPinHouse/>{roomData.location}</p>
                             <div className='match-score-badge'>
                                 <span className='checkmark'><Check/></span>{roomData.matchScore}% Affinità con il tuo modo di vivere
