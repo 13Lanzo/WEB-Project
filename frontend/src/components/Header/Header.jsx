@@ -17,6 +17,8 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [password, setPassword]=useState('');
     const [confirmPassword, setConfirmPassword]=useState('');
     const [errorMessage, setErrorMessage]= useState('');
+    const [bio, setBio]=useState('');
+    const [eta, setEta]=useState('');
     const LoginGoogle =()=>{
         window.open('https://www.google.com');
     };
@@ -112,6 +114,16 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                                 </select>
                             </div>
                             )}
+                            </div>
+
+                            <div className='form-group'>
+                                <label className='fomr-label'>Età</label>
+                                <input type='number' min='0' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=> setEta(e.target.value)} required/>
+                            </div>
+
+                            <div className='form-group'>
+                                <label className='form-label'>Bio</label>
+                                <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
                             </div>
                         </>
                     )}

@@ -87,6 +87,9 @@
   border: 1px solid #f1f5f9;
   box-sizing: border-box;
   flex-shrink: 0;
+  
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Contenitore e stile delle Tab superiori */
