@@ -83,7 +83,7 @@ async function updateUser(req, res) {
                 messaggio: "Non sei autorizzato ad aggiornare il profilo"
             });
         }
-        const {bio, tagPreferenze, facoltà}= req.body;
+        const {bio, tagPreferenze, facolta}= req.body;
         const updateData={};
         if(bio!=undefined) updateData.bio=bio;
         if(tagPreferenze !== undefined) updateData.tagPreferenze=tagPreferenze;

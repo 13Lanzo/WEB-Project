@@ -36,9 +36,25 @@ const RoomSchema = new mongoose.Schema({
         ref: 'User', // Riferisce al modello User per creare la relazione
         required: true
     },
-    disponibile: {
-        type: Boolean,
-        default: true
+    superficie:{
+        type: Number,
+        required: true
+    },
+    arredamento:{
+        type: Number,
+        required:true
+    },
+    postiLettoTotali:{
+        type: Number
+    },
+    postiLettoDisponibili:{
+        type: Number
+    },
+    inquiliniAssegnati:{
+        type: Number
+    },
+    inquiliniNonRegistrati:{
+        type: Number
     }
 }, { timestamps: true }); // Aggiunge automaticamente createdAt e updatedAt nel database
 

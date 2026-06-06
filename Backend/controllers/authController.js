@@ -76,7 +76,10 @@ try{
                 id: utente._id,
                 nome: utente.nome,
                 email: utente.email,
-                ruolo: utente.ruolo
+                ruolo: utente.ruolo,
+                cognome: utente.cognome,
+                bio: utente.bio,
+                tagPreferenze: utente.tagPreferenze
             }
         });
     } catch (err){

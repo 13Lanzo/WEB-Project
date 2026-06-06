@@ -49,8 +49,8 @@ const UserSchema = new mongoose.Schema(
     ruolo: {
       type: String,
       required: true,
-      enum: ["studente", "lavotatore", "proprietario"], // Accetta solo uno di questi  valori
-      default: "studente", // Se non specificato, assume che sia uno studente
+      enum: ["inquilino", "proprietario"], // Accetta solo uno di questi  valori
+      default: "inquilino", // Se non specificato, assume che sia uno studente
     },
     tagPreferenze: {
       type: [String],

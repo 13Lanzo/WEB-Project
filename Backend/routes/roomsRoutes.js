@@ -9,7 +9,7 @@ const soloProprietario =require('../middleware/roleMiddleware');
 router.get('/', RoomsController.getStanze);
 
 // prendiamo solo le stanze del proprietario loggato
-router.get('/mine',verificaToken, soloProprietario, RoomsController.getMyStanze);
+router.get('/mine',verificaToken, soloProprietario, RoomsController.getMyStanza);
 
 // prendiamo i dettagli della singola stanza
 router.get('/:id', verificaToken, RoomsController.getStanza);
