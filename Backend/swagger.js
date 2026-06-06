@@ -514,7 +514,7 @@ const swaggerOptions = {
             email: { type: "string" },
             eta: { type: "integer" },
             ruolo: { type: "string", enum: ["inquilino", "proprietario"] },
-            tagPreferenze: { type: "array", items: { type: "string" } },
+            tagPreferenze: { type: "array", items: { type: "string" }, example: ["ordinato", "non fumatore", "studente"]},
             bio: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" }
@@ -530,7 +530,6 @@ const swaggerOptions = {
             citta: { type: "string" },
             indirizzo: { type: "string" },
             creatoDa: { type: "string", description: "ID dell'utente proprietario" },
-            serviziInclusi: { type: "array", items: { type: "string" } },
             disponibile: { type: "boolean" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" }

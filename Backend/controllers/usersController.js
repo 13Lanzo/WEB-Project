@@ -83,7 +83,11 @@ async function updateUser(req, res) {
                 messaggio: "Non sei autorizzato ad aggiornare il profilo"
             });
         }
-
+        const {bio, tagPreferenze, facoltà}= req.body;
+        const updateData={};
+        if(bio!=undefined) updateData.bio=bio;
+        if(tagPreferenze !== undefined) updateData.tagPreferenze=tagPreferenze;
+        if(facolta!== undefined) updateData.facolta=facolta;
         // Escludiamo le password dall'aggiornamento generico del profilo
         delete req.body.password;
 

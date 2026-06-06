@@ -36,10 +36,6 @@ const RoomSchema = new mongoose.Schema({
         ref: 'User', // Riferisce al modello User per creare la relazione
         required: true
     },
-    serviziInclusi: {
-        type: [String], // (es. "Wi-Fi", "Aria Condizionata")
-        default: []
-    },
     disponibile: {
         type: Boolean,
         default: true

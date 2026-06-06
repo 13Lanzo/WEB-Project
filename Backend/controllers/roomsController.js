@@ -64,8 +64,7 @@ async function createStanza(req, res){
             messaggio: "Stanza creata con successo!",
             dati: stanzaSalvata
         });
-    }
-    catch (err) {
+    }catch (err) {
         res.status(500).json({
             success: false,
             messaggio: "Si è verificato un errore interno al server",
