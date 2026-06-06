@@ -7,4 +7,4 @@ const soloProprietario = (req, res, next)=>{
     }
     next();
 };
-GPUShaderModule.exports=soloProprietario;
+module.exports=soloProprietario;
