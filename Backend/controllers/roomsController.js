@@ -12,8 +12,6 @@ async function createStanza(req, res){
             arredamento, 
             postiLettoTotali, 
             postiLettoDisponibili, 
-            immagineUrl, 
-            serviziTags, 
             inquiliniAssegnati, 
             inquiliniNonRegistrati}=req.body;
 
@@ -54,8 +52,6 @@ async function createStanza(req, res){
             arredamento,
             postiLettoTotali,
             postiLettoDisponibili,
-            immagineUrl, //???
-            serviziTags,
             inquiliniAssegnati,
             inquiliniNonRegistrati
         });

@@ -513,7 +513,7 @@ const swaggerOptions = {
             cognome: { type: "string" },
             email: { type: "string" },
             eta: { type: "integer" },
-            ruolo: { type: "string", enum: ["studente", "lavoratore", "proprietario"] },
+            ruolo: { type: "string", enum: ["inquilino", "proprietario"] },
             tagPreferenze: { type: "array", items: { type: "string" } },
             bio: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
@@ -557,7 +557,7 @@ const swaggerOptions = {
             email: { type: "string", example: "giuseppe.test@poliba.it" },
             password: { type: "string", example: "PasswordSicura123" },
             eta: { type: "integer", example: 22 },
-            ruolo: { type: "string", enum: ["studente", "lavoratore", "proprietario"], example: "studente" },
+            ruolo: { type: "string", enum: ["inquilino", "proprietario"], example: "inquilino" },
             tagPreferenze: { type: "array", items: { type: "string" }, example: ["ordinato", "non-fumatore"] },
             bio: { type: "string", example: "Studente di Ingegneria Informatica." }
           }
