@@ -17,6 +17,39 @@ async function getAllUsers(req, res) {
     }
 }
 
+async function searchUsers(req, res) {
+    try{
+        const{q}= req.query;
+        if(!q){
+            return res.status(400).json({
+                success:false,
+                messaggio: 'Parametro di ricerca mancante.'
+            });
+        }
+        const regex =new RegExp(q,'i');
+        const utentiTrovati= await User.find({
+            ruolo: 'inquilino',
+            $or: [
+                {nome:{$regex: regex}},
+                {cognome: {$regex: regex}},
+                {email: {$regex: regex}}
+            ]
+        }).select('nome cognome email');
+        return res.status(200).json({
+            success:true,
+            dati: utentiTrovati
+        });
+    } catch (error) {
+        console.error('Errore nella ricerca utenti:', error.message);
+        res.status(500).json({
+            success:false,
+            messaggio: 'Si è verificato un errore durante la ricerca.',
+            dettaglio: error.message
+        });
+    }
+    
+}
+
 async function getUserById(req, res) {
     try {
         const utente = await User.findById(req.params.id).select('-password'); //escludiamo la password dalla risposta
@@ -116,5 +149,6 @@ module.exports = {
     getAllUsers,
     getUserById,
     updateUser,
+    searchUsers,
     deleteUser
 }
