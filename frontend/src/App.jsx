@@ -11,8 +11,7 @@ import Dettagli from './components/Dettagli/Dettagli';
 import Annunci from './components/Annunci/Annunci';
 import New from './components/New/New';
 import { useState } from 'react';
-//rendering per lo stato loggato o meno
-//ICONE: LUCIDE
+
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
   

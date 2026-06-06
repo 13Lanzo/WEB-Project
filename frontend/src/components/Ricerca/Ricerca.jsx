@@ -59,18 +59,8 @@ export default function Ricerca() {
                     <label>Città o Quartiere</label>
                     <div className='input-with-icon'>
                         <span className='input-icon'><MapPinHouse/></span>
-                        <input type='text' placeholder='Bari...'/>
+                        <input type='text' className='filters-sidebar' placeholder='Bari...'/>
                     </div>
-                </div>
-
-                <div className='filter-group'>
-                    <label>Università</label>
-                    <select defaultValue='all'>
-                        <option value='all'>Tutte le facoltà</option>
-                        <option value='ing'>Ingegneria</option>
-                        <option value='med'>Medicine</option>
-                        <option value='lav'>Lavoro</option>
-                    </select>
                 </div>
 
                 <div className='filter-group'>
@@ -84,10 +74,10 @@ export default function Ricerca() {
 
                 <div className='filter-group'>
                     <label>Preferenza Coinquilini</label>
-                    <div className='preferences-tag'>
+                    <div className='preferences-tags'>
                         <button className={`pref-tag ${selectedPreferences.includes('Non fumatori') ? 'active': ''}`} onClick={()=>togglePreference('Non fumatori')}>Non fumatori</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Pet-friendly') ? 'active': ''}`} onClick={()=>togglePreference('Pet-frindly')}>Pet-friendly</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Sileziosi') ? 'active':''}`} onClick={()=>togglePreference('Silenziosi')}>Silenziosi</button>
+                        <button className={`pref-tag ${selectedPreferences.includes('Pet-friendly') ? 'active': ''}`} onClick={()=>togglePreference('Pet-friendly')}>Pet-friendly</button>
+                        <button className={`pref-tag ${selectedPreferences.includes('Silenziosi') ? 'active': ''}`} onClick={()=>togglePreference('Silenziosi')}>Silenzioso</button>
                         <button className={`pref-tag ${selectedPreferences.includes('Studenti') ? 'active':''} `} onClick={()=> togglePreference('Studenti')}>Studenti</button>
                         <button className={`pref-tag ${selectedPreferences.includes('Lavoratori') ? 'active': ''}`} onClick={()=> togglePreference('Lavoratori')}>Lavoratori</button>
                         <button className={`pref-tag ${selectedPreferences.includes('Non coppie') ? 'active': ''}`} onClick={()=> togglePreference('Non coppie')}>Non coppie</button>
@@ -98,7 +88,7 @@ export default function Ricerca() {
             </aside>
 
             <main className='results-container'>
-                <header className='results-container'>
+                <header className='results-header'>
                     <div className='header-left'>
                         <h1>Stanza disponibile</h1>
                         <p className='results-count'>Trova match con il tuo profilo</p>
@@ -129,7 +119,7 @@ export default function Ricerca() {
                                     </div>
                                     <div className='room-price-box'>
                                         <span className='price-amount'> €{room.price}</span>
-                                        <span claaName='price-period'>/mese</span>
+                                        <span className='price-period'>/mese</span>
                                     </div>
                                 </div>
 

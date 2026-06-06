@@ -38,13 +38,15 @@ export default function Login({onLoginSuccess}) {
                 return;
             }  
             alert('Profilo creato con successo!!');
-            onLoginSuccess();
             navigate('/profilo');
+            onLoginSuccess();
+           
             //credenziali fittizie da eliminare  
         } else{
             if(email=== EMAIL && password===PW){
-                onLoginSuccess();
                 navigate('/profilo');
+                onLoginSuccess();
+                
             }else{
                 setErrorMessage('Email o password errate. Riprova!');
             }
