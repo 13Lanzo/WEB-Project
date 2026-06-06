@@ -2,49 +2,69 @@ import './Chat.css'
 import { useEffect, useState } from 'react'
 import {User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis  } from 'lucide-react'
 import io from 'socket.io-client'
+//import axios from 'axios';
 
-const myRandomId =Math.floor(Math.random()*1000).toString();
+//const myRandomId =Math.floor(Math.random()*1000).toString();
 const socket=io.connect('http://localhost:5000');
 
-export default function Chat() {
+export default function Chat({currentUser, aperturaDirettaConChi = null, aperturaDirettaNome = ""}) {
     const [message, setMessage]=useState('');
     //salvataggio messaggi veri
     const [messageList, setMessageList]=useState([]);
+    //salviamo tutte le persone con cui ho una chat attiva (per riempire la sidebar)
+    const [conversations, setConversations]=useState([]);
+    //memoriziamo l'id della persona con cui sto parlando in questo momento
+    const [attivoConChiId, setAttivoConChiId]=useState(aperturaDirettaConChi);
+    //memorizziamo il nome della persona con cui sto parlado
+    const [nomeContattoCorrente, setNomeContattoCorrente]=useState(aperturaDirettaNome);
 
-    const [contacts, setContacts] = useState([
-    { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-    ]);
-
-    const updateLastMessage=(newText, newTime)=>{
-            setContacts(prevContacts =>
-                prevContacts.map(contact=>{
-                    if (contact.active){
-                        return{...contact, lastMsg: newText, time: newTime};
-                    }
-                return contact;
-                })
-            );
-        };
-    //per ascoltare i messaggi in arrivo
+    //creiamo il nome del canale su cui comunicheremo, basato sui due id (ordinati per evitare duplicati)
+    const roomId = attivoConChiId ? [currentUser.id, attivoConChiId].sort().join('_'): null;
+    
+    //primo effect: registra l'utente sul server in tempo reale
     useEffect(()=>{
-        socket.on('ricevi_messaggio',(data)=>{
-            setMessageList((list)=>[...list,data]);
-            updateLastMessage(data.text, data.time);
+        if(currentUser?.id){
+            //dice al server Socket.io che siamo online
+            socket.emit('join_room', currentUser.id);
+            //avvia la funzione per caricare i contatti storici
+            //caricaConversazioni();
+        }
+    }, [currentUser?.id]);
+
+    //secondo effect: quando l'utente cambia contatto cliccando sulla sidebar, si sintonizza sulla nuova stanza
+
+    useEffect(()=>{
+        if(currentUser?.id && attivoConChiId && roomId){
+            //dice al server Socket.io che voglio ascoltare i messaggi di questa stanza
+            socket.emit('join_room', roomId);
+        }
+    }, [attivoConChiId, roomId, currentUser?.id]);
+
+    //terzo effect: resta in attesa h24 in ascolto dei messaggi che arrivano in tempo reale da Socket.io
+
+    useEffect(()=>{
+        socket.on('ricevi_messaggio', (data) => {
+            //verifichiamo che il messaggio ricevuto appartenga alla stanza attiva e lo mostriamo
+            if(data.roomId === roomId){
+                setMessageList((list)=>[...list, data]);
+            }
         });
-        return()=> socket.off('ricevi_messaggio')
-    }, []);
+        return()=>socket.off('ricevi_messaggio');
+    }, [roomId]);
+
 
     //per inviare messaggio
     const sendMessage= async()=>{
-        if(message!=='') {
-            const currentTime = new Date(Date.now()).getHours+':'+ new Date(Date.now().getMinutes());
+        if(message.trim() !== '' && attivoConChiId) {
+            //const currentTime = new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes();
             const messageData={
-                author: myRandomId,
-                text: message,
-                time: currentTime
+                roomId: roomId,
+                mittente: currentUser.id,
+                destinatario: attivoConChiId,
+                testo: message,
+                createdAt: new Date()
             };
             await socket.emit('invia_messaggio', messageData);
-            setMessageList((list)=>[...list, messageData]);
             setMessageList((list)=>[...list, messageData]);
             setMessage('');
         }
@@ -63,28 +83,48 @@ export default function Chat() {
                     </div>
                     
                     <div className='constacts-list'>
-                        {contacts.map(contact =>(
-                            <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`}>
-                                <div className='avatar-small'><User size={40}/></div>
-                                <div className='contact-info'>
-                                    <div className='contact-top'>
-                                        <span className='contact-name'>{contact.name}</span>
-                                        <span className='contact-time'>{contact.time}</span>
+                        {/* MODIFICA: Cicliamo l'array dinamico conversations inviato dal backend */}
+                        {conversations.map((conv) => {
+                            // Estraiamo i dati dell'utente con cui stiamo parlando
+                            const altroUtente = conv.partecipante || { nome: "Utente", cognome: "" };
+                            const isActive = altroUtente._id === attivoConChiId;
+
+                            return (
+                                <div 
+                                    key={conv._id} 
+                                    className={`contact-item ${isActive ? 'active' : ''}`}
+                                    onClick={() => {
+                                        // Quando clicchi un utente, salvi il suo ID e il suo Nome a schermo
+                                        setAttivoConChiId(altroUtente._id);
+                                        setNomeContattoCorrente(`${altroUtente.nome} ${altroUtente.cognome}`);
+                                    }}
+                                >
+                                    <div className='avatar-small'><User size={40}/></div>
+                                    <div className='contact-info'>
+                                        <div className='contact-top'>
+                                            <span className='contact-name'>{altroUtente.nome} {altroUtente.cognome}</span>
+                                            <span className='contact-time'>
+                                                {conv.ultimoMessaggio?.createdAt 
+                                                    ? new Date(conv.ultimoMessaggio.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+                                                    : '10:00'}
+                                            </span>
+                                        </div>
+                                        <p className='contact-msg'>
+                                            {/* Mostra l'anteprima dell'ultimo messaggio reale */}
+                                            {conv.ultimoMessaggio?.testo || "Clicca per aprire la chat"}
+                                        </p>
                                     </div>
-                                    <p className='contact-msg'>{contact.lastMsg}</p>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </aside>
-
                 <main className='chat-main'>
                     <header className='chat-header'>
                         <div className='header-user'>
                             <div className='avatar-medium'><User size={40}/></div>
                             <div>
-                                {contacts.map(contact =>(
-                                    <h4>{contact.name}</h4>))};
+                                <h4>{nomeContattoCorrente}</h4>
                                 <span className='status'>Online</span>
                             </div>
                         </div>
@@ -98,12 +138,19 @@ export default function Chat() {
                     <div className='messages-area'>
                         <div className='date-separator'><span>Oggi</span></div>
                         {messageList.map((msgContent, index)=>{
-                            const isMe=msgContent.author===myRandomId;
+                            const mittenteId = msgContent.mittente?._id || msgContent.mittente;
+                            const isMe = mittenteId === currentUser?.id;
                             return(
                                 <div key={index} className={`msg-wrapper ${isMe ? 'sent' : 'received'}`}>{isMe && <div className='avatar-msg'><User/></div>}
                                     <div className='msg-bubble'>
-                                        <p>{msgContent.text}</p>
-                                        <span className='msg-time'>{msgContent.time} {isMe && <CheckCheck size={14}/>}</span>
+                                        {/*leggiamo .testo allineato al database*/}
+
+                                        <p>{msgContent.testo}</p>
+                                        <span className='msg-time'>
+                                            {/*sostituiamo il vecchio msgContent.time con la data reale convertita in orario*/}
+
+                                            {msgContent.createdAt ? new Date(msgContent.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}): ''}{isMe && <CheckCheck size={14} style={{marginLeft: '5px'}}/>}
+                                        </span>
                                     </div>
                                 </div>
                             );
