@@ -14,6 +14,7 @@ export default function Login({onLoginSuccess}) {
     const [errorMessage, setErrorMessage]= useState('');
     const [bio, setBio]=useState('');
     const [eta, setEta]=useState('');
+    const [tags, setTags]=useState([]);
     const LoginGoogle =()=>{
         window.open('https://www.google.com');
     };
@@ -25,6 +26,17 @@ export default function Login({onLoginSuccess}) {
     //credenziali fittizie per visualizzare frontend da eliminare
     const EMAIL='cioccafra@gmail.com';
     const PW='password5';
+
+    const handleCheckboxChange = (e) => {
+        const {value, checked} = e.target;
+        if(checked){
+            //se è spuntato aggiungo il tag alla lista 
+            setTags([...tags, value]);
+        } else {
+            //se viene tolta la spunto rimuovo il tag dalla lista
+            setTags(tags.filter((tag) => tag !== value));
+        }
+    }
     
     const handleSubmit = (e)=> {
         e.preventDefault();
@@ -142,6 +154,21 @@ export default function Login({onLoginSuccess}) {
                         <div className='form-group'>
                             <label className='form-label'>Bio</label>
                             <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
+                        </div>
+
+                        <div className='form-group checkboxes-wrapper'>
+                            <label className='form-label'>Tag e Preferenze</label>
+                            <div className='checkboxes-grid'>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Non-Fumatori' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Ordinato' checked={tags.includes('Ordinato')} onChange={handleCheckboxChange}/><span>Ordinato</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Disordinato' checked={tags.includes('Disordinato')} onChange={handleCheckboxChange}/><span>Disordinato</span>
+                                </label>
+                            </div>
                         </div>
                         </>
                     )}
