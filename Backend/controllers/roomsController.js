@@ -3,7 +3,19 @@ const Room = require('../models/Room');
 
 async function createStanza(req, res){
         try {
-        const { titolo, descrizione, prezzo, citta, indirizzo, serviziInclusi } = req.body;
+        const { titolo, 
+            descrizione, 
+            prezzo, 
+            citta, 
+            indirizzo, 
+            superficie, 
+            arredamento, 
+            postiLettoTotali, 
+            postiLettoDisponibili, 
+            immagineUrl, 
+            serviziTags, 
+            inquiliniAssegnati, 
+            inquiliniNonRegistrati}=req.body;
 
         const creatoDa = req.user.id;
 
@@ -38,7 +50,14 @@ async function createStanza(req, res){
             citta,
             indirizzo,
             creatoDa, 
-            serviziInclusi
+            superficie,
+            arredamento,
+            postiLettoTotali,
+            postiLettoDisponibili,
+            immagineUrl, //???
+            serviziTags,
+            inquiliniAssegnati,
+            inquiliniNonRegistrati
         });
 
         // 4. Salvataggio della stanza nel DB
@@ -158,6 +177,20 @@ async function updateStanza(req, res){
     }
 }
 
+async function getMyStanza(req, res) {
+    try{
+        const mieStanze= await Room.find({creatoDa: req.user.id}).populate('inquiliniAssegnati','nome cognome email');
+        return res.status(200).json({
+            success: true,
+            dati: mieStanze
+        });
+    } catch (errore){
+        console.error('Errore nel recupero delle stanze personali:', errore.message);
+        res.status(500).json({errore: 'Errore nel caricamento della tua area riservata.'});
+    }
+    
+}
+
 async function deleteStanza (req, res){
     try {
         //const stanzaCancellata = await Room.findByIdAndDelete(req.params.id);
@@ -194,6 +227,7 @@ module.exports = {
     createStanza,
     getStanze,
     getStanza,
+    getMyStanza,
     updateStanza,
     deleteStanza
 }
