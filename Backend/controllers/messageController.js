@@ -110,6 +110,47 @@ try {
     }
 }
 
+async function getConversations(req, res) {
+    try{
+        const mioId=req.user.id;
+        const messaggi =await Message.find({
+            $or: [{mittente:mioId},{destinatario:mioId}]
+        }).populate('mittente destinatario','nome cognome email');
+        const interlocutoriMap={}
+
+        messaggi.forEach(msg=>{
+            const altroUtente =msg.mittente._id.toString()===mioId ? msg.destinatario : msg.mittente;
+            if(altroUtente){
+                interlocutoriMap[altroUtente._id]=altroUtente;
+            }
+        });
+        res.status(200).json({
+            success:true,
+            dati: Object.values(interlocutoriMap)
+        });
+    } catch(errore){
+        console.error('Errore nel recupero conversazioni:', errore);
+        res.status(500).json({success: false, messaggio: 'Errore interno.'});
+    }
+    
+}
+
+async function getUnread(req, res) {
+    try{
+        const mioId =req.user.id;
+        const nonLetti = await Message.find({destinatario:mioId, letto:false}).populate('mittente', 'nome cognome');
+        res.status(200).json({
+            success:true,
+            dati:nonLetti,
+            count: nonLetti.length
+        });
+    } catch (errore){
+        console.error('Errore nel recupero notifiche:', errore);
+        res.status(500).json({success: false, messaggio: 'Errore interno.'});
+    }
+    
+}
+
 async function updateMessage(req, res) {
     try{
         const mioId = req.user?.id || req.body.mioId || req.body.id; // ID dell'utente che sta leggendo la chat
@@ -192,6 +233,8 @@ async function deleteMessage(req, res) {
 module.exports = {
     createMessage, 
     getMessages,
+    getConversations,
+    getUnread,
     updateMessage,
     deleteMessage
 }
