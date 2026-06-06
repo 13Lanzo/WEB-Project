@@ -8,9 +8,6 @@
   box-sizing: border-box;
 }
 
-/* ==========================================
-   SIDEBAR DEI FILTRI (SINISTRA)
-   ========================================== */
 .filters-sidebar {
   width: 280px;
   background-color: #ffffff;
