@@ -52,6 +52,10 @@ export default function Login({onLoginSuccess}) {
                 setErrorMessage('La password deve avere almeno 6 caratteri.');
                 return;
             }  
+            if(eta < 18){
+                setErrorMessage('Devi essere maggiorenne per registrarti.');
+                return;
+            }
             alert('Profilo creato con successo!!');
             navigate('/profilo');
             onLoginSuccess();
