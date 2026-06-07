@@ -182,11 +182,11 @@ export default function New() {
                             <div className="input-row-2">
                                 <div className="input-group">
                                     <label>Città</label>
-                                    <select name="città" value={formData.citta} onClick={handleChange} className="input-field">
-                                        <option value='Pavia'>Bari</option>
+                                    <select name="citta" value={formData.citta} onClick={handleChange} className="input-field">
+                                        <option value='Bari'>Bari</option>
                                         <option value="Milano">Milano</option>
                                         <option value="Torino">Torino</option>
-                                        <option value="Bari">Pavia</option>
+                                        <option value="Pavia">Pavia</option>
                                     </select>
                                 </div>
                                 <div className="input-group">
