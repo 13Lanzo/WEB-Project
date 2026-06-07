@@ -111,7 +111,7 @@ export default function New() {
     };
 
     // INVIO REALE DEI DATI AL BACKEND via POST /api/rooms
-    const handlePublish =(e)=>{
+    const handlePublish = async (e)=>{
         e.preventDefault();
 
         const payload = {
