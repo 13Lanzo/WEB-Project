@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom'
 import './Header.css'
 import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
 import { io } from 'socket.io-client'
+import axios from 'axios';
 
 const socket=io.connect('http://localhost:5000');
 
@@ -28,8 +29,6 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     };
 
     //credenziali fittizie per visualizzare frontend da eliminare
-    const EMAIL='cioccafra@gmail.com';
-    const PW='password5';
 
     const handleCheckboxChange = (e) => {
         const {value, checked} = e.target;
@@ -43,10 +42,10 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     }
     
     //controllo password
-    const handleSubmit = (e)=> {
+    const handleSubmit = async (e)=> {
         e.preventDefault();
         setErrorMessage('');
-
+    
         if(activeTab === 'registrati') {
             if(confirmPassword !== password){
                 setErrorMessage('Le password non coincidono. Riprova. ');
@@ -60,17 +59,62 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 setErrorMessage('Devi essere maggiorenne per registrarti.');
                 return;
             }
-            alert('Profilo creato con successo!!');
-            onLoginSuccess();
-            navigate('/profilo');
-            onClose();
-            //credenziali fittizie da eliminare  
+    
+            //logica registrazione
+    
+            try {
+                const payload = {
+                    name: name, 
+                    lastName: lastname,
+                    role: role,
+                    faculty: role === 'Inquilino' ? faculty: undefined,
+                    eta: eta,
+                    bio: bio,
+                    tagsPreferenziale: tags,
+                    email: email,
+                    password: password
+                };
+    
+                const response = await axios.post('http://localhost:5000/api/auth/register', payload);
+    
+                //se la registrazione va a buon fine, salvo il token e le info utente e reindirizzo alla pagina profilo
+    
+                if(response.data && response.data.token){
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+    
+                alert('Profilo creato con successo!!');
+                onLoginSuccess(response.data.user);   //aggiorno lo stato di autenticazione in App.jsx
+                navigate('/profilo'); 
+            } catch (err){
+                //in caso di errore catturiamo il messaggio ricevuto dal backend 
+                console.error('Errore durante la registrazione:', err);
+                const messaggioServer = err.response?.data?.message || 'Server irraggiungibile.';
+                setErrorMessage(messaggioServer);
+            }
+                
         } else{
-            if(email=== EMAIL && password===PW){
-                onLoginSuccess();
-                onClose();
-            }else{
-                setErrorMessage('Email o password errate. Riprova!');
+            //logica login
+    
+            try{
+                const payload = {
+                    email: email,
+                    password: password
+                };
+    
+                const response = await axios.post('http://localhost:5000/api/auth/login', payload);
+    
+                if(response.data && response.data.token){
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+    
+                onLoginSuccess(response.data.user); //passo le info utente a App.jsx per aggiornare stato
+                navigate('/profilo');
+            } catch (err) {
+                const messaggioServer = err.response?.data?.message || 'Server irraggiungibile.';
+                setErrorMessage(messaggioServer);
             }
         }
     };
@@ -239,7 +283,10 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
     useEffect(() => {
         socket.on('ricevi_messaggio', (data) => {
             // Quando arriva un messaggio, aggiorna la finestrina!
-            updateLastMessage(data.text, data.time);
+            const orarioArrivo = data.createdAt
+                ? new Date(data.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            updateLastMessage(data.testo, orarioArrivo);
         });
 
         // Pulisce l'ascolto se cambi pagina
@@ -258,7 +305,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                             <button className={`nav-item ${activeLink=== 'Scopri' ? 'active' :''}`} onClick={()=> {setActiveLink('Scopri'); navigate('/ricerca');}}>Scopri</button>  
                             <button className={`nav-item ${activeLink=== 'Messaggi'? 'active':''}`} onClick={()=> {setActiveLink('Messaggi'); navigate('/chat');}}>Messaggi</button>
                             <button className={`nav-item ${activeLink=== 'Profilo' ? 'active': ''}`} onClick={()=> {setActiveLink('Profilo'); navigate('/profilo');}}>Profilo</button>
-                            <button className={`nav-item ${activeLink=== 'New'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/area-riservata');}}>Annunci</button>
+                            <button className={`nav-item ${activeLink=== 'Annuncio'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/area-riservata');}}>Annunci</button>
                         </nav>
                         
                         <div className='logged-in-actions'>
