@@ -60,8 +60,7 @@ try {
         const messaggioSalvato = await nuovoMessaggio.save();
 
         // Popoliamo i dettagli essenziali dei profili per l'output frontend
-        const messaggioPopolato = await messaggioSalvato
-            .populate('mittente destinatario', 'nome email');
+        const messaggioPopolato = await messaggioSalvato.populate('mittente destinatario', 'nome email');
 
         res.status(201).json(messaggioPopolato);
     
@@ -181,7 +180,7 @@ async function updateMessage(req, res) {
 async function deleteMessage(req, res) {
     try {
         // Recuperiamo l'id del messaggio dai parametri dell'URL
-        const messaggioId = req.params.id;
+        const messaggioId = req.params.messaggioId;
 
         try {
             validateObjectId(messaggioId, 'id messaggio');

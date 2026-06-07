@@ -260,7 +260,6 @@ const swaggerOptions = {
           summary: 'Solo il proprietario può creare una nuova stanza',
           description: "creazione della stanza dopo la verifica che l'utente sia proprietario",
           security: [{ bearerAuth: [] }],
-          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
           requestBody:{
             required:true,
             content:{
@@ -284,11 +283,13 @@ const swaggerOptions = {
                   }
                 }
               }
-        },
-          responses:{201: {description:'Stanza creata'}}
+            }
+          },
+          responses:{
+            201: {description:'Stanza creata'}
           }
-        }
-        },
+      }
+    },
       "/api/rooms/mine":{
         get:{
           tags:['RoomsController'],

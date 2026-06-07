@@ -3,19 +3,19 @@ const Room = require('../models/Room');
 
 async function createStanza(req, res){
         try {
-        const { titolo, 
-            descrizione, 
-            prezzo, 
-            citta, 
-            indirizzo, 
-            superficie, 
-            arredamento, 
-            disponibilita,
-            immagineURL,
-            postiLettoTotali, 
-            postiLettoDisponibili, 
-            inquiliniAssegnati, 
-            abitantiNonRegistrati}=req.body;
+            const { titolo, 
+                descrizione, 
+                prezzo, 
+                citta, 
+                indirizzo, 
+                superficie, 
+                arredamento, 
+                disponibilita,
+                immagineURL,
+                postiLettoTotali, 
+                postiLettoDisponibili, 
+                inquiliniAssegnati, 
+                abitantiNonRegistrati}=req.body;
 
         const creatoDa = req.user.id;
 
@@ -78,7 +78,7 @@ async function createStanza(req, res){
 
 async function getStanze (req, res){
     try {
-        // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350)
+        const queryFiltri = {};
         const { citta, prezzoMin, prezzoMax } = req.query;
 
         if (citta) {
@@ -176,7 +176,7 @@ async function updateStanza(req, res){
 
 async function getMyStanza(req, res) {
     try{
-        const mieStanze= await Room.find({creatoDa: req.user.id}).populate('inquiliniAssegnati','nome cognome email');
+        const mieStanze= await Room.find({creatoDa: req.user.id})
         return res.status(200).json({
             success: true,
             dati: mieStanze

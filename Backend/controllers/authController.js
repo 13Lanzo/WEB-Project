@@ -60,7 +60,7 @@ try{
 
         //creo le jwt
 
-        const payload = {id: utente._id};
+        const payload = {id: utente._id, ruolo: utente.ruolo};
 
         //firmiamo il toker
         const jwtSecretKey = process.env.JWT_SECRET; //prende la chiave segreta per cifrare il token dal file .env
