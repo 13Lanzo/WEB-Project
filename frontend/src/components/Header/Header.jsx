@@ -249,7 +249,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
     return (
         <div>
         <header className='site-header font-sans'>
-            <div className='header-logo'><HouseHeartIcon/></div>
+            <div className='header-logo' onClick={() => navigate('/')}><HouseHeartIcon/></div>
             
                 {/*rendering condizionale per vedere lo stato attivo del log*/}
                 {isLoggedIn ? (
@@ -258,7 +258,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                             <button className={`nav-item ${activeLink=== 'Scopri' ? 'active' :''}`} onClick={()=> {setActiveLink('Scopri'); navigate('/ricerca');}}>Scopri</button>  
                             <button className={`nav-item ${activeLink=== 'Messaggi'? 'active':''}`} onClick={()=> {setActiveLink('Messaggi'); navigate('/chat');}}>Messaggi</button>
                             <button className={`nav-item ${activeLink=== 'Profilo' ? 'active': ''}`} onClick={()=> {setActiveLink('Profilo'); navigate('/profilo');}}>Profilo</button>
-                            <button className={`nav-item ${activeLink=== 'New'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/annunci');}}>Annunci</button>
+                            <button className={`nav-item ${activeLink=== 'New'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/area-riservata');}}>Annunci</button>
                         </nav>
                         
                         <div className='logged-in-actions'>
