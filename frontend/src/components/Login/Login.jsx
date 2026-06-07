@@ -2,10 +2,10 @@ import './Login.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {CircleFadingPlus, GlobeCheck, CircleCheckBig } from 'lucide-react'
-//import axios from 'aixos';
+import axios from 'axios';
 
 export default function Login({onLoginSuccess}) {
-    const [activeTab, setActiveTab] = useState();
+    const [activeTab, setActiveTab] = useState('accedi');
     const navigate = useNavigate();
     const [name, setName]=useState('');
     const [lastname, setLastname]=useState('');
@@ -23,10 +23,7 @@ export default function Login({onLoginSuccess}) {
         window.open('https://www.instagram.com');
     };
     const [faculty, setFaculty]=useState('');
-    const [role, setRole]=useState('');
-    //credenziali fittizie per visualizzare frontend da eliminare
-    const EMAIL='cioccafra@gmail.com';
-    const PW='password5';
+    const [role, setRole]=useState('Inquilino');
 
     const handleCheckboxChange = (e) => {
         const {value, checked} = e.target;
@@ -39,7 +36,7 @@ export default function Login({onLoginSuccess}) {
         }
     }
     
-    const handleSubmit = (e)=> {
+    const handleSubmit = async (e)=> {
         e.preventDefault();
         setErrorMessage('');
 
@@ -56,18 +53,63 @@ export default function Login({onLoginSuccess}) {
                 setErrorMessage('Devi essere maggiorenne per registrarti.');
                 return;
             }
-            alert('Profilo creato con successo!!');
-            navigate('/profilo');
-            onLoginSuccess();
-           
+
+            //logica registrazione
+
+            try {
+                const payload = {
+                    name: name, 
+                    lastName: lastname,
+                    role: role,
+                    faculty: role === 'Inquilino' ? faculty: undefined,
+                    eta: eta,
+                    bio: bio,
+                    tagsPreferenziale: tags,
+                    email: email,
+                    password: password
+                };
+
+                const response = await axios.post('http://localhost:5000/api/auth/register', payload);
+
+                //se la registrazione va a buon fine, salvo il token e le info utente e reindirizzo alla pagina profilo
+
+                if(response.data && response.data.token){
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+
+                alert('Profilo creato con successo!!');
+                onLoginSuccess(response.data.user);   //aggiorno lo stato di autenticazione in App.jsx
+                navigate('/profilo'); 
+            } catch (err){
+                //in caso di errore catturiamo il messaggio ricevuto dal backend 
+                console.error('Errore durante la registrazione:', err);
+                const messaggioServer = err.response?.data?.message || 'Server irraggiungibile.';
+                setErrorMessage(messaggioServer);
+            }
+            
             //credenziali fittizie da eliminare  
         } else{
-            if(email=== EMAIL && password===PW){
+            //logica login
+
+            try{
+                const payload = {
+                    email: email,
+                    password: password
+                }
+
+                const response = await axios.post('http://localhost:5000/api/auth/login', payload);
+
+                if(response.data && response.data.token){
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+
+                onLoginSuccess(response.data.user); //passo le info utente a App.jsx per aggiornare stato
                 navigate('/profilo');
-                onLoginSuccess();
-                
-            }else{
-                setErrorMessage('Email o password errate. Riprova!');
+            } catch (err) {
+                const messaggioServer = err.response?.data?.message || 'Server irraggiungibile.';
+                setErrorMessage(messaggioServer);
             }
         }
     };
