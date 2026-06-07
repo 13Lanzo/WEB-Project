@@ -3,7 +3,19 @@ const Room = require('../models/Room');
 
 async function createStanza(req, res){
         try {
-        const { titolo, descrizione, prezzo, citta, indirizzo, serviziInclusi } = req.body;
+            const { titolo, 
+                descrizione, 
+                prezzo, 
+                citta, 
+                indirizzo, 
+                superficie, 
+                arredamento, 
+                disponibilita,
+                immagineURL,
+                postiLettoTotali, 
+                postiLettoDisponibili, 
+                inquiliniAssegnati, 
+                abitantiNonRegistrati}=req.body;
 
         const creatoDa = req.user.id;
 
@@ -38,7 +50,13 @@ async function createStanza(req, res){
             citta,
             indirizzo,
             creatoDa, 
-            serviziInclusi
+            superficie,
+            arredamento,
+            disponibilita,
+            postiLettoTotali,
+            postiLettoDisponibili,
+            inquiliniAssegnati,
+            abitantiNonRegistrati
         });
 
         // 4. Salvataggio della stanza nel DB
@@ -49,8 +67,7 @@ async function createStanza(req, res){
             messaggio: "Stanza creata con successo!",
             dati: stanzaSalvata
         });
-    }
-    catch (err) {
+    }catch (err) {
         res.status(500).json({
             success: false,
             messaggio: "Si è verificato un errore interno al server",
@@ -61,9 +78,8 @@ async function createStanza(req, res){
 
 async function getStanze (req, res){
     try {
-        // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350)
+        const queryFiltri = {};
         const { citta, prezzoMin, prezzoMax } = req.query;
-        let queryFiltri = {disponibile: true}; //mettiamo soltanto le stanze disponibili
 
         if (citta) {
             queryFiltri.citta = citta;
@@ -158,6 +174,20 @@ async function updateStanza(req, res){
     }
 }
 
+async function getMyStanza(req, res) {
+    try{
+        const mieStanze= await Room.find({creatoDa: req.user.id})
+        return res.status(200).json({
+            success: true,
+            dati: mieStanze
+        });
+    } catch (errore){
+        console.error('Errore nel recupero delle stanze personali:', errore.message);
+        res.status(500).json({errore: 'Errore nel caricamento della tua area riservata.'});
+    }
+    
+}
+
 async function deleteStanza (req, res){
     try {
         //const stanzaCancellata = await Room.findByIdAndDelete(req.params.id);
@@ -194,6 +224,7 @@ module.exports = {
     createStanza,
     getStanze,
     getStanza,
+    getMyStanza,
     updateStanza,
     deleteStanza
 }

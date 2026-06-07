@@ -36,14 +36,36 @@ const RoomSchema = new mongoose.Schema({
         ref: 'User', // Riferisce al modello User per creare la relazione
         required: true
     },
-    serviziInclusi: {
-        type: [String], // (es. "Wi-Fi", "Aria Condizionata")
+    superficie:{
+        type: Number,
+        required: true
+    },
+    arredamento:{
+        type: String,
+        required:true
+    },
+    disponibilita:{
+        type: String,
+        required:true
+    },
+    immagineUrl: {
+        type: String,
+        default: ''
+    },
+    postiLettoTotali:{
+        type: Number
+    },
+    postiLettoDisponibili:{
+        type: Number
+    },
+    inquiliniAssegnati: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    abitantiNonRegistrati: {
+        type: [String],
         default: []
     },
-    disponibile: {
-        type: Boolean,
-        default: true
-    }
 }, { timestamps: true }); // Aggiunge automaticamente createdAt e updatedAt nel database
 
 module.exports = mongoose.model('Room', RoomSchema);

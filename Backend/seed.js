@@ -255,8 +255,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Orazio Flacco 15",
                 creatoDa: proprietariCreati[0]._id, // Roberto Esposito
-                serviziInclusi: ["Wi-Fi", "Lavatrice", "Riscaldamento"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 1,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Posto Letto in Doppia - Zona Policlinico",
@@ -265,8 +269,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Orazio Flacco 15",
                 creatoDa: proprietariCreati[0]._id, // Roberto Esposito
-                serviziInclusi: ["Wi-Fi", "Lavatrice"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Nessuno",
+                postiLettoTotali: 2,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Accogliente Singola vicino Ateneo",
@@ -275,8 +283,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Nicolai 40",
                 creatoDa: proprietariCreati[1]._id, // Maria Romano
-                serviziInclusi: ["Wi-Fi", "Riscaldamento"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 3,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Camera Deluxe con bagno privato",
@@ -285,8 +297,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Corso Cavour 110",
                 creatoDa: proprietariCreati[2]._id, // Antonio Bruno
-                serviziInclusi: ["Wi-Fi", "Aria Condizionata", "TV"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 6,
+                postiLettoDisponibili: 3,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Singola per studentesse in appartamento condiviso",
@@ -295,8 +311,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Re David 120",
                 creatoDa: proprietariCreati[3]._id, // Anna Gallo
-                serviziInclusi: ["Wi-Fi", "Balcone", "Lavatrice"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 2,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Stanza Moderna vicino Stazione Centrale",
@@ -305,8 +325,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Piazza Moro 5",
                 creatoDa: proprietariCreati[4]._id, // Luigi De Luca
-                serviziInclusi: ["Wi-Fi", "Aria Condizionata", "Ascensore"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 9,
+                postiLettoDisponibili: 6,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Camera Doppia spaziosa per studenti",
@@ -315,8 +339,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Piazza Moro 5",
                 creatoDa: proprietariCreati[4]._id, // Luigi De Luca
-                serviziInclusi: ["Wi-Fi", "Aria Condizionata"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 1,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Luminosa Singola in attico ristrutturato",
@@ -325,8 +353,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Dante 250",
                 creatoDa: proprietariCreati[5]._id, // Elena Costa
-                serviziInclusi: ["Wi-Fi", "Terrazzo", "Lavastoviglie"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 5,
+                postiLettoDisponibili: 4,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Stanza singola silenziosa per studio",
@@ -335,8 +367,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Fanelli 200",
                 creatoDa: proprietariCreati[6]._id, // Francesco Giordano
-                serviziInclusi: ["Wi-Fi", "Riscaldamento"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 3,
+                postiLettoDisponibili: 3,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Camera confortevole in zona Carrassi",
@@ -345,8 +381,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Giulio Petroni 80",
                 creatoDa: proprietariCreati[7]._id, // Lucia Rizzo
-                serviziInclusi: ["Wi-Fi", "Ascensore", "Balcone"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 1,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Monolocale indipendente per studenti/ricercatori",
@@ -355,8 +395,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Amendola 150",
                 creatoDa: proprietariCreati[8]._id, // Salvatore Barbieri
-                serviziInclusi: ["Wi-Fi", "Aria Condizionata", "Cucina Privata"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 1,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             },
             {
                 titolo: "Elegante camera singola in centro",
@@ -365,8 +409,12 @@ async function seed() {
                 citta: "Bari",
                 indirizzo: "Via Putignani 30",
                 creatoDa: proprietariCreati[9]._id, // Caterina Fontana
-                serviziInclusi: ["Wi-Fi", "Riscaldamento Autonomo"],
-                disponibile: true
+                superficie: 20,
+                arredamento: "Completo",
+                postiLettoTotali: 1,
+                postiLettoDisponibili: 1,
+                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
+                abitantiNonRegistrati: []
             }
         ];
 
