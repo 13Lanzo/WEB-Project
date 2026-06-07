@@ -16,15 +16,15 @@ router.get('/conversations', verificaToken, MessageController.getConversations);
 router.get('/unread', verificaToken, MessageController.getUnread);
 
 //recupera tutti i messaggi nella chat
-router.get(':conChiId', verificaToken, MessageController.getMessages);
+router.get('/:conChiId', verificaToken, MessageController.getMessages);
 
-//apri una nuova conversazione
+//carica mex
 router.post('/', verificaToken,MessageController.createMessage);
 
 //segna come letti i messaggi ricevuti
 router.patch('/read/:mittenteId',verificaToken,MessageController.updateMessage);
 
-//elimina il messaggio ???
+//elimina il messaggio
 router.delete('/:messaggioId',verificaToken,MessageController.deleteMessage);
 
 module.exports = router;

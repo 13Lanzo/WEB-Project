@@ -10,10 +10,12 @@ async function createStanza(req, res){
             indirizzo, 
             superficie, 
             arredamento, 
+            disponibilita,
+            immagineURL,
             postiLettoTotali, 
             postiLettoDisponibili, 
             inquiliniAssegnati, 
-            inquiliniNonRegistrati}=req.body;
+            abitantiNonRegistrati}=req.body;
 
         const creatoDa = req.user.id;
 
@@ -50,10 +52,11 @@ async function createStanza(req, res){
             creatoDa, 
             superficie,
             arredamento,
+            disponibilita,
             postiLettoTotali,
             postiLettoDisponibili,
             inquiliniAssegnati,
-            inquiliniNonRegistrati
+            abitantiNonRegistrati
         });
 
         // 4. Salvataggio della stanza nel DB

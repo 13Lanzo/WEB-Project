@@ -44,18 +44,28 @@ const RoomSchema = new mongoose.Schema({
         type: Number,
         required:true
     },
+    disponibilita:{
+        type: String,
+        required:true
+    },
+    immagineUrl: {
+        type: String,
+        default: ''
+    },
     postiLettoTotali:{
         type: Number
     },
     postiLettoDisponibili:{
         type: Number
     },
-    inquiliniAssegnati:{
-        type: String
+    inquiliniAssegnati: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    abitantiNonRegistrati: {
+        type: [String],
+        default: []
     },
-    inquiliniNonRegistrati:{
-        type: String
-    }
 }, { timestamps: true }); // Aggiunge automaticamente createdAt e updatedAt nel database
 
 module.exports = mongoose.model('Room', RoomSchema);

@@ -9,7 +9,7 @@ const UserController = require('../controllers/usersController');
 router.get('/users', UserController.getAllUsers);
 
 //cerca utente
-router.get('/serch', verificaToken, UserController.searchUsers);
+router.get('/search', verificaToken, UserController.searchUsers);
 
 //metodo GET per ottenere tutte le informazioni di un utente
 router.get('/:id/user', verificaToken, UserController.getUserById);

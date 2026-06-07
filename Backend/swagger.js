@@ -235,8 +235,8 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/rooms":{
-        get:{
+    "/api/rooms":{
+      get:{
           tags:['RoomsController'],
           summary:'Elenco stanze',
           description: 'Cerca stanze in Ricerca.jsx',
@@ -256,10 +256,11 @@ const swaggerOptions = {
           responses: {200:{description:'Elenco stanze'}}
       },
       post:{
-          tags:['RoomController'],
+          tags:['RoomsController'],
           summary: 'Solo il proprietario può creare una nuova stanza',
           description: "creazione della stanza dopo la verifica che l'utente sia proprietario",
           security: [{ bearerAuth: [] }],
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
           requestBody:{
             required:true,
             content:{
@@ -275,24 +276,26 @@ const swaggerOptions = {
                     indirizzo: { type: "string", example: "Via Roma 10" },
                     superficie: { type: "number", example: 20 },
                     arredamento: { type: "number", example: 1 },
+                    disponibilita:{type:'string', example: '2 giugno'},
                     postiLettoTotali: { type: "number", example: 1 },
                     postiLettoDisponibili: { type: "number", example: 1 },
                     inquiliniAssegnati: { type: "string", example: "" },
-                    inquiliniNonRegistrati: { type: "string", example: "Mario Rossi" }
+                    abitantiNonRegistrati: { type: "string", example: "Mario Rossi" }
                   }
                 }
               }
-          },
+        },
           responses:{201: {description:'Stanza creata'}}
+          }
         }
-      }
-      },
+        },
       "/api/rooms/mine":{
         get:{
           tags:['RoomsController'],
           summary: 'Area Riservata',
           description: 'Cerca le stanze compatibili al mio Id per la mia area riservata',
           security: [{ bearerAuth: [] }],
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
           responses: { 200: { description: "Elenco stanze del proprietario loggato." } }
         }
       },

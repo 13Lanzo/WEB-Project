@@ -113,8 +113,7 @@ try {
 async function getConversations(req, res) {
     try{
         const mioId=req.user.id;
-        const messaggi =await Message.find({
-            $or: [{mittente:mioId},{destinatario:mioId}]
+        const messaggi =await Message.find({$or: [{mittente:mioId},{destinatario:mioId}]
         }).populate('mittente destinatario','nome cognome email');
         const interlocutoriMap={}
 
