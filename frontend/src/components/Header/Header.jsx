@@ -3,24 +3,29 @@ import {useNavigate} from 'react-router-dom'
 import './Header.css'
 import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
 import { io } from 'socket.io-client'
-import axios from 'axios';
 
 const socket=io.connect('http://localhost:5000');
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
-    const [activeTab, setActiveTab] = useState(initialTab);
+    // Diamo un valore di fallback ('accedi') se initialTab è undefined al primo avvio
+    const [activeTab, setActiveTab] = useState(initialTab || 'accedi');
     const navigate=useNavigate();
-    const [name, setName]=useState('');
-    const [lastname, setLastname]=useState('');
-    const [faculty, setFaculty]=useState('');
-    const [role, setRole]=useState('Inquilino');
-    const [email, setEmail]=useState('');
-    const [password, setPassword]=useState('');
-    const [confirmPassword, setConfirmPassword]=useState('');
-    const [errorMessage, setErrorMessage]= useState('');
-    const [bio, setBio]=useState('');
-    const [eta, setEta]=useState('');
-    const [tags, setTags]=useState([]);
+    
+    // STATI IN ITALIANO ALLINEATI AL DATABASE MONGOOB
+    const [nome, setNome] = useState('');
+    const [cognome, setCognome] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [bio, setBio] = useState('');
+    const [eta, setEta] = useState('');
+    const [tags, setTags] = useState([]);
+    const [facolta, setFacolta] = useState('');
+    
+    // Ruolo iniziale in minuscolo per evitare conflitti con i controller del server
+    const [ruolo, setRuolo] = useState('inquilino');
+
     const LoginGoogle =()=>{
         window.open('https://www.google.com');
     };
@@ -28,20 +33,15 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
         window.open('https://www.instagram.com');
     };
 
-    //credenziali fittizie per visualizzare frontend da eliminare
-
     const handleCheckboxChange = (e) => {
         const {value, checked} = e.target;
         if(checked){
-            //se è spuntato aggiungo il tag alla lista 
             setTags([...tags, value]);
         } else {
-            //se viene tolta la spunto rimuovo il tag dalla lista
             setTags(tags.filter((tag) => tag !== value));
         }
     }
     
-    //controllo password
     const handleSubmit = async (e)=> {
         e.preventDefault();
         setErrorMessage('');
@@ -55,66 +55,79 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 setErrorMessage('La password deve avere almeno 6 caratteri.');
                 return;
             }  
-            if(eta < 18){
+            if(Number(eta) < 18){
                 setErrorMessage('Devi essere maggiorenne per registrarti.');
                 return;
             }
     
-            //logica registrazione
-    
             try {
                 const payload = {
-                    name: name, 
-                    lastName: lastname,
-                    role: role,
-                    faculty: role === 'Inquilino' ? faculty: undefined,
-                    eta: eta,
+                    nome: nome, 
+                    cognome: cognome,
+                    ruolo: ruolo,
+                    facolta: ruolo === 'inquilino' ? facolta : undefined,
+                    eta: Number(eta),
                     bio: bio,
-                    tagsPreferenziale: tags,
+                    tags: tags,
                     email: email,
                     password: password
                 };
     
-                const response = await axios.post('http://localhost:5000/api/auth/register', payload);
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
     
-                //se la registrazione va a buon fine, salvo il token e le info utente e reindirizzo alla pagina profilo
+                const data = await response.json();
     
-                if(response.data && response.data.token){
-                    localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                if (!response.ok) {
+                    throw new Error(data.message || 'Errore durante la registrazione.');
+                }
+    
+                if(data.token){
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
                 }
     
                 alert('Profilo creato con successo!!');
-                onLoginSuccess(response.data.user);   //aggiorno lo stato di autenticazione in App.jsx
+                if(onLoginSuccess) onLoginSuccess(data.user);   // Aggiorna lo stato in App.jsx
                 navigate('/profilo'); 
+                onClose();
             } catch (err){
-                //in caso di errore catturiamo il messaggio ricevuto dal backend 
                 console.error('Errore durante la registrazione:', err);
-                const messaggioServer = err.response?.data?.message || 'Server irraggiungibile.';
-                setErrorMessage(messaggioServer);
+                setErrorMessage(err.message || 'Server irraggiungibile.');
             }
                 
-        } else{
-            //logica login
-    
-            try{
+        } else {
+            try {
                 const payload = {
                     email: email,
                     password: password
                 };
     
-                const response = await axios.post('http://localhost:5000/api/auth/login', payload);
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
     
-                if(response.data && response.data.token){
-                    localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                const data = await response.json();
+    
+                if (!response.ok) {
+                    throw new Error(data.message || 'Email o password errate. Riprova!');
                 }
     
-                onLoginSuccess(response.data.user); //passo le info utente a App.jsx per aggiornare stato
+                if(data.token){
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                }
+    
+                if(onLoginSuccess) onLoginSuccess(data.user); 
                 navigate('/profilo');
+                onClose();
             } catch (err) {
-                const messaggioServer = err.response?.data?.message || 'Server irraggiungibile.';
-                setErrorMessage(messaggioServer);
+                setErrorMessage(err.message || 'Server irraggiungibile.');
             }
         }
     };
@@ -147,25 +160,25 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                         <div className='form-row-double'>
                             <div className='form-group'>
                                 <label className='form-label'>Nome</label>
-                                <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={name} onChange={(e)=>setName(e.target.value)} required/>
+                                <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={nome} onChange={(e)=>setNome(e.target.value)} required/>
                             </div>
                             <div className='form-group'>
                                 <label className='form-label'>Cognome</label>
-                                <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={lastname} onChange={(e)=>setLastname(e.target.value)} required/>
+                                <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={cognome} onChange={(e)=>setCognome(e.target.value)} required/>
                             </div>
                         </div>
-                        <div className={role=== 'Inquilino' ? 'form-row-double': 'form-group'}>
+                        <div className={ruolo=== 'inquilino' ? 'form-row-double': 'form-group'}>
                             <div className='form-group'>
-                                        <label className='form-label'>Ruolo Utente</label>
-                                        <select className='form-input' value={role} onChange={(e) => {setRole(e.target.value); if(e.target.value==='Proprietario'){setFaculty('');}}} required>
-                                            <option value="Inquilino">Inquilino</option>
-                                            <option value="Proprietario">Proprietario</option>
-                                        </select>
-                                    </div>
-                            {role==='Inquilino' &&(
+                                <label className='form-label'>Ruolo Utente</label>
+                                <select className='form-input' value={ruolo} onChange={(e) => {setRuolo(e.target.value); if(e.target.value==='proprietario'){setFacolta('');}}} required>
+                                    <option value="inquilino">Inquilino</option>
+                                    <option value="proprietario">Proprietario</option>
+                                </select>
+                            </div>
+                            {ruolo==='inquilino' &&(
                             <div className='form-group'>
                                 <label className='form-label'>Seleziona Facoltà</label>
-                                <select className='form-input' value={faculty} onChange={(e)=> setFaculty(e.target.value)} required>
+                                <select className='form-input' value={facolta} onChange={(e)=> setFacolta(e.target.value)} required>
                                     <option value='' disabled>Scegli</option>
                                     <option value='Ingegneria'>Ingegneria</option>
                                     <option value='Medicina'>Medicina</option>
@@ -174,22 +187,22 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                                 </select>
                             </div>
                             )}
-                            </div>
+                        </div>
 
-                            <div className='form-group'>
-                                <label className='fomr-label'>Età</label>
-                                <input type='number' min='0' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=> setEta(e.target.value)} required/>
-                            </div>
+                        <div className='form-group'>
+                            <label className='fomr-label'>Età</label>
+                            <input type='number' min='0' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=> setEta(e.target.value)} required/>
+                        </div>
 
-                            <div className='form-group'>
-                                <label className='form-label'>Bio</label>
-                                <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
-                            </div>
+                        <div className='form-group'>
+                            <label className='form-label'>Bio</label>
+                            <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
+                        </div>
 
-                            <div className='form-group checkboxes-wrapper'>
-                                <label className='form-label'>Tag e Preferenze</label>
-                                <div className='checkboxes-grid'>
-                                    <label className='checkbox-label'>
+                        <div className='form-group checkboxes-wrapper'>
+                            <label className='form-label'>Tag e Preferenze</label>
+                            <div className='checkboxes-grid'>
+                                <label className='checkbox-label'>
                                     <input type='checkbox' value='Non Fumatore' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
                                 </label>
                                 <label className='checkbox-label'>
@@ -213,14 +226,14 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                                 <label className='checkbox-label'>
                                     <input type='checkbox' value='Lavastoviglie' checked={tags.includes('Lavastoviglie')} onChange={handleCheckboxChange}/><span>Lavastoviglie</span>
                                 </label>
-                                </div>
                             </div>
+                        </div>
                         </>
                     )}
                     <div className='form-group'>
                         <label className='form-label'>Email</label>
                         <input type="email" placeholder='inserisci emali' className='form-input' value={email} onChange={(e)=> setEmail(e.target.value)} required/>
-                        </div>
+                    </div>
                     <div className='form-group'>
                         <label className='form-label'>Password</label>
                         <input type='password' placeholder='........' className='form-input' value={password} onChange={(e)=> setPassword(e.target.value)} required/>
@@ -270,7 +283,6 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
     const updateLastMessage = (newText, newTime) => {
         setContacts(prevContacts =>
             prevContacts.map(contact => {
-                // Aggiorna il contatto attivo
                 if (contact.active) {
                     return { ...contact, lastMsg: newText, time: newTime };
                 }
@@ -279,17 +291,14 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
         );
     };
 
-    // 2. Mettiti in ascolto dei nuovi messaggi in arrivo
     useEffect(() => {
         socket.on('ricevi_messaggio', (data) => {
-            // Quando arriva un messaggio, aggiorna la finestrina!
             const orarioArrivo = data.createdAt
                 ? new Date(data.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             updateLastMessage(data.testo, orarioArrivo);
         });
 
-        // Pulisce l'ascolto se cambi pagina
         return () => socket.off('ricevi_messaggio');
     }, []);    
     
@@ -298,7 +307,6 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
         <header className='site-header font-sans'>
             <div className='header-logo' onClick={() => navigate('/')}><HouseHeartIcon/></div>
             
-                {/*rendering condizionale per vedere lo stato attivo del log*/}
                 {isLoggedIn ? (
                     <>
                         <nav className='header-navigation'>

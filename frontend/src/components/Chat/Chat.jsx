@@ -2,7 +2,6 @@ import './Chat.css'
 import { useEffect, useState } from 'react'
 import { User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis } from 'lucide-react'
 import io from 'socket.io-client'
-import axios from 'axios'
 
 const socket = io.connect('http://localhost:5000');
 
@@ -17,18 +16,20 @@ export default function Chat({ currentUser, aperturaDirettaConChi = null, apertu
     const roomId = attivoConChiId ? [currentUser?.id, attivoConChiId].sort().join('_') : null;
     const token = localStorage.getItem('token'); // Recuperiamo il token per le chiamate protette
 
-    // ========================================================
-    // EFFECT 1: SINTONIZZA L'UTENTE E CARICA LA SIDEBAR INIZIALE
-    // ========================================================
     useEffect(() => {
         const caricaConversazioni = async () => {
             if (!currentUser?.id) return;
             try {
-                const response = await axios.get(`http://localhost:5000/api/chat/conversations/${currentUser.id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch(`http://localhost:5000/api/chat/conversations/${currentUser.id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
-                if (response.data) {
-                    setConversations(response.data);
+                const data = await response.json();
+                if (response.ok) {
+                    setConversations(data);
                 }
             } catch (err) {
                 console.error("Errore nel recupero della sidebar chat:", err);
@@ -41,18 +42,20 @@ export default function Chat({ currentUser, aperturaDirettaConChi = null, apertu
         }
     }, [currentUser?.id, token]);
 
-    // ========================================================
-    // EFFECT 2: CAMBIA STANZA E SCARICA LA CRONOLOGIA MESSAGGI
-    // ========================================================
     useEffect(() => {
         const caricaMessaggiStorici = async () => {
             if (!roomId) return;
             try {
-                const response = await axios.get(`http://localhost:5000/api/chat/messages/${roomId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch(`http://localhost:5000/api/chat/messages/${roomId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
-                if (response.data) {
-                    setMessageList(response.data);
+                const data = await response.json();
+                if (response.ok) {
+                    setMessageList(data);
                 }
             } catch (err) {
                 console.error("Errore nel recupero dello storico messaggi:", err);
@@ -65,18 +68,20 @@ export default function Chat({ currentUser, aperturaDirettaConChi = null, apertu
         }
     }, [attivoConChiId, roomId, token, currentUser?.id]); 
 
-    // ========================================================
-    // EFFECT 3: RESTA IN ASCOLTO H24 DEI MESSAGGI IN REALTIME
-    // ========================================================
     useEffect(() => {
         const aggiornaSidebar = async () => {
             if (!currentUser?.id) return;
             try {
-                const response = await axios.get(`http://localhost:5000/api/chat/conversations/${currentUser.id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch(`http://localhost:5000/api/chat/conversations/${currentUser.id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
-                if (response.data) {
-                    setConversations(response.data);
+                const data = await response.json();
+                if (response.ok) {
+                    setConversations(data);
                 }
             } catch (err) {
                 console.error("Errore aggiornamento sidebar:", err);
@@ -93,9 +98,6 @@ export default function Chat({ currentUser, aperturaDirettaConChi = null, apertu
         return () => socket.off('ricevi_messaggio');
     }, [roomId, currentUser?.id, token]);
 
-    // ========================================================
-    // GESTIONE DELL'INVIO DEL MESSAGGIO DALL'INPUT
-    // ========================================================
     const sendMessage = async () => {
         if (message.trim() !== '' && attivoConChiId && currentUser?.id) {
             const messageData = {
@@ -110,14 +112,19 @@ export default function Chat({ currentUser, aperturaDirettaConChi = null, apertu
             setMessageList((list) => [...list, messageData]);
             setMessage('');
 
-            // Delay per consentire il salvataggio a DB prima di ricaricare le anteprime della sidebar
+            // Delay per consentire il salvataggio a DB prima di ricaricare le anteprime della sidebar tramite fetch
             setTimeout(async () => {
                 try {
-                    const response = await axios.get(`http://localhost:5000/api/chat/conversations/${currentUser.id}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
+                    const response = await fetch(`http://localhost:5000/api/chat/conversations/${currentUser.id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
                     });
-                    if (response.data) {
-                        setConversations(response.data);
+                    const data = await response.json();
+                    if (response.ok) {
+                        setConversations(data);
                     }
                 } catch (err) {
                     console.error("Errore aggiornamento sidebar dopo invio:", err);

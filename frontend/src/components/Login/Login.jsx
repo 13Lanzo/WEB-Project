@@ -52,9 +52,6 @@ export default function Login({ onLoginSuccess }) {
                 return;
             }
 
-            // ==========================================
-            // LOGICA REGISTRAZIONE CON FETCH API (ITALIANO)
-            // ==========================================
             try {
                 const payload = {
                     nome: nome, 
@@ -94,9 +91,6 @@ export default function Login({ onLoginSuccess }) {
             }
                 
         } else {
-            // ==========================================
-            // LOGICA LOGIN CON FETCH API (ITALIANO)
-            // ==========================================
             try {
                 const payload = { email: email, password: password };
 
