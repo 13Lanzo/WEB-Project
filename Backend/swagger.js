@@ -274,7 +274,7 @@ const swaggerOptions = {
                     citta: { type: "string", example: "Bari" },
                     indirizzo: { type: "string", example: "Via Roma 10" },
                     superficie: { type: "number", example: 20 },
-                    arredamento: { type: "number", example: 1 },
+                    arredamento: { type: "number", example: "completo" },
                     disponibilita:{type:'string', example: '2 giugno'},
                     postiLettoTotali: { type: "number", example: 1 },
                     postiLettoDisponibili: { type: "number", example: 1 },
