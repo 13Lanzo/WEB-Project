@@ -91,8 +91,7 @@ async function updateUser(req, res) {
         // Escludiamo le password dall'aggiornamento generico del profilo
         delete req.body.password;
 
-        const utenteAggiornato = await 
-            User.findByIdAndUpdate(req.params.id, req.body, 
+        const utenteAggiornato = await User.findByIdAndUpdate(req.params.id, req.body, 
                 { new:true, runValidators: true })
                 .select('-password');
 

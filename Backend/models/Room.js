@@ -51,10 +51,10 @@ const RoomSchema = new mongoose.Schema({
         type: Number
     },
     inquiliniAssegnati:{
-        type: Number
+        type: String
     },
     inquiliniNonRegistrati:{
-        type: Number
+        type: String
     }
 }, { timestamps: true }); // Aggiunge automaticamente createdAt e updatedAt nel database
 

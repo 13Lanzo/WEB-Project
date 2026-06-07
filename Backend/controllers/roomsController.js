@@ -77,7 +77,6 @@ async function getStanze (req, res){
     try {
         // Estraiamo eventuali parametri di filtro dall'URL (es: ?citta=Bari&prezzoMax=350)
         const { citta, prezzoMin, prezzoMax } = req.query;
-        let queryFiltri = {disponibile: true}; //mettiamo soltanto le stanze disponibili
 
         if (citta) {
             queryFiltri.citta = citta;
