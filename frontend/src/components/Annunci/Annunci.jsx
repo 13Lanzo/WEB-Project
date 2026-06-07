@@ -27,9 +27,11 @@ export default function Annunci () {
     const [loading, setLoading] = useState(true);
 
     // recuperiamo i dati dall'utente loggato dal LocalStorage
-    const ruolo = localStorage.getItem("ruolo"); // proprietario o inquilino
-    const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const ruolo = user?.ruolo; // proprietario o inquilino
+    const userId = user?.id || user?._id;
 
     // divisione logica tra proprietario e inquilino
     // PROPRIETARIO:
@@ -40,20 +42,20 @@ export default function Annunci () {
             try {
                 setLoading(true);
                 const headers = {
-                    'Authorization': `Bearer ${token}`, // nel caso prevedere anche refresh token
-                    'Content_type': 'application/json'
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 };
 
                 if (isProprietario){
                     // Chiamata per recuperare solo le stanze dal proprietario loggato
-                    const res = await fetch('api/rooms/mine', {headers});
+                    const res = await fetch('/api/rooms/mine', {headers});
                     const data = await res.json();
                     if (data.success || Array.isArray(data)) {
                         setAnnunci(data.dati || data);
                     }
                 } else {
                     // Chiamata per tutte le stanze filtrando poi lato client quelle assegnate al conquilino
-                    const res = await fetch('api/rooms', {headers});
+                    const res = await fetch('/api/rooms', {headers});
                     const data = await res.json();
                     const tutteLeStanze = data.dati || data;
 
@@ -86,17 +88,17 @@ export default function Annunci () {
         if(!window.confirm("Sei sicuro di voler eliminare permanentemente questo annuncio?")) return;
 
         try {
-            const res = await fetch(`api/rooms/${id}`, {
+            const res = await fetch(`/api/rooms/${id}`, {
                 method: 'DELETE',
                 headers: {'Authorization': `Bearer ${token}`}
             });
             const data = await res.json();
 
-            if (data.success){
-                // Aggiorna lo stato locale rimuovendo l'annuncio elimato
-                setAnnunci(annunci.filter(annuncio => (annuncio._id || annuncio.id)))
+            if (res.ok || data.success){
+                // Aggiorna lo stato locale rimuovendo l'annuncio eliminato
+                setAnnunci(annunci.filter(annuncio => annuncio._id !== id && annuncio.id !== id));
             } else {
-                alert("Impossibile eliminare l'annuncio: " + data.messaggio);
+                alert("Impossibile eliminare l'annuncio: " + (data.messaggio || 'Errore generico'));
             }
         } catch (error) {
             console.error("Errore durante l'eliminazione:", error);
@@ -130,8 +132,8 @@ export default function Annunci () {
             </div>
 
             {/* SCHERMATA VUOTA - CASO PROPRIETARIO (Nessun annuncio creato) */}
-            {isProprietario && annunci.length > 0 && (
-                <div className="empty-state-boc">
+            {isProprietario && annunci.length === 0 && (
+                <div className="empty-state-box">
                     <Home size={48} className="empty-icon" />
                     <h2>Non hai ancora pubblicato nessun annuncio</h2>
                     <p>Crea ora il tuo primo annuncio per permettere a nuovi inquilini di trovare casa!</p>
@@ -142,7 +144,7 @@ export default function Annunci () {
             )}
 
             {/* SCHERMATA VUOTA - CASO INQUILINO (Nessuna stanza assegnata)*/}
-            {!isProprietario && annunci.length ===0 && (
+            {!isProprietario && annunci.length === 0 && (
                 <div className="empty-state-box">
                     <Home size={48} className="empty-icon" />
                     <h2>Non hai ancora una stanza assegnata</h2>
@@ -160,12 +162,12 @@ export default function Annunci () {
                 {annunci.map((annuncio)=> {
                     const currentId = annuncio._id || annuncio.id // Supporto sia per id MongoDB che per fallback
                     return (
-                        <div className='annuncio-card' key={annuncio.id}>
+                        <div className='annuncio-card' key={currentId}>
                             <div className='card-image-wrapper'>
                             <span className='city-badge'>
                                 <MapPinHouse/> {annuncio.city || annuncio.citta}
                             </span>
-                                <img src={annuncio.image || annuncio.immagine} alt={annuncio.title || annuncio.titolo}/>
+                                <img src={annuncio.image || annuncio.immagineUrl || annuncio.immagine} alt={annuncio.title || annuncio.titolo}/>
                             </div>
 
                             <div className='card-content'>
@@ -189,7 +191,7 @@ export default function Annunci () {
                             </div>
                             <div className='card-footer'>
                                 <button className='btn-dettaglio'
-                                        onClick={() => navigate('/dettagli', {state: {id: currentId}})}>
+                                        onClick={() => navigate('/dettagli/' + currentId)}>
                                     Visualizza dettaglio
                                 </button>
                                 {isProprietario && (

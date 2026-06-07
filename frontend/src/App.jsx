@@ -39,7 +39,7 @@ function App() {
     <div>
       
       <Router>
-        <Header isLoggedIn={isLoggedIn} currentUser={currentUser} onLogout={handleLogout}/>
+        <Header isLoggedIn={isLoggedIn} currentUser={currentUser} onLogout={handleLogout} onLogin={handleLoginSuccess}/>
         <Routes>
           <Route path='/' element={<Home isLoggedIn={isLoggedIn}/>}/>
 

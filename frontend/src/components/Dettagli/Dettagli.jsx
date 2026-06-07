@@ -1,7 +1,7 @@
 import './Dettagli.css'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
-import {MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check } from 'lucide-react'
+import {MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check, UserRound } from 'lucide-react'
 
 export default function Dettagli({isLoggedIn}) {
     const {id} = useParams(); // Recupera l'ID della stanza dall'URL (/dettagli/:id)

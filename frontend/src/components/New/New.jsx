@@ -20,8 +20,10 @@ export default function New() {
     
     // Recupero dati autenticazione da localStorage
     const token = localStorage.getItem("token");
-    const ruolo = localStorage.getItem("ruolo");
-    const nomeProprietario = localStorage.getItem("nomeUtente") || "Super Proprietario";
+    const userStr = localStorage.getItem("user");
+    const user = userStr ? JSON.parse(userStr) : null;
+    const ruolo = user?.ruolo;
+    const nomeProprietario = user ? `${user.nome} ${user.cognome || ''}` : "Super Proprietario";
 
     // 1. PROTEZIONE DELLA PAGINA: se l'utente non è proprietario, redirect a /annunci
     useEffect(() => {
@@ -45,14 +47,15 @@ export default function New() {
     // Stili del Form ampliati con i nuovi campi richiesti
     const [formData, setFormData] = useState({
         citta: 'Bari',
-        zona: '',
+        indirizzo: '',
         titolo: '',
+        descrizione: '',
         prezzo: '',
         superficie: '',
         arredamento: 'Completo',
         disponibilita: 'Immediata',
         postiLettoTotali: '',
-        postilettoDisponibili:'',
+        postiLettoDisponibili: '',
         immagineUrl: defaultImages[0]
     });
     const [selectedTags, setSelectedTags]=useState(['Non fumatore']);
@@ -79,9 +82,8 @@ export default function New() {
     const handleSearchUsers = async() => {
         if (!searchQuery.trim()) return;
         try {
-            // VERIFICARE LA ROTTA!!!!!!!!!!!
-            const res = await fetch(`/api/users/search?q={searchQuery}`, {
-                headers: { 'Authorization': 'Bearer ${token}' }
+            const res = await fetch(`/api/users/search?q=${searchQuery}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             const data = await res.json();
@@ -105,14 +107,14 @@ export default function New() {
     // Aggiungi nome fittizio all'array abitantiNonRegistrati
     const addAbitanteFittizio = () => {
         if(nomeFittizioInput.trim() && ! abitantiNonRegistrati.includes(nomeFittizioInput.trim())) {
-            setAbitantiNonRegistrati([...abitantiNonRegistrati, nomeFittizioInput()]);
+            setAbitantiNonRegistrati([...abitantiNonRegistrati, nomeFittizioInput.trim()]);
             setNomeFittizioInput('');
         }
     };
 
     // INVIO REALE DEI DATI AL BACKEND via POST /api/rooms
     const handlePublish = async (e)=>{
-        e.preventDefault();
+        if (e) e.preventDefault();
 
         const payload = {
             ...formData,
@@ -127,7 +129,7 @@ export default function New() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ${token}'
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -137,11 +139,11 @@ export default function New() {
                 alert('Annuncio pubblicato con successo su Room4U');
                 navigate('/annunci');
             } else {
-                alert('Errore durante la pubblicazione: ' + data.messaggio);
+                alert('Errore durante la pubblicazione: ' + (data.messaggio || data.errore || 'Errore generico'));
             }
             
         } catch (error) {
-            console.error("Errore di rete durante la pubblicaione:", error);
+            console.error("Errore di rete durante la pubblicazione:", error);
             alert("Impossibile connettersi al server.");
         }
     };
@@ -182,7 +184,7 @@ export default function New() {
                             <div className="input-row-2">
                                 <div className="input-group">
                                     <label>Città</label>
-                                    <select name="citta" value={formData.citta} onClick={handleChange} className="input-field">
+                                    <select name="citta" value={formData.citta} onChange={handleChange} className="input-field">
                                         <option value='Bari'>Bari</option>
                                         <option value="Milano">Milano</option>
                                         <option value="Torino">Torino</option>
@@ -191,12 +193,16 @@ export default function New() {
                                 </div>
                                 <div className="input-group">
                                     <label>Indirizzo</label>
-                                    <input type="text" name="zona" value={formData.zona} onChange={handleChange} placeholder="Via, Viale, Piazza..." className="input-field" required/>
+                                    <input type="text" name="indirizzo" value={formData.indirizzo} onChange={handleChange} placeholder="Via, Viale, Piazza..." className="input-field" required/>
                                 </div>
                             </div>
                             <div className="input-group">
                                 <label>Titolo dell'annuncio</label>
                                 <input type="text" name="titolo" value={formData.titolo} onChange={handleChange} placeholder="Camera singola..." className="input-field" required/>
+                            </div>
+                            <div className="input-group">
+                                <label>Descrizione dell'annuncio</label>
+                                <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Inserisci una descrizione dettagliata della camera..." className="input-field" rows="4" required></textarea>
                             </div>
                             <div className="input-row-4">
                                 <div className='input-group'>
@@ -223,7 +229,7 @@ export default function New() {
                                     </div>
                                     <div className="input-group">
                                         <label>Disponibilità</label>
-                                        <input type="text" name="disponibilità" value={formData.disponibilita} onChange={handleChange} placeholder="Es: Immediata o da Settembre" className="input-field" required/>
+                                        <input type="text" name="disponibilita" value={formData.disponibilita} onChange={handleChange} placeholder="Es: Immediata o da Settembre" className="input-field" required/>
                                     </div>
                                 </div>
 
@@ -232,8 +238,17 @@ export default function New() {
                                     <div className="input-group">
                                         <label>Posti Letto Totali nella Casa</label>
                                         <input type="number" 
+                                            name="postiLettoTotali" 
+                                            value={formData.postiLettoTotali} 
+                                            onChange={handleChange} 
+                                            placeholder="Es: 3" 
+                                            className="input-field" required />
+                                    </div>
+                                    <div className="input-group">
+                                        <label>Posti Letto Disponibili</label>
+                                        <input type="number" 
                                             name="postiLettoDisponibili" 
-                                            value={formData.postilettoDisponibili} 
+                                            value={formData.postiLettoDisponibili} 
                                             onChange={handleChange} 
                                             placeholder="Es: 1" 
                                             className="input-field" required />
@@ -328,7 +343,7 @@ export default function New() {
                                     </div>
                                 </div>
                                 <div className="form-actions">
-                                    <button type="submit" className="btn-pubblica" onClick={()=> navigate('/annunci')}><Sparkle/> Pubblica Annuncio</button>
+                                    <button type="submit" className="btn-pubblica"><Sparkle/> Pubblica Annuncio</button>
                                     <button type="button" className="btn-annulla" onClick={()=> navigate('/annunci')}>Annulla</button>
                                 </div>       
                         </form>
@@ -347,7 +362,7 @@ export default function New() {
                                     <img src={formData.immagineUrl} alt='Anteprima'/>
                                 </div>
                                 <div className="card-content">
-                                    <p className="zone-text">{formData.zona || 'Inserisci indirizzo...'}</p>
+                                    <p className="zone-text">{formData.indirizzo || 'Inserisci indirizzo...'}</p>
                                     <h3 className="card-title">{formData.titolo || "Inserisci il titolo dell'annuncio..."}</h3>
                                     <div className="card-specs-row">
                                             <div className="spec-col">
@@ -362,7 +377,7 @@ export default function New() {
                                             <div className="spec-col">
                                                 <span className="spec-label">POSTI LETTO</span>
                                                 <span className="spec-value">
-                                                    {formData.postilettoDisponibili || '0'}/{formData.postiLettoTotali || '0'} liberi
+                                                    {formData.postiLettoDisponibili || '0'}/{formData.postiLettoTotali || '0'} liberi
                                                 </span>
                                             </div>
                                         </div>
