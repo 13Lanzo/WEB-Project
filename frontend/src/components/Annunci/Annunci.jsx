@@ -1,87 +1,212 @@
+/* MODIFICHE:
+Logica differenziata in base al ruolo:
+    Se proprietario:
+    Titolo: "Area Riservata — I Miei Annunci"
+Fetch GET /api/rooms/mine → mostrare solo le proprie stanze
+Bottone "NUOVO ANNUNCIO" → /new
+Se non ha annunci → mostrare messaggio vuoto con bottone "Crea il tuo primo annuncio"
+Pulsante elimina → DELETE /api/rooms/:id
+Se inquilino:
+    Titolo: "Area Riservata — La Mia Stanza"
+Fetch GET /api/rooms + filtrare se l'utente è in inquiliniAssegnati
+Se ha una stanza assegnata → mostrare i dettagli della stanza
+Se non ha stanza → messaggio "Non hai ancora una stanza assegnata" + bottone "Cerca Camere" → /ricerca
+Rimuovere:
+    Switch fittizio setIsProprietario(!isProprietario)
+Dati mock mockAnnunci
+*/
+
 import './Annunci.css'
 import { useState } from 'react'
 import {useNavigate} from 'react-router-dom';
-import {Sparkles, CirclePlus, MapPinHouse, Trash } from 'lucide-react';
+import {Sparkles, CirclePlus, MapPinHouse, Trash, Home} from 'lucide-react';
 
 export default function Annunci () {
     const navigate=useNavigate();
-    //SOLO PROVA DA ELIMINARE
-    const [isProprietario, setIsProprietario]=useState(true);
-    const mockAnnunci = [
-        {
-            id: 1,
-            city: 'Pavia',
-            zone: 'Centro storico, 12',
-            title: 'Luminosa stanza nel centro di Pavia',
-            price: 420,
-            space: 18,
-            availability: 'Immediata',
-            image: 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 2,
-            city: 'Milano',
-            zone: 'Zona Bicocca',
-            title: 'Stanza per studenti Milano Bicocca',
-            price: 700,
-            space: 60,
-            availability: 'Settembre',
-            image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80'
+    const [annunci, setAnnunci] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // recuperiamo i dati dall'utente loggato dal LocalStorage
+    const ruolo = localStorage.getItem("ruolo"); // proprietario o inquilino
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+
+    // divisione logica tra proprietario e inquilino
+    // PROPRIETARIO:
+    const isProprietario = ruolo === 'proprietario';
+
+    useEffect(()=>{
+        const fetchAnnunci = async () => {
+            try {
+                setLoading(true);
+                const headers = {
+                    'Authorization': `Bearer ${token}`, // nel caso prevedere anche refresh token
+                    'Content_type': 'application/json'
+                };
+
+                if (isProprietario){
+                    // Chiamata per recuperare solo le stanze dal proprietario loggato
+                    const res = await fetch('api/rooms/mine', {headers});
+                    const data = await res.json();
+                    if (data.success || Array.isArray(data)) {
+                        setAnnunci(data.dati || data);
+                    }
+                } else {
+                    // Chiamata per tutte le stanze filtrando poi lato client quelle assegnate al conquilino
+                    const res = await fetch('api/rooms', {headers});
+                    const data = await res.json();
+                    const tutteLeStanze = data.dati || data;
+
+                    if (Array.isArray(tutteLeStanze)) {
+                        // Filtriamo se l'ID dell'utente corrente è incluso nell'array inquiliniAssegnati
+                        const stanzaAssegnata = tutteLeStanze.filter(stanza =>
+                        stanza.inquiliniAssegnati?.includes(userId)
+                        );
+                        setAnnunci(stanzaAssegnata);
+                    }
+                }
+            } catch (error) {
+                console.error("Errore nel caricamento dell'area riservata:",error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // logica della gestione della scandenza del token
+        if (token) {
+            fetchAnnunci();
+        } else {
+            setLoading(false);
+            navigate('/login'); // se manca il token, reindirizza al login per sicurezza
         }
-    ];
-    const displayedAnnunci =isProprietario ? mockAnnunci : [mockAnnunci[0]];
+    }, [isProprietario, token, userId, navigate]);
+
+    // Gestione eliminazione annuncio (solo per il PROPRIETARIO)
+    const handleDelete = async (id) => {
+        if(!window.confirm("Sei sicuro di voler eliminare permanentemente questo annuncio?")) return;
+
+        try {
+            const res = await fetch(`api/rooms/${id}`, {
+                method: 'DELETE',
+                headers: {'Authorization': `Bearer ${token}`}
+            });
+            const data = await res.json();
+
+            if (data.success){
+                // Aggiorna lo stato locale rimuovendo l'annuncio elimato
+                setAnnunci(annunci.filter(annuncio => (annuncio._id || annuncio.id)))
+            } else {
+                alert("Impossibile eliminare l'annuncio: " + data.messaggio);
+            }
+        } catch (error) {
+            console.error("Errore durante l'eliminazione:", error);
+        }
+    };
+
+    if(loading){
+        return <div className="loading-container"><p>Caricamento Area riservata...</p></div>;
+    }
+
 
     return(
         <div className='annunci-page font-sans'>
-            <div className='test-cotrols'>
-                <button onClick={()=> setIsProprietario(!isProprietario)}>Cambia {isProprietario ? 'Proprietario' : 'Inquilino'}</button>
-            </div>
             <div className='annunci-container'>
                 <div className='header-text-block'>
-                    <span className='area-badge'><Sparkles /> AREA {isProprietario ? 'PROPRIETARIO' : 'INQUILINO'}</span>
-                    <h1>{isProprietario ? 'I Mie Annunci' : 'La Mia Stanza'}</h1>
-                    <p>{isProprietario ? 'Visualizza, modifica, crea e gestisci in tempo reale le stanze del tuo appartamento.' : 'Visualizza i dettagli della stanza che hai affittato o prenotato.'}</p>
+                    <span className='area-badge'>
+                        <Sparkles /> AREA {isProprietario ? 'PROPRIETARIO' : 'INQUILINO'}
+                    </span>
+                    <h1>{isProprietario ? 'Area Riservata - I miei Annunci' : 'Area Riservata - La mia Stanza'}</h1>
+                    <p>
+                        {isProprietario
+                            ? 'Visualizza, crea e gestisci in tempo reale le stanze dei tuoi appartamenti.'
+                            : 'Visualizza i dettagli della stanza che hai affittato o prenotato.'}
+                    </p>
                 </div>
-                {isProprietario && (
-                    <button className='btn-nuovo-annuncio' onClick={()=>navigate('/new')}><CirclePlus size={15}/> NUOVO ANNUNCIO</button>
+                {isProprietario && annunci.length > 0 && (
+                    <button className='btn-nuovo-annuncio' onClick={()=>navigate('/new')}>
+                        <CirclePlus size={15}/> NUOVO ANNUNCIO
+                    </button>
                 )}
             </div>
 
-            <div className='annunci-grid'>
-                {displayedAnnunci.map((annuncio)=>(
-                    <div className='annuncio-card' kay={annuncio.id}>
-                        <div className='card-image-wrapper'>
-                            <span className='city-badge'> <MapPinHouse/> {annuncio.city}</span>
-                            <img src={annuncio.image} alt={annuncio.title}/>
-                        </div>
+            {/* SCHERMATA VUOTA - CASO PROPRIETARIO (Nessun annuncio creato) */}
+            {isProprietario && annunci.length > 0 && (
+                <div className="empty-state-boc">
+                    <Home size={48} className="empty-icon" />
+                    <h2>Non hai ancora pubblicato nessun annuncio</h2>
+                    <p>Crea ora il tuo primo annuncio per permettere a nuovi inquilini di trovare casa!</p>
+                    <button className="btn-nuovo-annuncio-empty" onClick={() => navigate('/new')}>
+                        <CirclePlus size={15}/> Crea il tuo primo annuncio
+                    </button>
+                </div>
+            )}
 
-                        <div className='card-content'>
-                            <p className='zone-text'>{annuncio.zone}</p>
-                            <h3 className='card-title'>{annuncio.title}</h3>
-                            <div className='card-specs-row'>
-                                <div className='spec-col'>
-                                    <span className='spec-label'>PREZZO</span>
-                                    <span className='spec-value'>{annuncio.price} €/mese</span>
-                                </div>
-                                <div className='spec-col'>
-                                    <span className='spec-label'>SPAZIO</span>
-                                    <span className='spec-value'>{annuncio.space} mq</span>
-                                </div>
-                                <div className='spec-col'>
-                                    <span className='spec-label'>DISPONIBILITA'</span>
-                                    <span className='spec-value'>{annuncio.availability}</span>
+            {/* SCHERMATA VUOTA - CASO INQUILINO (Nessuna stanza assegnata)*/}
+            {!isProprietario && annunci.length ===0 && (
+                <div className="empty-state-box">
+                    <Home size={48} className="empty-icon" />
+                    <h2>Non hai ancora una stanza assegnata</h2>
+                    <p>Esplora la bacheca di Room4U per trovare l'alloggio perfetto per le tue esigenze!</p>
+                    <button className="btn-cerca-camere" onClick={()=> navigate('/ricerca')}>
+                        Cerca Camere
+                    </button>
+                </div>
+            )}
+
+
+            {/* GRIGLIA DEGLI ANNUNCI (se presenti) */}
+            { annunci.length > 0 && (
+            <div className='annunci-grid'>
+                {annunci.map((annuncio)=> {
+                    const currentId = annuncio._id || annuncio.id // Supporto sia per id MongoDB che per fallback
+                    return (
+                        <div className='annuncio-card' key={annuncio.id}>
+                            <div className='card-image-wrapper'>
+                            <span className='city-badge'>
+                                <MapPinHouse/> {annuncio.city || annuncio.citta}
+                            </span>
+                                <img src={annuncio.image || annuncio.immagine} alt={annuncio.title || annuncio.titolo}/>
+                            </div>
+
+                            <div className='card-content'>
+                                <p className='zone-text'>{annuncio.zone || annuncio.indirizzo}</p>
+                                <h3 className='card-title'>{annuncio.title || annuncio.titolo}</h3>
+                                <div className='card-specs-row'>
+                                    <div className='spec-col'>
+                                        <span className='spec-label'>PREZZO</span>
+                                        <span className='spec-value'>{annuncio.price || annuncio.prezzo} €/mese</span>
+                                    </div>
+                                    <div className='spec-col'>
+                                        <span className='spec-label'>SPAZIO</span>
+                                        <span className='spec-value'>{annuncio.space || annuncio.superficie} mq</span>
+                                    </div>
+                                    <div className='spec-col'>
+                                        <span className='spec-label'>DISPONIBILITA'</span>
+                                        <span
+                                            className='spec-value'>{annuncio.availability || annuncio.disponibilita}</span>
+                                    </div>
                                 </div>
                             </div>
+                            <div className='card-footer'>
+                                <button className='btn-dettaglio'
+                                        onClick={() => navigate('/dettagli', {state: {id: currentId}})}>
+                                    Visualizza dettaglio
+                                </button>
+                                {isProprietario && (
+                                    <button
+                                        className="btn-delete"
+                                        aria-label="Elimina annuncio"
+                                        onClick={() => handleDelete(currentId)}
+                                    >
+                                        <Trash/>
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                        <div className='card-footer'>
-                            <button className='btn-dettaglio' onClick={()=> navigate('/dettagli')}>Visualizza dettaglio</button>
-                            {isProprietario && (
-                                <button className="btn-delete" aria-label="Elimina annuncio"><Trash/></button>
-                            )}
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
+        )}
         </div>
     );
 }
