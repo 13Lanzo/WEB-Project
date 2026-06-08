@@ -27,11 +27,6 @@ export default function New() {
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80'
     ];
 
-    const availableTags = [
-        'Non fumatore', 'Pet friendly', 'Tranquillo', 'Eco-friendly', 
-        'Luminoso', 'Terrazzo', 'Aria Condizionata', 'Lavastoviglie'
-    ];
-
     // Stili del Form ampliati con i nuovi campi richiesti
     const [formData, setFormData] = useState({
         citta: 'Bari...',
@@ -46,7 +41,6 @@ export default function New() {
         postiLettoDisponibili: '',
         immagineUrl: defaultImages[0]
     });
-    const [selectedTags, setSelectedTags]=useState(['Non fumatore']);
 
     // Stati per la gestione della sezione "Chi vive nella casa"
     const [searchQuery, setSearchQuery] = useState('');
@@ -59,12 +53,6 @@ export default function New() {
         const {name, value} = e.target;
         setFormData(prev => ({...prev, [name]:value}));
     };
-
-    const toggleTag = (tag) => {
-        setSelectedTags(prev=>
-            prev.includes(tag) ? prev.filter(t => t !==tag) : [...prev, tag]
-        );
-    };  
 
     // Ricerca asincrona degli utenti registrati sul backend
     const handleSearchUsers = async() => {
@@ -103,7 +91,6 @@ export default function New() {
 
         const payload = {
             ...formData,
-            serviziTags: selectedTags,
             inquiliniAssegnati: inquiliniAssegnati.map(u => u._id || u.id),
             abitantiNonRegistrati
         };
@@ -297,14 +284,6 @@ export default function New() {
                                         ))}
                                     </div>
                                 </div> 
-                                <div className="tags-section">
-                                    <label className="section-label">Caratteristiche & Servizi (Seleziona tag)</label>
-                                    <div className="tags-flex">
-                                        {availableTags.map(tag=> (
-                                            <button type="button" key={tag} className={`tag-pill ${selectedTags.includes(tag) ? 'active' : ''}`} onClick={()=> toggleTag(tag)}>{tag}</button>
-                                        ))}
-                                    </div>
-                                </div>
                                 <div className="form-actions">
                                     <button type="submit" className="btn-pubblica"><Sparkle/> Pubblica Annuncio</button>
                                     <button type="button" className="btn-annulla" onClick={()=> navigate('/annunci')}>Annulla</button>

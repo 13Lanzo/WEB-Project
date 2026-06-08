@@ -172,6 +172,100 @@
   line-height: 1.3;
 }
 
+/* ==========================================
+   STILI MANCANTI: LOADING E EMPTY STATES
+   ========================================== */
+
+/* Container di caricamento centrato a schermo */
+.loading-container {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* Card centrale per l'assenza di annunci */
+.empty-state-box {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.25rem;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  margin: 2rem auto;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Icona della casa grigia/neutra nelle schermate vuote */
+.empty-icon {
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-box h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.empty-state-box p {
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Pulsante "Crea il tuo primo annuncio" (Arancione coerente con l'header) */
+.btn-nuovo-annuncio-empty {
+  background-color: #ff5a00;
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.85rem 2rem;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(255, 90, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-nuovo-annuncio-empty:hover {
+  background-color: #cc4800;
+  transform: translateY(-2px);
+}
+
+/* Pulsante "Cerca Camere" per l'inquilino (Verde Smeraldo UniRoom) */
+.btn-cerca-camere {
+  background-color: #065f46;
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.85rem 2rem;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(6, 95, 70, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-cerca-camere:hover {
+  background-color: #044e3a;
+  transform: translateY(-2px);
+}
+
 /* Specifiche: Prezzo, Spazio, Disp */
 .card-specs-row {
   display: grid;

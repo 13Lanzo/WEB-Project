@@ -84,16 +84,14 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 if (!response.ok) {
                     throw new Error(data.message || 'Errore durante la registrazione.');
                 }
-
-                const utenteReale = data.utente || data.user;
-
-                if (data.token && utenteReale) {
+                const utenteRegistrato = data.user || data.utente;
+                if (data.token) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(utenteReale)); // UNIFICATO SU 'user'
+                    localStorage.setItem('user', JSON.stringify(utenteRegistrato)); // UNIFICATO SU 'user'
                 }
 
                 alert('Profilo creato con successo!!');
-                onLoginSuccess(utenteReale);
+                onLoginSuccess(utenteRegistrato);
                 navigate('/profilo'); 
                 onClose();
             } catch (err) {
@@ -116,17 +114,15 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 if (!response.ok) {
                     throw new Error(data.message || 'Email o password errate. Riprova!');
                 }
-
-                const utenteReale = data.user || data.user;
-
-                if (data.token && utenteReale) {
+                const utenteLoggato = data.utente || data.user;
+                if (data.token) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(utenteReale)); // UNIFICATO SU 'user'
+                    localStorage.setItem('user', JSON.stringify(utenteLoggato)); // UNIFICATO SU 'user'
                 }
 
-                onLoginSuccess(data.user);
-                onClose();
+                onLoginSuccess(utenteLoggato);
                 navigate('/profilo');
+                onClose();
             } catch (err) {
                 setErrorMessage(err.message || 'Server irraggiungibile.');
             }
