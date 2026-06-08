@@ -179,18 +179,6 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                             </div>
                         </div>
                     </section>
-
-                    {/* Tag dei Servizi Inclusi reali recuperati dal database */}
-                    {(roomData.serviziTags || roomData.serviziInclusi) && (
-                        <section className='tags-display-section'>
-                            <h2>Servizi e caratteristiche inclusi</h2>
-                            <div className='profile-tags-flex'>
-                                {(roomData.serviziTags || roomData.serviziInclusi).map((tag, idx) => (
-                                    <span key={idx} className='profile-spec-tag'>{tag}</span>
-                                ))}
-                            </div>
-                        </section>
-                    )}
                 </main>
 
                 {/* Sidebar Laterale Gestione Coinquilini e Chat */}
@@ -209,10 +197,7 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                                         </div>
                                         <button 
                                             className="btn-send-message-tenant" 
-                                            onClick={() => handleStartChat(inquilino._id || inquilino.id)}
-                                            title={`Contatta ${inquilino.nome}`}
-                                        >
-                                            <SendHorizontal size={14}/>
+                                            onClick={() => handleStartChat(inquilino._id || inquilino.id)}>Contatta {inquilino.nome}<SendHorizontal size={14}/>
                                         </button>
                                     </div>
                                 ))}
@@ -225,7 +210,7 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                                 <p className="fittizi-title-label">Altri abitanti nella casa:</p>
                                 {roomData.abitantiNonRegistrati.map((nome, idx) => (
                                     <div key={idx} className="tenant-fittizio-row">
-                                        <span>👤 {nome}</span>
+                                        <span><UserRound/> {nome}</span>
                                     </div>
                                 ))}
                             </div>

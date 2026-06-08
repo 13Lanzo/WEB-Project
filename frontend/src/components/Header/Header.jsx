@@ -91,9 +91,9 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 }
 
                 alert('Profilo creato con successo!!');
-                onLoginSuccess(data.utente);
-                onClose();
+                onLoginSuccess(data.user);
                 navigate('/profilo'); 
+                onClose();
             } catch (err) {
                 console.error('Errore registrazione:', err);
                 setErrorMessage(err.message || 'Server irraggiungibile.');
@@ -121,7 +121,8 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 }
 
                 onLoginSuccess(data.user);
-                navigate('/area-riservata');
+                onClose();
+                navigate('/profilo');
             } catch (err) {
                 setErrorMessage(err.message || 'Server irraggiungibile.');
             }

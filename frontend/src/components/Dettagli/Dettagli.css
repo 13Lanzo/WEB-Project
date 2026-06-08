@@ -314,28 +314,89 @@
 }
 
 /* Tag Coinquilino */
-.profile-tags-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
+/* --- Sezione Abitanti --- */
+.inquilini-reali-list, 
+.inquilini-fittizi-list {
+    margin-bottom: 20px;
 }
 
-.profile-spec-tag {
-  background-color: #f1f5f9;
-  color: #475569;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
+/* Container per ogni riga inquilino */
+.tenant-chat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8fafc;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background-color 0.2s;
 }
 
-.profile-bio-text {
-  font-size: 0.875rem;
-  font-style: italic;
-  line-height: 1.6;
-  color: #475569;
-  margin: 0 0 24px 0;
+.tenant-chat-row:hover {
+    background-color: #f1f5f9;
+}
+
+.tenant-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.tenant-fittizio-row {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: #64748b;
+    border-left: 3px solid #e2e8f0;
+    margin-bottom: 4px;
+}
+
+.fittizi-title-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+/* Bottone Chat Inquilino */
+.btn-send-message-tenant {
+    background: none;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.btn-send-message-tenant:hover {
+    background-color: #046a38;
+    color: white;
+    border-color: #046a38;
+}
+
+/* Icona avatar piccolo */
+.host-avatar-small {
+    width: 24px;
+    height: 24px;
+    background-color: #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.specs-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Crea due colonne eque e simmetriche */
+  gap: 1.25rem;                         /* Spazio armonioso tra i campi */
+  margin-bottom: 2rem;
 }
 
 /* Bottone Invia Messaggio */

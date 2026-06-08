@@ -1,17 +1,5 @@
-/* [MODIFY] 
-New.jsx
-Correggere typo: prev.include(tag) → prev.includes(tag)
-Aggiungere campi mancanti al form: postiLettoTotali, postiLettoDisponibili
-Sezione "Chi vive nella casa":
-Campo di ricerca utenti registrati: input → GET /api/users/search?q=... → mostrare risultati → aggiungere a inquiliniAssegnati
-Campo testo libero per nomi fittizi → aggiungere a abitantiNonRegistrati
-handlePublish: chiamata reale a POST /api/rooms con tutti i campi (incluse immagineUrl, serviziTags, inquiliniAssegnati, abitantiNonRegistrati)
-Aggiornare preview in tempo reale con i nuovi campi
-Protezione: se l'utente non è proprietario, redirect a /annunci
-*/
-
 import { useEffect, useState } from "react";
-import {Await, useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import './New.css'
 import {Home, ImageDown, Sparkle, MapPinHouse, Eye, UserRound, Search, Plus, X } from 'lucide-react'
 
@@ -46,12 +34,12 @@ export default function New() {
 
     // Stili del Form ampliati con i nuovi campi richiesti
     const [formData, setFormData] = useState({
-        citta: 'Bari',
-        indirizzo: '',
-        titolo: '',
-        descrizione: '',
-        prezzo: '',
-        superficie: '',
+        citta: 'Bari...',
+        indirizzo: 'Via/Viale/Piazza...',
+        titolo: 'Stanza singola..',
+        descrizione: 'Casa spaziosa...',
+        prezzo: '€',
+        superficie: '30',
         arredamento: 'Completo',
         disponibilita: 'Immediata',
         postiLettoTotali: '',
@@ -95,7 +83,6 @@ export default function New() {
         }
     };
 
-    // Aggiungi utente reale all'array inquiliniAssegnati
     const addInquilinoReale = (user) => {
         if(!inquiliniAssegnati.some(u => u._id === user._id)) {
             setInquiliniAssegnati([...inquiliniAssegnati, user]);
@@ -104,7 +91,6 @@ export default function New() {
         setSearchResults([]);
     }
 
-    // Aggiungi nome fittizio all'array abitantiNonRegistrati
     const addAbitanteFittizio = () => {
         if(nomeFittizioInput.trim() && ! abitantiNonRegistrati.includes(nomeFittizioInput.trim())) {
             setAbitantiNonRegistrati([...abitantiNonRegistrati, nomeFittizioInput.trim()]);
@@ -112,20 +98,18 @@ export default function New() {
         }
     };
 
-    // INVIO REALE DEI DATI AL BACKEND via POST /api/rooms
     const handlePublish = async (e)=>{
         if (e) e.preventDefault();
 
         const payload = {
             ...formData,
             serviziTags: selectedTags,
-            // Inviamo al backend solo gli ID degli utenti registrati
             inquiliniAssegnati: inquiliniAssegnati.map(u => u._id || u.id),
             abitantiNonRegistrati
         };
 
         try {
-            const res = await fetch('/api/rooms', {
+            const res = await fetch('http://localhost:500/api/rooms', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -147,22 +131,6 @@ export default function New() {
             alert("Impossibile connettersi al server.");
         }
     };
-    
-    
-    // // TEST FITTIZIO (precedente)
-    // const userProprietario = {
-    //     name: 'Super Proprietario',
-    //     initials: 'SU',
-    //     email: 'prop@host.it',
-    //     roleLabel: 'PROPRIETARIO',
-    //     roleType: 'proprietario',
-    //     bio: 'Nessuna biografia inserita. Personalizza il tuo profilo per trovare coinquilini compatibili!',
-    //     status: 'PROPRIETARIO ATTIVO',
-    //     verified: true
-    // };
-
-
-
     return(
         <div className="new-page font-sans">
             <div className="page-container">
@@ -204,7 +172,7 @@ export default function New() {
                                 <label>Descrizione dell'annuncio</label>
                                 <textarea name="descrizione" value={formData.descrizione} onChange={handleChange} placeholder="Inserisci una descrizione dettagliata della camera..." className="input-field" rows="4" required></textarea>
                             </div>
-                            <div className="input-row-4">
+                            <div className="specs-form-grid">
                                 <div className='input-group'>
                                     <label>Prezzo Mensile</label>
                                     <div className="input-with-prefix">
@@ -231,10 +199,7 @@ export default function New() {
                                         <label>Disponibilità</label>
                                         <input type="text" name="disponibilita" value={formData.disponibilita} onChange={handleChange} placeholder="Es: Immediata o da Settembre" className="input-field" required/>
                                     </div>
-                                </div>
-
-                                {/* AGGIUNTA CAMPI MANCANTI: Posti Letto Totali e Disponibili */}
-                                <div className="input-row-2">       
+                                    
                                     <div className="input-group">
                                         <label>Posti Letto Totali nella Casa</label>
                                         <input type="number" 
@@ -255,13 +220,11 @@ export default function New() {
                                     </div>
                                 </div>
 
-                                { /* SEZIONE COMPLESSA: Chi vive nella casa */}
                                 <div className="chi-vive-section">
                                     <label className="section-label">
                                         <UserRound size={16}/> Chi vive nella casa (Gestione Coinquilini)
                                     </label>
 
-                                    { /* 1. Ricerca Utenti Registrati */}
                                     <div className="search-user-block">
                                         <p className="sub-label-info">Cerca un inquilino registrato tramite Email o Nome per associarlo alla stanza:</p>
                                         <div className="search-input-wrapper">

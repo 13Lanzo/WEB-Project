@@ -1,21 +1,3 @@
-/* MODIFICHE:
-Logica differenziata in base al ruolo:
-    Se proprietario:
-    Titolo: "Area Riservata — I Miei Annunci"
-Fetch GET /api/rooms/mine → mostrare solo le proprie stanze
-Bottone "NUOVO ANNUNCIO" → /new
-Se non ha annunci → mostrare messaggio vuoto con bottone "Crea il tuo primo annuncio"
-Pulsante elimina → DELETE /api/rooms/:id
-Se inquilino:
-    Titolo: "Area Riservata — La Mia Stanza"
-Fetch GET /api/rooms + filtrare se l'utente è in inquiliniAssegnati
-Se ha una stanza assegnata → mostrare i dettagli della stanza
-Se non ha stanza → messaggio "Non hai ancora una stanza assegnata" + bottone "Cerca Camere" → /ricerca
-Rimuovere:
-    Switch fittizio setIsProprietario(!isProprietario)
-Dati mock mockAnnunci
-*/
-
 import './Annunci.css'
 import { useState, useEffect } from 'react'
 import {useNavigate} from 'react-router-dom';

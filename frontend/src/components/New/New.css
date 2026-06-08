@@ -36,6 +36,7 @@
   margin: 0 0 0.5rem 0;
   font-size: 2.25rem;
   font-weight: 800;
+  color: #1e3a8a
 }
 
 .header-text p {
@@ -72,6 +73,7 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 800;
+  color:  #1e3a8a
 }
 
 /* Inputs */
@@ -147,6 +149,165 @@
 
 .input-with-suffix .input-field {
   padding-right: 2.5rem;
+}
+
+/* ==========================================
+   SEZIONE "CHI VIVE NELLA CASA" (New.css)
+   ========================================== */
+
+.chi-vive-section {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chi-vive-section .section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
+
+.sub-label-info {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+/* Contenitori Input Ricerca */
+.search-user-block, 
+.fittizi-user-block {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #065f46;
+  box-shadow: 0 0 0 2px rgba(6, 95, 70, 0.1);
+}
+
+.input-field-search {
+  flex-grow: 1;
+  border: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  outline: none;
+  background: transparent;
+}
+
+.btn-search-trigger {
+  background-color: #f1f5f9;
+  border: none;
+  border-left: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 10px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-search-trigger:hover {
+  background-color: #e2e8f0;
+  color: #065f46;
+}
+
+/* Dropdown Risultati Ricerca */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.search-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #334155;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: #f8fafc;
+  color: #065f46;
+}
+
+/* Badge Coinquiilini (Pills) */
+.residenti-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.badge-residente {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.badge-residente svg {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.badge-residente svg:hover {
+  opacity: 1;
+}
+
+/* Distinzione visiva Reale vs Fittizio */
+.badge-residente.reale {
+  background-color: #e6f7f0;
+  color: #046a38;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-residente.fittizio {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
 }
 
 /* Griglia Immagini */

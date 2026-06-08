@@ -111,7 +111,7 @@ export default function Login({ onLoginSuccess }) {
                     localStorage.setItem('user', JSON.stringify(data.user));
                 }
 
-                onLoginSuccess(data.utente);
+                onLoginSuccess(data.user);
                 navigate('/area-riservata');
             } catch (err) {
                 setErrorMessage(err.message || 'Server irraggiungibile.');
