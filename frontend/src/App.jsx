@@ -13,16 +13,17 @@ import New from './components/New/New';
 import { useState } from 'react';
 
 function App() {
-  
   //stato per tenere traccia dell'utente loggato, inizialmente null (non loggato)
   const [currentUser, setCurrentUser]=useState(() => {
-    const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
-  });
+    try{
+    const saved = localStorage.getItem('utente');
+    return (saved && saved !== 'undefined')? JSON.parse(saved) : null;
+  }catch (error) {
+    console.error("Errore nel parsing del localStorage:", error);
+    localStorage.removeItem('user'); // Rimuovi il dato corrotto
+    return null;}});
   
-  //determina se l'utente è loggato o no in base alla presenza di currentUser
-  const isLoggedIn = !!currentUser;
-
+  const isLoggedIn=!!currentUser;
   //funzione per gestire il logout: pulisce localStorage e aggiorna stato
   const handleLogout = () => {
     localStorage.removeItem('token');

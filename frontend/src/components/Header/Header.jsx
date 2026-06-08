@@ -42,29 +42,29 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
         }
     }
     
-    const handleSubmit = async (e)=> {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
-    
-        if(activeTab === 'registrati') {
-            if(confirmPassword !== password){
-                setErrorMessage('Le password non coincidono. Riprova. ');
+
+        if (activeTab === 'registrati') {
+            if (confirmPassword !== password) {
+                setErrorMessage('Le password non coincidono. Riprova.');
                 return;
             }
-            if(password.length<6){
+            if (password.length < 6) {
                 setErrorMessage('La password deve avere almeno 6 caratteri.');
                 return;
             }  
-            if(Number(eta) < 18){
+            if (Number(eta) < 18) {
                 setErrorMessage('Devi essere maggiorenne per registrarti.');
                 return;
             }
-    
+
             try {
                 const payload = {
                     nome: nome, 
                     cognome: cognome,
-                    ruolo: ruolo,
+                    ruolo: ruolo, 
                     facolta: ruolo === 'inquilino' ? facolta : undefined,
                     eta: Number(eta),
                     bio: bio,
@@ -72,65 +72,61 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                     email: email,
                     password: password
                 };
-    
+
                 const response = await fetch('http://localhost:5000/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-    
+
                 const data = await response.json();
-    
+
                 if (!response.ok) {
                     throw new Error(data.message || 'Errore durante la registrazione.');
                 }
-    
-                if(data.token){
+
+                if (data.token) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                 }
-    
+
                 alert('Profilo creato con successo!!');
-                if(onLoginSuccess) onLoginSuccess(data.user);   // Aggiorna lo stato in App.jsx
+                onLoginSuccess(data.user);
                 navigate('/profilo'); 
-                onClose();
-            } catch (err){
-                console.error('Errore durante la registrazione:', err);
+            } catch (err) {
+                console.error('Errore registrazione:', err);
                 setErrorMessage(err.message || 'Server irraggiungibile.');
             }
                 
         } else {
             try {
-                const payload = {
-                    email: email,
-                    password: password
-                };
-    
+                const payload = { email: email, password: password };
+
                 const response = await fetch('http://localhost:5000/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-    
+
                 const data = await response.json();
-    
+
                 if (!response.ok) {
                     throw new Error(data.message || 'Email o password errate. Riprova!');
                 }
-    
-                if(data.token){
+
+                if (data.token) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                 }
-    
-                if(onLoginSuccess) onLoginSuccess(data.user); 
-                navigate('/profilo');
-                onClose();
+
+                onLoginSuccess(data.user);
+                navigate('/area-riservata');
             } catch (err) {
                 setErrorMessage(err.message || 'Server irraggiungibile.');
             }
         }
     };
+
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -360,7 +356,7 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
                 onClose={()=> setIsModalOpen(false)} 
                 initialTab={initialTab} 
                 key={`${isModalOpen}-${initialTab}`} 
-                onLoginSuccess={onLogin}/>
+                onLoginSuccess={onLogin} />
         </div>
     );
 }
