@@ -1,21 +1,23 @@
 import './Chat.css'
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis } from 'lucide-react'
 import io from 'socket.io-client'
 
 // Connessione al server Socket.IO
 const socket = io.connect('http://localhost:5000');
 
-export default function Chat({currentUser, aperturaDirettaConChi = null, aperturaDirettaNome = ""}) {
+export default function Chat({currentUser}) {
+    const location=useLocation(); //per avere l'indirizzamento da Dettagli.js
     const [message, setMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
     const [conversations, setConversations] = useState([]);
-    const [attivoConChiId, setAttivoConChiId] = useState(aperturaDirettaConChi);
-    const [nomeContattoCorrente, setNomeContattoCorrente] = useState(aperturaDirettaNome);
+    const [attivoConChiId, setAttivoConChiId] = useState(location.state?.aperturaDirettaConChi || null);
+    const [nomeContattoCorrente, setNomeContattoCorrente] = useState(location.state?.aperturaDirettaNome || "");
 
     // Recupera il token di sicurezza salvato al momento del Login
     const token = localStorage.getItem('token');
-
+    
     // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
     useEffect(() => {
         // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
@@ -43,30 +45,20 @@ export default function Chat({currentUser, aperturaDirettaConChi = null, apertur
     // Aggiunto 'token' alle dipendenze per far felice ESLint
     }, [currentUser?.id, token]); 
 
-    // EFFECT 2: Quando cambi contatto, carica i vecchi messaggi
+    // EFFECT 2: Quando cambia l'utente attivo
     useEffect(() => {
-        // Spostiamo la funzione DENTRO l'effetto
-        const caricaStoricoMessaggi = async () => {
-            if (!attivoConChiId) return;
-            try {
-                const response = await fetch(`http://localhost:5000/api/messages/${attivoConChiId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+        if (attivoConChiId && token) {
+            const fetchMessaggi = async () => {
+                const res = await fetch(`http://localhost:5000/api/messages/${attivoConChiId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await response.json();
-                setMessageList(data); 
-            } catch (errore) {
-                console.error("Errore nel caricamento dello storico:", errore);
-            }
-        };
-
-        if (attivoConChiId) {
-            caricaStoricoMessaggi();
+                const data = await res.json();
+                setMessageList(data.dati || []); 
+            };
+            fetchMessaggi();
         }
-    // Aggiunto 'token' alle dipendenze
-    }, [attivoConChiId, token]); 
+    }, [attivoConChiId, token]);
+            
 
     // EFFECT 3: Resta in ascolto di nuovi messaggi in arrivo (Real-Time)
     useEffect(() => {

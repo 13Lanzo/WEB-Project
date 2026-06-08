@@ -21,25 +21,6 @@ export default function Dettagli({isLoggedIn}) {
         disponibilita: { icon: <CalendarArrowUp color='green'></CalendarArrowUp>, label: "Disponibilità", suffix: "" }
     };
 
-    // FITTIZIO:
-    // const roomData={
-    //     title: "Modern Single Room near Politecnico",
-    //     location: "Zona Città Studi, Milano",
-    //     price: 650,
-    //     matchScore: 80,
-    //     size: 18,
-    //     furniture: "Full Set",
-    //     internet: "Gigabit Fiber",
-    //     available_date: "Sept 1, 2024",
-    //     description: "Spacious and luminous single room located in a recently renovated apartment. Just 5 minutes walking distance from Politecnico di Milano (Leonardo). The room comes fully equipped with a double bed, large wardrobe, ergonomic desk, and designer lamp.",
-    //     host: {
-    //         name: "Marco",
-    //         age: 24,
-    //         bio: '"Looking for a quiet roommate who values clean common spaces and occasional shared dinners. Currently finishing my Master\'s at Polimi."',
-    //         tags: ["Ingegneria", "Amante dei gatti", "Vegano", "Palestra"]
-    //     }
-    // };
-
     // Chiamata GET reale verso il backend per caricare il singolo annuncio
     useEffect(() => {
         const fetchRoomDetails = async () => {
@@ -71,9 +52,10 @@ export default function Dettagli({isLoggedIn}) {
     }, [id, token]);
 
     // Navigazione verso la chat passando l'ID dell'interlocutore nello stato di navigazione
-    const handleStartChat = (recipientID) => {
+    const handleStartChat = () => {
         if (isLoggedIn) {
-            navigate(`/chat`, { state: {openChatWith: recipientID }});
+            navigate(`/chat`, { state: {aperturaDirettaConChi: roomData.creatoDa._id,
+                aperturaDirettaNome: roomData.creatoDa.nome}});
         } else {
             navigate('/login')
         }
@@ -95,14 +77,6 @@ export default function Dettagli({isLoggedIn}) {
         "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80",
         "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=400&q=80"
     ];
-
-    // const ClickMessaggio=()=>{
-    //     if (isLoggedIn){
-    //         navigate('/chat');
-    //     }else{
-    //         navigate('/login');
-    //     }
-    // };
 
     return(
         <div className='room-detail-page font-sans'>
