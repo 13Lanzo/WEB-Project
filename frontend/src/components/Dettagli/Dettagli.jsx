@@ -3,10 +3,14 @@ import { useEffect, useState } from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check, UserRound } from 'lucide-react'
 
-export default function Dettagli({isLoggedIn}) {
+export default function Dettagli({isLoggedIn, currentUser}) {
     const {id} = useParams(); // Recupera l'ID della stanza dall'URL (/dettagli/:id)
     const navigate = useNavigate();
-    
+    useEffect(()=>{
+        if(currentUser){
+            console.log('Utente loggato:', currentUser?.nome)
+        }
+    }, [currentUser]);
     const [roomData, setRoomData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
@@ -26,7 +30,7 @@ export default function Dettagli({isLoggedIn}) {
         const fetchRoomDetails = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`/api/rooms/${id}`, {
+                const res = await fetch(`http://localhost:5000/api/rooms/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
