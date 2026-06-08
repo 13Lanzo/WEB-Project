@@ -155,7 +155,7 @@ export default function Ricerca() {
                     </div>
                 </header>
 
-                {/* Commentato come richiesto dall'utente:
+                {/* Commento i dati fittizi:
                 {/* 
                 <div className='rooms-grid'>
                     {ROOMS_DATA.map((room)=>(

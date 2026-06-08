@@ -40,7 +40,7 @@ export default function Profilo({ currentUser, onLogout }) {
     // Dati reali estratti da currentUser
     const name = currentUser ? `${currentUser.nome} ${currentUser.cognome || ''}` : "Utente";
     const email = currentUser?.email || "";
-    const roleLabel = currentUser?.ruolo === 'proprietario' ? 'PROPRIETARIO' : 'CO-INQUILINO / STUDENTE';
+    const roleLabel = currentUser?.ruolo === 'proprietario' ? 'PROPRIETARIO' : 'INQUILINO';
     const roleType = currentUser?.ruolo || 'inquilino'; // 'inquilino' o 'proprietario'
     const bio = currentUser?.bio || "Nessuna biografia inserita. Personalizza il tuo profilo per trovare coinquilini compatibili!";
     const faculty = currentUser?.facolta || "Nessuna facoltà specificata";
