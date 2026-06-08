@@ -128,7 +128,7 @@ export default function Ricerca() {
                                         <span key={idx} className='room-spec-tag'>{tag}</span>
                                     ))}
                                 </div>
-                                <button className='btn-view-details' onClick={()=>  navigate('/dettagli')}>Maggiori dettagli</button>
+                                <button className='btn-view-details' onClick={()=>  navigate('/dettagli/' + room.id)}>Maggiori dettagli</button>
                             </div>
                         </div> 
                     ))}

@@ -81,7 +81,6 @@ export default function Chat({currentUser, aperturaDirettaConChi = null, apertur
         return () => socket.off('ricevi_messaggio', gestisciNuovoMessaggio);
     }, [attivoConChiId, currentUser?.id]);
 
-
     // 3. INVIA IL MESSAGGIO (Salva nel DB + Invia su Socket)
     const sendMessage = async () => {
         if (message.trim() !== '' && attivoConChiId) {
@@ -121,14 +120,14 @@ export default function Chat({currentUser, aperturaDirettaConChi = null, apertur
         }
     };
 
-    return(
+    return (
         <div className='chat-page'>
             <div className='chat-container'>
                 <aside className='chat-sidebar'>
                     <div className='sidebar-header'>
                         <div className="search-bar">
                             <span className='icon'><Search/></span>
-                            <input type='text' placeholder='Cerca conversazioni...'/>
+                            <input type='text' placeholder='Cerca conversazioni...' />
                         </div>
                         <button className='filter-btn'><GripHorizontal/></button>
                     </div>
