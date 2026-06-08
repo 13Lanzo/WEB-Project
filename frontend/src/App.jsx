@@ -16,7 +16,7 @@ function App() {
   //stato per tenere traccia dell'utente loggato, inizialmente null (non loggato)
   const [currentUser, setCurrentUser]=useState(() => {
     try{
-    const saved = localStorage.getItem('utente');
+    const saved = localStorage.getItem('user');
     return (saved && saved !== 'undefined')? JSON.parse(saved) : null;
   }catch (error) {
     console.error("Errore nel parsing del localStorage:", error);
