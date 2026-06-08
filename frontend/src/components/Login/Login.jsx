@@ -1,7 +1,7 @@
 import './Login.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { CircleFadingPlus, GlobeCheck, CircleCheckBig } from 'lucide-react'
+import { CircleFadingPlus, Globe, CircleCheckBig } from 'lucide-react'
 
 export default function Login({ onLoginSuccess }) {
     const [activeTab, setActiveTab] = useState('accedi');
@@ -249,7 +249,7 @@ export default function Login({ onLoginSuccess }) {
                     </div>
 
                     <div className='social-grid'>
-                        <button type='button' className='btn-social' onClick={LoginGoogle}><GlobeCheck color='blue'/><span className='social-label'>Google</span></button>
+                        <button type='button' className='btn-social' onClick={LoginGoogle}><Globe color='blue'/><span className='social-label'>Google</span></button>
                         <button type='button' className='btn-social' onClick={LoginInsta}><CircleFadingPlus color='#e1306c'/><span className='social-label' style={{ fontWeight:600 }}>Instagram</span></button>
                     </div>
                 </div>

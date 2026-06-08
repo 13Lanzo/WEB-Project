@@ -69,6 +69,8 @@ const mongooseOptions = {
   family: 4,
 };
 
+const server = http.createServer(app);
+
 mongoose
   .connect(MONGODB_URI, mongooseOptions)
   .then(() => {
@@ -77,7 +79,6 @@ mongoose
       console.log(`Il server è in ascolto sulla porta ${PORT}...`);
       console.log(`Testa la rotta su http://localhost:${PORT}/`);
     });
-
     console.log("Connesso correttamente a MongoDB Atlas!");
   })
   .catch((err) => {
@@ -93,13 +94,13 @@ mongoose
   });
 
 //implementazione di Socket.io
-// const server = http.createServer(app);
-// const io = new Server(server, {
-//   cors: {
-//     origin: 'http://localhost:5173',
-//     methods: ['GET', 'POST']
-//   }
-// });
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+});
 
 const utentiConnessi = {};
 

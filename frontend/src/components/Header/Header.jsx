@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Header.css'
-import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
+import {HouseHeartIcon, BellRing, CircleFadingPlus, Globe, User, MoveRight} from 'lucide-react'
 import { io } from 'socket.io-client'
 
 const socket=io.connect('http://localhost:5000');
@@ -257,7 +257,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                     <div className='divider-line'></div>
                 </div>
                 <div className='social-grid'>
-                    <button type='button' className='btn-social' onClick={LoginGoogle}><GlobeCheck color='blue'/><span className='social-label'>Google</span></button>
+                    <button type='button' className='btn-social' onClick={LoginGoogle}><Globe color='blue'/><span className='social-label'>Google</span></button>
                     <button type='button' className='btn-social' onClick={LoginInsta}><CircleFadingPlus color='#e1306c'/><span className='social-label' style={{ fontWeight:600 }}>Instagram</span></button>
                 </div>
             </div>
@@ -265,7 +265,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     );
 }
 
-export default function Header({isLoggedIn, onLogout, onLogin}){
+export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [initialTab, setInitialTab] = useState('registrati');
     const [isNotifOpen, setIsNotifOpen]=useState(false);
@@ -290,6 +290,11 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
             })
         );
     };
+    useEffect(()=>{
+        if(currentUser){
+            console.log('Utente loggato:', currentUser?.nome)
+        }
+    }, [currentUser]);
 
     useEffect(() => {
         socket.on('ricevi_messaggio', (data) => {
