@@ -5,10 +5,19 @@ const dns = require("dns");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const http=require('http');
-const {Server}= require('socket.io');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 app.use(express.json());
 app.use(
   cors({
@@ -64,7 +73,7 @@ mongoose
   .connect(MONGODB_URI, mongooseOptions)
   .then(() => {
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Il server è in ascolto sulla porta ${PORT}...`);
       console.log(`Testa la rotta su http://localhost:${PORT}/`);
     });
@@ -82,33 +91,33 @@ mongoose
       );
     }
   });
-  
+
 //implementazione di Socket.io
-const server= http.createServer(app);
-const io= new Server(server,{
-  cors:{
-    origin:'http://localhost:5173',
-    methods: ['GET', 'POST']
-  }
-});
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: 'http://localhost:5173',
+//     methods: ['GET', 'POST']
+//   }
+// });
 
-const utentiConnessi={};
+const utentiConnessi = {};
 
-io.on('connection', (socket)=>{
+io.on('connection', (socket) => {
   console.log('Nuovo utente connesso via socket:', socket.id);
-  socket.on('registra_utente', (userId)=>{
-    utentiConnessi[userId]=socket.id;
+  socket.on('registra_utente', (userId) => {
+    utentiConnessi[userId] = socket.id;
     console.log(`Utente ${userId} associato al socket ${socket.id}`);
   });
-  socket.on('invia_messaggio', (data)=>{
-    const socketDestinatario=utentiConnessi[data.destinatarioId];
-    if(socketDestinatario){
-      io.to(socketDestinatario).emit('ricevi_messaggio',data);
+  socket.on('invia_messaggio', (data) => {
+    const socketDestinatario = utentiConnessi[data.destinatarioId];
+    if (socketDestinatario) {
+      io.to(socketDestinatario).emit('ricevi_messaggio', data);
     }
   });
-  socket.on('disconnect', ()=>{
-    for(const userId in utentiConnessi){
-      if(utentiConnessi[userId]=== socket.id){
+  socket.on('disconnect', () => {
+    for (const userId in utentiConnessi) {
+      if (utentiConnessi[userId] === socket.id) {
         delete utentiConnessi[userId];
         break;
       }

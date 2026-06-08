@@ -1,5 +1,5 @@
 import './Dettagli.css'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 import {MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check, UserRound } from 'lucide-react'
 
