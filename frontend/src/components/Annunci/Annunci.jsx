@@ -17,7 +17,7 @@ Dati mock mockAnnunci
 */
 
 import './Annunci.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {useNavigate} from 'react-router-dom';
 import {Sparkles, CirclePlus, MapPinHouse, Trash, Home} from 'lucide-react';
 
@@ -29,16 +29,20 @@ export default function Annunci () {
     // recuperiamo i dati dall'utente loggato dal LocalStorage
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
+    const user = (userStr && userStr !== "undefined") ? JSON.parse(userStr) : null;
     const ruolo = user?.ruolo; // proprietario o inquilino
     const userId = user?.id || user?._id;
 
-    // divisione logica tra proprietario e inquilino
-    // PROPRIETARIO:
     const isProprietario = ruolo === 'proprietario';
+    
 
     useEffect(()=>{
-        const fetchAnnunci = async () => {
+        if (!token){
+            navigate('/login');
+            return;
+        };
+        // logica della gestione della scandenza del token
+        const fetchAnnunci=async()=>{
             try {
                 setLoading(true);
                 const headers = {
@@ -48,21 +52,19 @@ export default function Annunci () {
 
                 if (isProprietario){
                     // Chiamata per recuperare solo le stanze dal proprietario loggato
-                    const res = await fetch('/api/rooms/mine', {headers});
+                    const res = await fetch('http://localhost:5000/api/rooms/mine', {headers});
                     const data = await res.json();
-                    if (data.success || Array.isArray(data)) {
-                        setAnnunci(data.dati || data);
-                    }
+                    setAnnunci(data.dati || data);
                 } else {
                     // Chiamata per tutte le stanze filtrando poi lato client quelle assegnate al conquilino
-                    const res = await fetch('/api/rooms', {headers});
+                    const res = await fetch('http://localhost:5000/api/rooms', {headers});
                     const data = await res.json();
                     const tutteLeStanze = data.dati || data;
 
                     if (Array.isArray(tutteLeStanze)) {
                         // Filtriamo se l'ID dell'utente corrente è incluso nell'array inquiliniAssegnati
                         const stanzaAssegnata = tutteLeStanze.filter(stanza =>
-                        stanza.inquiliniAssegnati?.includes(userId)
+                            stanza.inquiliniAssegnati?.includes(userId)
                         );
                         setAnnunci(stanzaAssegnata);
                     }
@@ -73,14 +75,7 @@ export default function Annunci () {
                 setLoading(false);
             }
         };
-
-        // logica della gestione della scandenza del token
-        if (token) {
-            fetchAnnunci();
-        } else {
-            setLoading(false);
-            navigate('/login'); // se manca il token, reindirizza al login per sicurezza
-        }
+        fetchAnnunci();
     }, [isProprietario, token, userId, navigate]);
 
     // Gestione eliminazione annuncio (solo per il PROPRIETARIO)

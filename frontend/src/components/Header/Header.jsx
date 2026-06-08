@@ -91,7 +91,8 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 }
 
                 alert('Profilo creato con successo!!');
-                onLoginSuccess(data.user);
+                onLoginSuccess(data.utente);
+                onClose();
                 navigate('/profilo'); 
             } catch (err) {
                 console.error('Errore registrazione:', err);

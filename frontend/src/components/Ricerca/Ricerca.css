@@ -275,22 +275,6 @@
   color: #64748b;
 }
 
-/* Tag Specifici della Stanza */
-.room-tags-container {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.room-spec-tag {
-  background-color: #f1f5f9;
-  color: #475569;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
 .btn-view-details {
   width: 100%;
   background-color: #046a38;
