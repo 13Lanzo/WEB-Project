@@ -33,7 +33,9 @@ function App() {
 
   //funzione che viene passata a Login.jsx per aggiornare lo stato di autenticazione dopo un login riuscito
   const handleLoginSuccess = (userObj) => {
+    console.log("Ricevuto utente in App:", userObj);
     setCurrentUser(userObj);
+    localStorage.setItem('user', JSON.stringify(userObj));
   };
   
   return (
