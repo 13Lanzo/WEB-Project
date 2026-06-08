@@ -265,7 +265,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     );
 }
 
-export default function Header({isLoggedIn, onLogout, onLogin}){
+export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [initialTab, setInitialTab] = useState('registrati');
     const [isNotifOpen, setIsNotifOpen]=useState(false);
@@ -290,6 +290,11 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
             })
         );
     };
+    useEffect(()=>{
+        if(currentUser){
+            console.log('Utente loggato:', currentUser?.nome)
+        }
+    }, [currentUser]);
 
     useEffect(() => {
         socket.on('ricevi_messaggio', (data) => {
