@@ -17,7 +17,7 @@ export default function Chat({currentUser}) {
 
     // Recupera il token di sicurezza salvato al momento del Login
     const token = localStorage.getItem('token');
-    
+    const myUserId = currentUser?.id || currentUser?._id;
     // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
     useEffect(() => {
         // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
@@ -38,12 +38,12 @@ export default function Chat({currentUser}) {
             }
         };
 
-        if (currentUser?.id) {
-            socket.emit('registra_utente', currentUser.id);
+        if (myUserId) {
+            socket.emit('registra_utente', myUserId);
             caricaConversazioni();
         }
     // Aggiunto 'token' alle dipendenze per far felice ESLint
-    }, [currentUser?.id, token]); 
+    }, [myUserId, token]); 
 
     // EFFECT 2: Quando cambia l'utente attivo
     useEffect(() => {
@@ -64,20 +64,19 @@ export default function Chat({currentUser}) {
     useEffect(() => {
         const gestisciNuovoMessaggio = (data) => {
             const mittenteReale = data.mittente?._id || data.mittente;
-            if (mittenteReale === attivoConChiId || mittenteReale === currentUser?.id) {
+            if (mittenteReale === attivoConChiId || mittenteReale === myUserId) {
                 setMessageList((list) => [...list, data]);
             }
         };
 
         socket.on('ricevi_messaggio', gestisciNuovoMessaggio);
         return () => socket.off('ricevi_messaggio', gestisciNuovoMessaggio);
-    }, [attivoConChiId, currentUser?.id]);
+    }, [attivoConChiId, myUserId]);
 
     // 3. INVIA IL MESSAGGIO (Salva nel DB + Invia su Socket)
     const sendMessage = async () => {
         if (message.trim() !== '' && attivoConChiId) {
             try {
-                // A. Salvataggio permanente nel Database
                 const response = await fetch('http://localhost:5000/api/messages', {
                     method: 'POST',
                     headers: {
@@ -90,20 +89,20 @@ export default function Chat({currentUser}) {
                     })
                 });
 
-                const messaggioSalvato = await response.json();
-
+                const dataModificata = await response.json();
+                const messaggioEffettivo = dataModificata.dati || dataModificata;
                 // B. Trasmissione istantanea (Socket.IO) per il destinatario
                 const messageData = {
                     destinatarioId: attivoConChiId,
-                    mittente: currentUser.id, 
+                    mittente: myUserId, 
                     testo: message,
-                    createdAt: messaggioSalvato.createdAt || new Date()
+                    createdAt: messaggioEffettivo.createdAt || new Date()
                 };
                 
                 socket.emit('invia_messaggio', messageData);
 
                 // C. Aggiorna lo schermo immediatamente per chi scrive
-                setMessageList((list) => [...list, messaggioSalvato]);
+                setMessageList((list) => [...list, messaggioEffettivo]);
                 setMessage(''); 
 
             } catch (errore) {
@@ -173,7 +172,8 @@ export default function Chat({currentUser}) {
                         
                         {messageList.map((msgContent, index) => {
                             const mittenteId = msgContent.mittente?._id || msgContent.mittente;
-                            const isMe = mittenteId === currentUser?.id;
+                            const myUserId = currentUser?.id || currentUser?._id;
+                            const isMe = mittenteId === myUserId;
 
                             return(
                                 <div key={index} className={`msg-wrapper ${isMe ? 'sent' : 'received'}`}>

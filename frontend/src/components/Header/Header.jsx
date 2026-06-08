@@ -85,13 +85,15 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                     throw new Error(data.message || 'Errore durante la registrazione.');
                 }
 
-                if (data.token) {
+                const utenteReale = data.utente || data.user;
+
+                if (data.token && utenteReale) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('user', JSON.stringify(utenteReale)); // UNIFICATO SU 'user'
                 }
 
                 alert('Profilo creato con successo!!');
-                onLoginSuccess(data.user);
+                onLoginSuccess(utenteReale);
                 navigate('/profilo'); 
                 onClose();
             } catch (err) {
@@ -115,9 +117,11 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                     throw new Error(data.message || 'Email o password errate. Riprova!');
                 }
 
-                if (data.token) {
+                const utenteReale = data.user || data.user;
+
+                if (data.token && utenteReale) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('user', JSON.stringify(utenteReale)); // UNIFICATO SU 'user'
                 }
 
                 onLoginSuccess(data.user);

@@ -234,21 +234,7 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                                 <SendHorizontal /> Contatta il proprietario
                             </button>
                         </div>
-                        
-                        {/* <h4>{roomData.host.name}, {roomData.host.age} years old</h4>
-                        <span className='verified-badge'><Dot size={10}/> Verified Host</span> */}
-
                     </div>
-                    
-                    
-                    {/* <div className='profile-tags-flex'>
-                        {roomData.host.tags.map((tag,idx)=>(
-                            <span key={idx} className='profile-spec-tag'>{tag}</span>
-                        ))}
-                    </div>
-                    <p className='profile-bio-text'>{roomData.host.bio}</p>
-                    <button className='btn-send-message' onClick={ClickMessaggio}><SendHorizontal/>Invia messaggio</button>
-                    */}
 
                     <div className='host-trust-footer'>
                         <span><ShieldCheck /> Proprietario Verificato</span>

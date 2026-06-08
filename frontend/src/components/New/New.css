@@ -209,6 +209,7 @@
   font-size: 0.95rem;
   outline: none;
   background: transparent;
+  color: black;
 }
 
 .btn-search-trigger {
