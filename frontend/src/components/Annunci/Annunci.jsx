@@ -135,7 +135,7 @@ export default function Annunci () {
 
             {/* GRIGLIA DEGLI ANNUNCI (se presenti) */}
             { annunci.length > 0 && (
-            <div className='annunci-grid'>
+            <div className='rooms-grid'>
                 {annunci.map((annuncio)=> {
                     const currentId = annuncio._id || annuncio.id // Supporto sia per id MongoDB che per fallback
                     return (

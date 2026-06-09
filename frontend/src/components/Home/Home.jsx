@@ -8,7 +8,7 @@ export default function Home({isLoggedIn}) {
     const navigate=useNavigate();
     const handlePubblicaAnnuncio=()=>{
         if(isLoggedIn){
-            navigate('/annunci');
+            navigate('/area-riservata');
         }else{
             navigate('login');
         }

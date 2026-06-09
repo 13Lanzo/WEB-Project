@@ -5,7 +5,7 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Uniroom API Documentazione",
+      title: "Room4U API Documentazione",
       version: "1.0.0",
       description:
         "Documentazione ufficiale delle API REST per la piattaforma Room4U\n\nrealizzato da Giuseppe, Francesca e Pierpaolo",

@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './Header.css'
-import {HouseHeartIcon, BellRing, CircleFadingPlus, Globe, User, MoveRight} from 'lucide-react'
-import { io } from 'socket.io-client'
+import {HouseHeartIcon, BellRing, CircleFadingPlus, Globe, MoveRight} from 'lucide-react'
+//import { io } from 'socket.io-client'
 
-const socket=io.connect('http://localhost:5000');
+//const socket=io.connect('http://localhost:5000');
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     // Diamo un valore di fallback ('accedi') se initialTab è undefined al primo avvio
@@ -274,36 +274,46 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
     const [activeLink, setActiveLink]=useState('Scopri');
     const navigate =useNavigate();
 
-    const [contacts, setContacts] = useState([
-        { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-        ]);
+    // const [contacts, setContacts] = useState([]);
 
-    const updateLastMessage = (newText, newTime) => {
-        setContacts(prevContacts =>
-            prevContacts.map(contact => {
-                if (contact.active) {
-                    return { ...contact, lastMsg: newText, time: newTime };
-                }
-                return contact;
-            })
-        );
-    };
-    useEffect(()=>{
-        if(currentUser){
-            console.log('Utente loggato:', currentUser?.nome)
-        }
-    }, [currentUser]);
+    // const updateLastMessage = (idMittente, nomeMittente, nuovoTesto, nuovoOrario) => {
+    //     setContacts(prevContacts =>
+    //         prevContacts.map(contact => {
+    //             const exist= prevContacts.some(c=>c._id=== idMittente || c.id=== idMittente);
+    //             if(exist){
+    //                 const updated= prevContacts.map(c=>{
+    //                     const currentCId=c._id|| c.id;
+    //                     if(currentCId===idMittente){
+    //                         return{...c,lastMsg: nuovoTesto, time:nuovoOrario};
+    //                     }
+    //                     return c;
+    //                 });
+    //                 const target=updated.find(c=>(c._id||c.id)===idMittente);
+    //                 const filtered=updated.filter(c=>(c.id ||c._id)!== idMittente);
+    //                 return[target,...filtered];
+    //             }else{
+    //                 return[{
+    //                     _id:idMittente, name: nomeMittente, lastMsg: nuovoTesto, time: nuovoOrario}, ...prevContacts];
+    //             }
+    //         })
+    //     );
+    // };
+     useEffect(()=>{
+         if(currentUser){
+             console.log('Utente loggato:', currentUser?.nome)
+         }
+     }, [currentUser]);
 
-    useEffect(() => {
-        socket.on('ricevi_messaggio', (data) => {
-            const orarioArrivo = data.createdAt
-                ? new Date(data.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            updateLastMessage(data.testo, orarioArrivo);
-        });
+    // useEffect(() => {
+    //     socket.on('ricevi_messaggio', (data) => {
+    //         const orarioArrivo = data.createdAt
+    //             ? new Date(data.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    //             : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    //         updateLastMessage(data.testo, orarioArrivo);
+    //     });
 
-        return () => socket.off('ricevi_messaggio');
-    }, []);    
+    //     return () => socket.off('ricevi_messaggio');
+    // }, []);    
     
     return (
         <div>
@@ -327,7 +337,7 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
                                         <h4>Messaggi Recenti</h4>
                                     </div>
                                     
-                                    <div className='constacts-list'>
+                                    {/* <div className='constacts-list'>
                                         {contacts.map(contact =>(
                                             <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`} onClick={()=>{ navigate('/chat'); setIsNotifOpen(false);}}>
                                                 <div className='notif-avatar'><User size={40}/></div>
@@ -340,7 +350,7 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
                                                 </div>
                                             </div>
                                         ))}
-                                    </div>
+                                    </div> */}
                                     <div className='notif-footer' onClick={()=>{navigate('/chat'); setIsNotifOpen(false);}}>Vai alla Chat <MoveRight size={10}/></div>
                                 </div>
                             )}

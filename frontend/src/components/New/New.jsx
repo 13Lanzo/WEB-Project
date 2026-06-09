@@ -58,7 +58,7 @@ export default function New() {
     const handleSearchUsers = async() => {
         if (!searchQuery.trim()) return;
         try {
-            const res = await fetch(`/api/users/search?q=${searchQuery}`, {
+            const res = await fetch(`http://localhost:5000/api/users/search?q=${searchQuery}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -96,7 +96,7 @@ export default function New() {
         };
 
         try {
-            const res = await fetch('http://localhost:500/api/rooms', {
+            const res = await fetch('http://localhost:5000/api/rooms', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -166,22 +166,22 @@ export default function New() {
                                         <span>€</span>
                                         <input type="number" name="prezzo" value={formData.prezzo} onChange={handleChange} placeholder="Es: 300" className="input-field" required/>
                                     </div>
-
-                                    <div className="input-group">
+                                </div>
+                                <div className="input-group">
                                         <label>Superficie</label>
                                         <div className="input-with-suffix">
                                             <input type="number" name="superficie" value={formData.superficie} onChange={handleChange} placeholder="Es: 16" className="input-field" required/>
                                             <span>mq</span>
                                         </div>
-                                    </div>
-                                    <div className="input-group">
+                                </div>
+                                <div className="input-group">
                                         <label>Arredamento</label>
                                         <select name="arredamento" value={formData.arredamento} onChange={handleChange} className="input-field">
                                             <option value='Completo'>Completo</option>
                                             <option value='Parziale'>Parziale</option>
                                             <option value='Vuoto'>Vuoto</option>
                                         </select>
-                                    </div>
+                                </div>
                                     <div className="input-group">
                                         <label>Disponibilità</label>
                                         <input type="text" name="disponibilita" value={formData.disponibilita} onChange={handleChange} placeholder="Es: Immediata o da Settembre" className="input-field" required/>
@@ -270,9 +270,7 @@ export default function New() {
                                     </div>
 
                                 </div>
-                                
-
-                            </div>    
+                            
                                 <div className="image-selection-section">
                                     <label className="section-label"><ImageDown/> Scegli l'immagine della camera</label>
                                     <div className="image-picker-grid">
@@ -287,13 +285,13 @@ export default function New() {
                                 <div className="form-actions">
                                     <button type="submit" className="btn-pubblica"><Sparkle/> Pubblica Annuncio</button>
                                     <button type="button" className="btn-annulla" onClick={()=> navigate('/annunci')}>Annulla</button>
-                                </div>       
+                                </div>        
                         </form>
                     </div>
 
                     {/* ANTEPRIMA AGGIORNATA IN TEMPO REALE */}
                     <div className="preview-column">
-                        <div className="previw-header">
+                        <div className="preview-header">
                             <span className="eye-icon"><Eye size={15}/></span>
                             <span>ANTEPRIMA IN TEMPO REALE</span>
                         </div>
@@ -348,7 +346,7 @@ export default function New() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>    
         </div>
     );
 }
