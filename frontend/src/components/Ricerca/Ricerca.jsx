@@ -101,7 +101,10 @@ export default function Ricerca() {
                     {rooms.map((room)=>(
                         <div key={room._id} className='room-card'>
                             <div className='room-image-wrapper'>
-                                <img src={room.image} alt={room.titolo} className='room-img'/>
+                                <img src={room.immagineUrl || room.image || room.immagine || 
+                                    "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80" } 
+                                    alt={room.titolo} 
+                                    className='room-img'/>
                                 <span className='match-badge'><Zap/>% Match</span>
                             </div>
                         

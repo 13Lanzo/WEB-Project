@@ -27,15 +27,16 @@ async function seed() {
         await Message.deleteMany({});
         console.log("Dati esistenti cancellati con successo.");
 
-        // 3. Creazione degli utenti (10 Studenti e 10 Proprietari)
-        const studentiData = [
+        // 3. Creazione degli utenti (3 Inquilini e 3 Proprietari)
+        const inquiliniData = [
             {
                 nome: "Davide",
                 cognome: "Lanzo",
                 email: "d.lanzo@studenti.poliba.it",
                 password: "PasswordSicura123",
                 eta: 21,
-                ruolo: "studente",
+                ruolo: "inquilino",
+                facolta: "Ingegneria",
                 tagPreferenze: ["ordinato", "non-fumatore"],
                 bio: "Studente di Informatica al Poliba."
             },
@@ -45,7 +46,8 @@ async function seed() {
                 email: "cioccafra@gmail.com",
                 password: "password5",
                 eta: 22,
-                ruolo: "studente",
+                ruolo: "inquilino",
+                facolta: "Medicina",
                 tagPreferenze: ["tranquillo", "studio-notturno"],
                 bio: "Studio Lettere all'Uniba, mi piace la tranquillità e leggere libri."
             },
@@ -55,79 +57,10 @@ async function seed() {
                 email: "pier.test@poliba.it",
                 password: "PasswordSicura123",
                 eta: 22,
-                ruolo: "studente",
+                ruolo: "inquilino",
+                facolta: "Ingegneria",
                 tagPreferenze: ["disordinato", "non-fumatore"],
                 bio: "Studente di Ingegneria Automazione al Poliba."
-            },
-            {
-                nome: "Marco",
-                cognome: "Rossi",
-                email: "marco.rossi@studenti.uniba.it",
-                password: "PasswordSicura123",
-                eta: 23,
-                ruolo: "studente",
-                tagPreferenze: ["sociale", "cucina"],
-                bio: "Studente di Economia, amo cucinare per tutti e condividere le cene."
-            },
-            {
-                nome: "Giulia",
-                cognome: "Bianchi",
-                email: "giulia.b@studenti.poliba.it",
-                password: "PasswordSicura123",
-                eta: 20,
-                ruolo: "studente",
-                tagPreferenze: ["sportivo", "ordinato"],
-                bio: "Studio Architettura, amante dello sport e dell'ordine."
-            },
-            {
-                nome: "Luca",
-                cognome: "Verdi",
-                email: "luca.v@studenti.uniba.it",
-                password: "PasswordSicura123",
-                eta: 24,
-                ruolo: "studente",
-                tagPreferenze: ["musica", "non-fumatore"],
-                bio: "Studente di Giurisprudenza, suono la chitarra nel tempo libero."
-            },
-            {
-                nome: "Sofia",
-                cognome: "Russo",
-                email: "sofia.r@studenti.poliba.it",
-                password: "PasswordSicura123",
-                eta: 21,
-                ruolo: "studente",
-                tagPreferenze: ["tranquillo", "animale-domestico"],
-                bio: "Studio Ingegneria Edile, ho un piccolo gatto molto educato."
-            },
-            {
-                nome: "Alessandro",
-                cognome: "Ferrara",
-                email: "ale.f@studenti.uniba.it",
-                password: "PasswordSicura123",
-                eta: 22,
-                ruolo: "studente",
-                tagPreferenze: ["cucina", "studio-notturno"],
-                bio: "Studente di Lingue, adoro viaggiare e fare amicizia."
-            },
-            {
-                nome: "Beatrice",
-                cognome: "Neri",
-                email: "bea.neri@studenti.poliba.it",
-                password: "PasswordSicura123",
-                eta: 22,
-                ruolo: "studente",
-                tagPreferenze: ["ordinato", "non-fumatore"],
-                bio: "Studio Matematica, seria e molto rispettosa degli spazi."
-            },
-            {
-                nome: "Giovanni",
-                cognome: "Gallo",
-                email: "giovanni.g@studenti.uniba.it",
-                password: "PasswordSicura123",
-                eta: 23,
-                ruolo: "studente",
-                tagPreferenze: ["sociale", "musica"],
-                bio: "Studio Scienze Politiche, solare e pronto a condividere esperienze."
             }
         ];
 
@@ -161,84 +94,14 @@ async function seed() {
                 ruolo: "proprietario",
                 tagPreferenze: [],
                 bio: "Offro stanze in affitto arredate e vicine ai campus."
-            },
-            {
-                nome: "Anna",
-                cognome: "Gallo",
-                email: "anna.gallo@outlook.it",
-                password: "PasswordSicura123",
-                eta: 60,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Nonna e proprietaria, affitto camere solo a studenti referenziati."
-            },
-            {
-                nome: "Luigi",
-                cognome: "De Luca",
-                email: "luigi.deluca@gmail.com",
-                password: "PasswordSicura123",
-                eta: 41,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Affittacamere professionale, assistenza h24."
-            },
-            {
-                nome: "Elena",
-                cognome: "Costa",
-                email: "elena.costa@hotmail.it",
-                password: "PasswordSicura123",
-                eta: 35,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Proprietaria giovane e disponibile, appartamenti moderni."
-            },
-            {
-                nome: "Francesco",
-                cognome: "Giordano",
-                email: "francesco.g@gmail.com",
-                password: "PasswordSicura123",
-                eta: 48,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Proprietario attento alla manutenzione e ai dettagli."
-            },
-            {
-                nome: "Lucia",
-                cognome: "Rizzo",
-                email: "lucia.rizzo@yahoo.com",
-                password: "PasswordSicura123",
-                eta: 55,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Affitto stanze singole e doppie in zona tranquilla."
-            },
-            {
-                nome: "Salvatore",
-                cognome: "Barbieri",
-                email: "salvatore.b@live.it",
-                password: "PasswordSicura123",
-                eta: 50,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Monolocali e camere per studenti Poliba e Uniba."
-            },
-            {
-                nome: "Caterina",
-                cognome: "Fontana",
-                email: "caterina.f@gmail.com",
-                password: "PasswordSicura123",
-                eta: 43,
-                ruolo: "proprietario",
-                tagPreferenze: [],
-                bio: "Appartamenti ristrutturati di recente in centro storico."
             }
         ];
 
-        // Creazione studenti (usiamo .create in un loop/Promise.all per far scattare il pre-save hook di bcrypt)
-        const studentiCreati = await Promise.all(
-            studentiData.map(student => User.create(student))
+        // Creazione inquilini (usiamo .create in un loop/Promise.all per far scattare il pre-save hook di bcrypt)
+        const inquiliniCreati = await Promise.all(
+            inquiliniData.map(student => User.create(student))
         );
-        console.log(`Creati ${studentiCreati.length} studenti.`);
+        console.log(`Creati ${inquiliniCreati.length} inquilini.`);
 
         // Creazione proprietari
         const proprietariCreati = await Promise.all(
@@ -246,7 +109,7 @@ async function seed() {
         );
         console.log(`Creati ${proprietariCreati.length} proprietari.`);
 
-        // 4. Creazione delle stanze associate ai proprietari
+        // 4. Creazione delle stanze associate ai proprietari, con relazioni 1:1 con gli inquilini assegnati
         const stanzeData = [
             {
                 titolo: "Stanza Singola Luminosa - Zona Policlinico",
@@ -257,10 +120,12 @@ async function seed() {
                 creatoDa: proprietariCreati[0]._id, // Roberto Esposito
                 superficie: 20,
                 arredamento: "Completo",
+                disponibilita: "Immediata",
+                immagineUrl: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80",
                 postiLettoTotali: 1,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
+                postiLettoDisponibili: 0,
+                inquiliniAssegnati: [inquiliniCreati[0]._id], // Davide Lanzo
+                abitantiNonRegistrati: ["Luca"]
             },
             {
                 titolo: "Posto Letto in Doppia - Zona Policlinico",
@@ -271,10 +136,12 @@ async function seed() {
                 creatoDa: proprietariCreati[0]._id, // Roberto Esposito
                 superficie: 20,
                 arredamento: "Nessuno",
+                disponibilita: "Immediata",
+                immagineUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80",
                 postiLettoTotali: 2,
                 postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
+                inquiliniAssegnati: [inquiliniCreati[1]._id], // Francesca Ciocca
+                abitantiNonRegistrati: ["Sofia"]
             },
             {
                 titolo: "Accogliente Singola vicino Ateneo",
@@ -285,213 +152,39 @@ async function seed() {
                 creatoDa: proprietariCreati[1]._id, // Maria Romano
                 superficie: 20,
                 arredamento: "Completo",
+                disponibilita: "Da Settembre",
+                immagineUrl: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80",
                 postiLettoTotali: 3,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Camera Deluxe con bagno privato",
-                descrizione: "Stanza grande in appartamento signorile. Bagno interno ad uso esclusivo.",
-                prezzo: 380,
-                citta: "Bari",
-                indirizzo: "Corso Cavour 110",
-                creatoDa: proprietariCreati[2]._id, // Antonio Bruno
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 6,
-                postiLettoDisponibili: 3,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Singola per studentesse in appartamento condiviso",
-                descrizione: "Stanza confortevole in appartamento per sole ragazze vicino al Politecnico.",
-                prezzo: 270,
-                citta: "Bari",
-                indirizzo: "Via Re David 120",
-                creatoDa: proprietariCreati[3]._id, // Anna Gallo
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 2,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Stanza Moderna vicino Stazione Centrale",
-                descrizione: "Completamente ristrutturata, cucina abitabile in comune e servizio portierato.",
-                prezzo: 320,
-                citta: "Bari",
-                indirizzo: "Piazza Moro 5",
-                creatoDa: proprietariCreati[4]._id, // Luigi De Luca
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 9,
-                postiLettoDisponibili: 6,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Camera Doppia spaziosa per studenti",
-                descrizione: "Stanza doppia con due letti singoli, armadio a 6 ante e due scrivanie.",
-                prezzo: 220,
-                citta: "Bari",
-                indirizzo: "Piazza Moro 5",
-                creatoDa: proprietariCreati[4]._id, // Luigi De Luca
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 1,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Luminosa Singola in attico ristrutturato",
-                descrizione: "Stanza in attico al 7° piano con splendido terrazzo in comune.",
-                prezzo: 350,
-                citta: "Bari",
-                indirizzo: "Via Dante 250",
-                creatoDa: proprietariCreati[5]._id, // Elena Costa
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 5,
-                postiLettoDisponibili: 4,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Stanza singola silenziosa per studio",
-                descrizione: "Camera dotata di scrivania extra large e libreria a muro. Molto silenziosa.",
-                prezzo: 260,
-                citta: "Bari",
-                indirizzo: "Via Fanelli 200",
-                creatoDa: proprietariCreati[6]._id, // Francesco Giordano
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 3,
-                postiLettoDisponibili: 3,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Camera confortevole in zona Carrassi",
-                descrizione: "Appartamento ben servito da supermercati e fermata del bus.",
-                prezzo: 290,
-                citta: "Bari",
-                indirizzo: "Via Giulio Petroni 80",
-                creatoDa: proprietariCreati[7]._id, // Lucia Rizzo
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 1,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Monolocale indipendente per studenti/ricercatori",
-                descrizione: "Monolocale con cucina privata e bagno privato. Ingresso indipendente.",
-                prezzo: 450,
-                citta: "Bari",
-                indirizzo: "Via Amendola 150",
-                creatoDa: proprietariCreati[8]._id, // Salvatore Barbieri
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 1,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
-            },
-            {
-                titolo: "Elegante camera singola in centro",
-                descrizione: "In palazzo d'epoca con servizio portierato, cucina abitabile attrezzata.",
-                prezzo: 360,
-                citta: "Bari",
-                indirizzo: "Via Putignani 30",
-                creatoDa: proprietariCreati[9]._id, // Caterina Fontana
-                superficie: 20,
-                arredamento: "Completo",
-                postiLettoTotali: 1,
-                postiLettoDisponibili: 1,
-                inquiliniAssegnati: [], // Vuoto o con un ID di uno studente creato
-                abitantiNonRegistrati: []
+                postiLettoDisponibili: 2,
+                inquiliniAssegnati: [inquiliniCreati[2]._id], // Pierpaolo Cannone
+                abitantiNonRegistrati: ["Giulia"]
             }
         ];
 
         const stanzeCreate = await Room.insertMany(stanzeData);
         console.log(`Create ${stanzeCreate.length} stanze.`);
 
-        // 5. Creazione dei messaggi (conversazioni tra studenti e proprietari)
+        // 5. Creazione dei messaggi (conversazioni tra inquilini e proprietari)
         const messaggiData = [
-            // Conversazione 1: Davide (studente 0) e Roberto (proprietario 0)
+            // Conversazione 1: Davide (inquilino 0) e Roberto (proprietario 0)
             {
-                mittente: studentiCreati[0]._id,
+                mittente: inquiliniCreati[0]._id,
                 destinatario: proprietariCreati[0]._id,
                 testo: "Salve Roberto! La stanza singola al Policlinico è ancora libera?",
                 letto: true
             },
             {
                 mittente: proprietariCreati[0]._id,
-                destinatario: studentiCreati[0]._id,
+                destinatario: inquiliniCreati[0]._id,
                 testo: "Ciao Davide! Sì, è ancora disponibile. Vorresti vederla?",
                 letto: true
             },
+            // Conversazione 2: Francesca (inquilino 1) e Maria (proprietario 1)
             {
-                mittente: studentiCreati[0]._id,
-                destinatario: proprietariCreati[0]._id,
-                testo: "Sì, andrebbe bene mercoledì pomeriggio verso le 16:00?",
-                letto: false
-            },
-            // Conversazione 2: Francesca (studente 1) e Maria (proprietario 1)
-            {
-                mittente: studentiCreati[1]._id,
+                mittente: inquiliniCreati[1]._id,
                 destinatario: proprietariCreati[1]._id,
                 testo: "Buonasera, volevo sapere se nel prezzo di 280 euro sono incluse le utenze.",
                 letto: true
-            },
-            {
-                mittente: proprietariCreati[1]._id,
-                destinatario: studentiCreati[1]._id,
-                testo: "Buonasera Francesca, il prezzo include condominio e internet. Luce e gas sono a consumo.",
-                letto: false
-            },
-            // Conversazione 3: Pierpaolo (studente 2) e Antonio (proprietario 2)
-            {
-                mittente: studentiCreati[2]._id,
-                destinatario: proprietariCreati[2]._id,
-                testo: "Ciao, la camera deluxe con bagno privato in Corso Cavour ha l'aria condizionata?",
-                letto: true
-            },
-            {
-                mittente: proprietariCreati[2]._id,
-                destinatario: studentiCreati[2]._id,
-                testo: "Ciao Pierpaolo! Sì, c'è un climatizzatore inverter in camera ad uso autonomo.",
-                letto: true
-            },
-            {
-                mittente: studentiCreati[2]._id,
-                destinatario: proprietariCreati[2]._id,
-                testo: "Perfetto, ti ringrazio. Possiamo fissare una visita?",
-                letto: false
-            },
-            // Altri messaggi di contatto vari
-            {
-                mittente: studentiCreati[3]._id, // Marco
-                destinatario: proprietariCreati[4]._id, // Luigi
-                testo: "Salve Luigi, accetta contratti registrati transitori per studenti universitari?",
-                letto: true
-            },
-            {
-                mittente: proprietariCreati[4]._id,
-                destinatario: studentiCreati[3]._id,
-                testo: "Certamente Marco, registriamo contratti transitori regolarmente registrati all'Agenzia delle Entrate.",
-                letto: true
-            },
-            {
-                mittente: studentiCreati[4]._id, // Giulia
-                destinatario: proprietariCreati[5]._id, // Elena
-                testo: "Ciao Elena, l'attico in Via Dante ha anche l'ascensore?",
-                letto: false
             }
         ];
 

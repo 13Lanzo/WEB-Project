@@ -1,29 +1,29 @@
 const express = require('express');
 const Room = require('../models/Room');
 
-async function createStanza(req, res){
-        try {
-            const { titolo, 
-                descrizione, 
-                prezzo, 
-                citta, 
-                indirizzo, 
-                superficie, 
-                arredamento, 
-                disponibilita,
-                immagineURL,
-                postiLettoTotali, 
-                postiLettoDisponibili, 
-                inquiliniAssegnati, 
-                abitantiNonRegistrati}=req.body;
+async function createStanza(req, res) {
+    try {
+        const { titolo,
+            descrizione,
+            prezzo,
+            citta,
+            indirizzo,
+            superficie,
+            arredamento,
+            disponibilita,
+            postiLettoTotali,
+            postiLettoDisponibili,
+            inquiliniAssegnati,
+            abitantiNonRegistrati,
+            immagineUrl } = req.body;
 
         const creatoDa = req.user.id;
 
         // 1. Validazione base dei campi obbligatori
         if (!titolo || !descrizione || !prezzo || !citta || !indirizzo) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
-                errore: "Tutti i campi obbligatori devono essere compilati." 
+                errore: "Tutti i campi obbligatori devono essere compilati."
             });
         }
 
@@ -45,29 +45,30 @@ async function createStanza(req, res){
         // 3. Creazione della nuova stanza se non è un duplicato
         const nuovaStanza = new Room({
             titolo,
-            descrizione, 
+            descrizione,
             prezzo,
             citta,
             indirizzo,
-            creatoDa, 
+            creatoDa,
             superficie,
             arredamento,
             disponibilita,
             postiLettoTotali,
             postiLettoDisponibili,
             inquiliniAssegnati,
-            abitantiNonRegistrati
+            abitantiNonRegistrati,
+            immagineUrl
         });
 
         // 4. Salvataggio della stanza nel DB
         const stanzaSalvata = await nuovaStanza.save();
-        
+
         return res.status(201).json({
             success: true,
             messaggio: "Stanza creata con successo!",
             dati: stanzaSalvata
         });
-    }catch (err) {
+    } catch (err) {
         res.status(500).json({
             success: false,
             messaggio: "Si è verificato un errore interno al server",
@@ -76,7 +77,7 @@ async function createStanza(req, res){
     }
 }
 
-async function getStanze (req, res){
+async function getStanze(req, res) {
     try {
         const queryFiltri = {};
         const { citta, prezzoMin, prezzoMax } = req.query;
@@ -88,7 +89,7 @@ async function getStanze (req, res){
             queryFiltri.prezzo = { ...queryFiltri.prezzo, $gte: parseFloat(prezzoMin) };
             // gte = Grater than or equal (maggiore o uguale) - 
             // usiamo parseFloat per convertire la stringa in numero decimale
-            
+
         }
         if (prezzoMax) {
             queryFiltri.prezzo = { ...queryFiltri.prezzo, $lte: parseFloat(prezzoMax) };
@@ -110,7 +111,7 @@ async function getStanze (req, res){
     }
 }
 
-async function getStanza(req, res){
+async function getStanza(req, res) {
     try {
         const stanza = await Room.findById(req.params.id).populate('creatoDa', 'nome email bio tagPreferenziale');
 
@@ -130,12 +131,12 @@ async function getStanza(req, res){
     }
 }
 
-async function updateStanza(req, res){
+async function updateStanza(req, res) {
     try {
 
         const stanza = await Room.findById(req.params.id);
 
-        if(!stanza){
+        if (!stanza) {
             return res.status(404).json({
                 success: false,
                 messaggio: "Stanza non trovata. Impossibile aggiornare."
@@ -144,8 +145,8 @@ async function updateStanza(req, res){
 
         //controlliamo se l'utente loggato è il proprietario della stanza
 
-        
-        if(stanza.creatoDa.toString() !== req.user.id){
+
+        if (stanza.creatoDa.toString() !== req.user.id) {
             return res.status(403).json({
                 success: false,
                 messaggio: "Azione non autorizzata. Non puoi modificare un annuncio non tuo."
@@ -175,32 +176,32 @@ async function updateStanza(req, res){
 }
 
 async function getMyStanza(req, res) {
-    try{
-        const mieStanze= await Room.find({creatoDa: req.user.id})
+    try {
+        const mieStanze = await Room.find({ creatoDa: req.user.id })
         return res.status(200).json({
             success: true,
             dati: mieStanze
         });
-    } catch (errore){
+    } catch (errore) {
         console.error('Errore nel recupero delle stanze personali:', errore.message);
-        res.status(500).json({errore: 'Errore nel caricamento della tua area riservata.'});
+        res.status(500).json({ errore: 'Errore nel caricamento della tua area riservata.' });
     }
-    
+
 }
 
-async function deleteStanza (req, res){
+async function deleteStanza(req, res) {
     try {
         //const stanzaCancellata = await Room.findByIdAndDelete(req.params.id);
         //cerchiamo la stanza all'interno del DB + relativo controllo 
         const stanza = await Room.findById(req.params.id);
-        if(!stanza) {
+        if (!stanza) {
             return res.status(404).json({
                 success: false,
                 messaggio: "Impossibile eliminare: annuncio non trovato."
             });
         }
 
-        if(stanza.creatoDa.toString() !== req.user.id){
+        if (stanza.creatoDa.toString() !== req.user.id) {
             return res.status(403).json({
                 success: false,
                 messaggio: "Azione non autorizzata. Non puoi eliminare un annuncio non tuo."
