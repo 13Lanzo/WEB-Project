@@ -158,7 +158,7 @@ export default function New() {
                                     <label>Prezzo Mensile</label>
                                     <div className="input-with-prefix">
                                         <span>€</span>
-                                        <input type="number" name="prezzo" value={formData.prezzo} onChange={handleChange} placeholder="Es: 300" className="input-field" required/>
+                                        <input type="number" name="prezzo" min={0} value={formData.prezzo} onChange={handleChange} placeholder="Es: 300" className="input-field" required/>
                                     </div>
                                 </div>
                                 <div className="input-group">
@@ -213,7 +213,7 @@ export default function New() {
                                                 value={searchQuery} 
                                                 onChange={(e) => setSearchQuery(e.target.value)} 
                                                 placeholder="Inserisci nome o email..." 
-                                                className="input-field-search" />
+                                                className="input-field-search" onKeyDown={(e)=> {if (e.key==='Enter'){ e.preventDefault(); handleSearchUsers();}}}/>
                                             <button type="button" 
                                                 onClick={handleSearchUsers} 
                                                 className="btn-search-trigger">
