@@ -113,7 +113,10 @@ async function getStanze(req, res) {
 
 async function getStanza(req, res) {
     try {
-        const stanza = await Room.findById(req.params.id).populate('creatoDa', 'nome email bio tagPreferenziale');
+        const stanza = await Room.findById(req.params.id)
+            .populate('creatoDa', 'nome email bio tagPreferenziale') // per i dati del proprietario
+            .populate('inquiliniAssegnati', 'nome cognome email bio tagPreferenze');
+        // per i dati dell'inquilino che vive nella casa
 
         if (!stanza) {
             return res.status(404).json({ errore: "Stanza non trovata." });

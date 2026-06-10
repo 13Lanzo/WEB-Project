@@ -1,10 +1,10 @@
 import './Annunci.css'
 import { useState, useEffect } from 'react'
-import {useNavigate} from 'react-router-dom';
-import {Sparkles, CirclePlus, MapPinHouse, Trash, Home} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Sparkles, CirclePlus, MapPinHouse, Trash, Home } from 'lucide-react';
 
-export default function Annunci () {
-    const navigate=useNavigate();
+export default function Annunci() {
+    const navigate = useNavigate();
     const [annunci, setAnnunci] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -16,15 +16,15 @@ export default function Annunci () {
     const userId = user?.id || user?._id;
 
     const isProprietario = ruolo === 'proprietario';
-    
 
-    useEffect(()=>{
-        if (!token){
+
+    useEffect(() => {
+        if (!token) {
             navigate('/login');
             return;
         };
         // logica della gestione della scandenza del token
-        const fetchAnnunci=async()=>{
+        const fetchAnnunci = async () => {
             try {
                 setLoading(true);
                 const headers = {
@@ -32,14 +32,14 @@ export default function Annunci () {
                     'Content-Type': 'application/json'
                 };
 
-                if (isProprietario){
+                if (isProprietario) {
                     // Chiamata per recuperare solo le stanze dal proprietario loggato
-                    const res = await fetch('http://localhost:5000/api/rooms/mine', {headers});
+                    const res = await fetch('http://localhost:5000/api/rooms/mine', { headers });
                     const data = await res.json();
                     setAnnunci(data.dati || data);
                 } else {
                     // Chiamata per tutte le stanze filtrando poi lato client quelle assegnate al conquilino
-                    const res = await fetch('http://localhost:5000/api/rooms', {headers});
+                    const res = await fetch('http://localhost:5000/api/rooms', { headers });
                     const data = await res.json();
                     const tutteLeStanze = data.dati || data;
 
@@ -52,7 +52,7 @@ export default function Annunci () {
                     }
                 }
             } catch (error) {
-                console.error("Errore nel caricamento dell'area riservata:",error);
+                console.error("Errore nel caricamento dell'area riservata:", error);
             } finally {
                 setLoading(false);
             }
@@ -62,16 +62,17 @@ export default function Annunci () {
 
     // Gestione eliminazione annuncio (solo per il PROPRIETARIO)
     const handleDelete = async (id) => {
-        if(!window.confirm("Sei sicuro di voler eliminare permanentemente questo annuncio?")) return;
+        if (!window.confirm("Sei sicuro di voler eliminare permanentemente questo annuncio?")) return;
 
         try {
-            const res = await fetch(`/api/rooms/${id}`, {
+            const res = await fetch(`http://localhost:5000/api/rooms/${id}`, {
+                // Aggiunto host assoluto http://localhost:5000 per eliminare realmente la stanza
                 method: 'DELETE',
-                headers: {'Authorization': `Bearer ${token}`}
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
 
-            if (res.ok || data.success){
+            if (res.ok || data.success) {
                 // Aggiorna lo stato locale rimuovendo l'annuncio eliminato
                 setAnnunci(annunci.filter(annuncio => annuncio._id !== id && annuncio.id !== id));
             } else {
@@ -79,15 +80,16 @@ export default function Annunci () {
             }
         } catch (error) {
             console.error("Errore durante l'eliminazione:", error);
+            alert("Si è verificato un errore di rete durante l'eliminazione dell'annuncio.");
         }
     };
 
-    if(loading){
+    if (loading) {
         return <div className="loading-container"><p>Caricamento Area riservata...</p></div>;
     }
 
 
-    return(
+    return (
         <div className='annunci-page font-sans'>
             <div className='annunci-container'>
                 <div className='header-text-block'>
@@ -102,8 +104,8 @@ export default function Annunci () {
                     </p>
                 </div>
                 {isProprietario && annunci.length > 0 && (
-                    <button className='btn-nuovo-annuncio' onClick={()=>navigate('/new')}>
-                        <CirclePlus size={15}/> NUOVO ANNUNCIO
+                    <button className='btn-nuovo-annuncio' onClick={() => navigate('/new')}>
+                        <CirclePlus size={15} /> NUOVO ANNUNCIO
                     </button>
                 )}
             </div>
@@ -115,7 +117,7 @@ export default function Annunci () {
                     <h2>Non hai ancora pubblicato nessun annuncio</h2>
                     <p>Crea ora il tuo primo annuncio per permettere a nuovi inquilini di trovare casa!</p>
                     <button className="btn-nuovo-annuncio-empty" onClick={() => navigate('/new')}>
-                        <CirclePlus size={15}/> Crea il tuo primo annuncio
+                        <CirclePlus size={15} /> Crea il tuo primo annuncio
                     </button>
                 </div>
             )}
@@ -126,7 +128,7 @@ export default function Annunci () {
                     <Home size={48} className="empty-icon" />
                     <h2>Non hai ancora una stanza assegnata</h2>
                     <p>Esplora la bacheca di Room4U per trovare l'alloggio perfetto per le tue esigenze!</p>
-                    <button className="btn-cerca-camere" onClick={()=> navigate('/ricerca')}>
+                    <button className="btn-cerca-camere" onClick={() => navigate('/ricerca')}>
                         Cerca Camere
                     </button>
                 </div>
@@ -134,58 +136,58 @@ export default function Annunci () {
 
 
             {/* GRIGLIA DEGLI ANNUNCI (se presenti) */}
-            { annunci.length > 0 && (
-            <div className='rooms-grid'>
-                {annunci.map((annuncio)=> {
-                    const currentId = annuncio._id || annuncio.id // Supporto sia per id MongoDB che per fallback
-                    return (
-                        <div className='annuncio-card' key={currentId}>
-                            <div className='card-image-wrapper'>
-                            <span className='city-badge'>
-                                <MapPinHouse/> {annuncio.city || annuncio.citta}
-                            </span>
-                                <img src={annuncio.image || annuncio.immagineUrl || annuncio.immagine} alt={annuncio.title || annuncio.titolo}/>
-                            </div>
+            {annunci.length > 0 && (
+                <div className='rooms-grid'>
+                    {annunci.map((annuncio) => {
+                        const currentId = annuncio._id || annuncio.id // Supporto sia per id MongoDB che per fallback
+                        return (
+                            <div className='annuncio-card' key={currentId}>
+                                <div className='card-image-wrapper'>
+                                    <span className='city-badge'>
+                                        <MapPinHouse /> {annuncio.city || annuncio.citta}
+                                    </span>
+                                    <img src={annuncio.image || annuncio.immagineUrl || annuncio.immagine} alt={annuncio.title || annuncio.titolo} />
+                                </div>
 
-                            <div className='card-content'>
-                                <p className='zone-text'>{annuncio.zone || annuncio.indirizzo}</p>
-                                <h3 className='card-title'>{annuncio.title || annuncio.titolo}</h3>
-                                <div className='card-specs-row'>
-                                    <div className='spec-col'>
-                                        <span className='spec-label'>PREZZO</span>
-                                        <span className='spec-value'>{annuncio.price || annuncio.prezzo} €/mese</span>
-                                    </div>
-                                    <div className='spec-col'>
-                                        <span className='spec-label'>SPAZIO</span>
-                                        <span className='spec-value'>{annuncio.space || annuncio.superficie} mq</span>
-                                    </div>
-                                    <div className='spec-col'>
-                                        <span className='spec-label'>DISPONIBILITA'</span>
-                                        <span
-                                            className='spec-value'>{annuncio.availability || annuncio.disponibilita}</span>
+                                <div className='card-content'>
+                                    <p className='zone-text'>{annuncio.zone || annuncio.indirizzo}</p>
+                                    <h3 className='card-title'>{annuncio.title || annuncio.titolo}</h3>
+                                    <div className='card-specs-row'>
+                                        <div className='spec-col'>
+                                            <span className='spec-label'>PREZZO</span>
+                                            <span className='spec-value'>{annuncio.price || annuncio.prezzo} €/mese</span>
+                                        </div>
+                                        <div className='spec-col'>
+                                            <span className='spec-label'>SPAZIO</span>
+                                            <span className='spec-value'>{annuncio.space || annuncio.superficie} mq</span>
+                                        </div>
+                                        <div className='spec-col'>
+                                            <span className='spec-label'>DISPONIBILITA'</span>
+                                            <span
+                                                className='spec-value'>{annuncio.availability || annuncio.disponibilita}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className='card-footer'>
-                                <button className='btn-dettaglio'
+                                <div className='card-footer'>
+                                    <button className='btn-dettaglio'
                                         onClick={() => navigate('/dettagli/' + currentId)}>
-                                    Visualizza dettaglio
-                                </button>
-                                {isProprietario && (
-                                    <button
-                                        className="btn-delete"
-                                        aria-label="Elimina annuncio"
-                                        onClick={() => handleDelete(currentId)}
-                                    >
-                                        <Trash/>
+                                        Visualizza dettaglio
                                     </button>
-                                )}
+                                    {isProprietario && (
+                                        <button
+                                            className="btn-delete"
+                                            aria-label="Elimina annuncio"
+                                            onClick={() => handleDelete(currentId)}
+                                        >
+                                            <Trash />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
-        )}
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

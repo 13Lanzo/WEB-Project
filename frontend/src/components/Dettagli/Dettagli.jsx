@@ -1,27 +1,27 @@
 import './Dettagli.css'
 import { useEffect, useState } from 'react'
-import {useNavigate, useParams} from 'react-router-dom'
-import {MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check, UserRound } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check, UserRound } from 'lucide-react'
 
-export default function Dettagli({isLoggedIn, currentUser}) {
-    const {id} = useParams(); // Recupera l'ID della stanza dall'URL (/dettagli/:id)
+export default function Dettagli({ isLoggedIn, currentUser }) {
+    const { id } = useParams(); // Recupera l'ID della stanza dall'URL (/dettagli/:id)
     const navigate = useNavigate();
-    useEffect(()=>{
-        if(currentUser){
+    useEffect(() => {
+        if (currentUser) {
             console.log('Utente loggato:', currentUser?.nome)
         }
     }, [currentUser]);
     const [roomData, setRoomData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
-    
+
     const token = localStorage.getItem('token')
 
     // Configurazione icone ed etichette dalle specifiche fisiche
     const SPECS_CONFIG = {
-        superficie: { icon:<TriangleRight color='green'/>, label: "Superficie", suffix: " m²" },
-        arredamento: { icon: <BedDouble color='green'/>, label: "Arredamento", suffix: "" },
-        postiLettoDisponibili: { icon: <HouseWifi color='green'/>, label: "Posti totali", suffix: "letti" },
+        superficie: { icon: <TriangleRight color='green' />, label: "Superficie", suffix: " m²" },
+        arredamento: { icon: <BedDouble color='green' />, label: "Arredamento", suffix: "" },
+        postiLettoDisponibili: { icon: <HouseWifi color='green' />, label: "Posti totali", suffix: "letti" },
         disponibilita: { icon: <CalendarArrowUp color='green'></CalendarArrowUp>, label: "Disponibilità", suffix: "" }
     };
 
@@ -56,33 +56,41 @@ export default function Dettagli({isLoggedIn, currentUser}) {
     }, [id, token]);
 
     // Navigazione verso la chat passando l'ID dell'interlocutore nello stato di navigazione
-    const handleStartChat = () => {
+    const handleStartChat = (destinatarioId, destinatarioNome) => {
         if (isLoggedIn) {
-            navigate(`/chat`, { state: {aperturaDirettaConChi: roomData.creatoDa._id,
-                aperturaDirettaNome: roomData.creatoDa.nome}});
+            const targetId = destinatarioId || roomData.creatoDa?._id || roomData.creatoDa?.id;
+            const targetNome = destinatarioNome || roomData.creatoDa?.nome || "Proprietario";
+
+            navigate(`/chat`, {
+                state: {
+                    aperturaDirettaConChi: targetId,
+                    aperturaDirettaNome: targetNome
+                }
+            });
         } else {
-            navigate('/login')
+            navigate('/login');
         }
     };
+
 
     if (loading) {
         return <div className='loading-container'><p>Caricamento dettagli stanza in corso...</p></div>
     }
 
-    if(!roomData){
+    if (!roomData) {
         return <div className='error-container'><p>Stanza non trovata o annuncio rimosso.</p></div>
     }
 
     // Gestione array immagini: usiamo quella del DB come principale e delle immagini stock come galleria secondaria
     const mainImage = roomData.immagineUrl || roomData.immagine || "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80";
-    const tutteLeFoto=[ 
+    const tutteLeFoto = [
         mainImage,
         "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80",
         "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=400&q=80",
         "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=400&q=80"
     ];
 
-    return(
+    return (
         <div className='room-detail-page font-sans'>
             {/* Galleria immagini */}
             <section className='image-gallery-grid'>
@@ -91,14 +99,14 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                 </div>
                 <div className='sub-images'>
                     <div className='sub-img'>
-                        <img src={tutteLeFoto[1]} alt="Dettaglio interno 1"/>
+                        <img src={tutteLeFoto[1]} alt="Dettaglio interno 1" />
                     </div>
                     <div className='sub-img'>
-                        <img src={tutteLeFoto[2]} alt="Dettaglio interno 2"/>
+                        <img src={tutteLeFoto[2]} alt="Dettaglio interno 2" />
                     </div>
                     <div className='sub-img relative-box'>
-                        <img src={tutteLeFoto[3]} alt="Dettaglio interno 3"/>
-                        <button className='btn-all-photos' onClick={()=>setShowAllPhotos(true)}>Mostra tutto</button>
+                        <img src={tutteLeFoto[3]} alt="Dettaglio interno 3" />
+                        <button className='btn-all-photos' onClick={() => setShowAllPhotos(true)}>Mostra tutto</button>
                     </div>
                 </div>
             </section>
@@ -114,7 +122,7 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                                     &times; Chiudi
                                 </button>
                             </header>
-                            
+
                             <div className="gallery-pictures-grid">
                                 {tutteLeFoto.map((fotoUrl, index) => (
                                     <div key={index} className="gallery-picture-item">
@@ -133,27 +141,27 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                         <div>
                             <h1 className='room-main-info'>{roomData.titolo || roomData.title}</h1>
                             <p className='geo-location'>
-                                <MapPinHouse/>{roomData.indirizzo || roomData.zona}, {roomData.citta || roomData.city}
-                                </p>
+                                <MapPinHouse />{roomData.indirizzo || roomData.zona}, {roomData.citta || roomData.city}
+                            </p>
                             <div className='match-score-badge'>
                                 <span className='checkmark'>
-                                    <Check/></span>
-                                    {roomData.matchScore || 85}% Affinità con il tuo modo di vivere
+                                    <Check /></span>
+                                {roomData.matchScore || 85}% Affinità con il tuo modo di vivere
                             </div>
                         </div>
                         <div className='price-tag-box'>
                             <span className='price-label'>PREZZO MENSILE</span>
-                            <span className='price-value'>€{ roomData.prezzo || roomData.price}<small>/mese</small></span>
+                            <span className='price-value'>€{roomData.prezzo || roomData.price}<small>/mese</small></span>
                         </div>
                     </div>
 
                     {/* Griglia Caratteristiche Fisiche della Stanza */}
                     <div className='features-specs-grid'>
-                        {Object.keys(SPECS_CONFIG).map((key)=> {
-                            const config=SPECS_CONFIG[key];
-                            const dbValue=roomData[key];
-                            if(!dbValue) return null;
-                            return(
+                        {Object.keys(SPECS_CONFIG).map((key) => {
+                            const config = SPECS_CONFIG[key];
+                            const dbValue = roomData[key];
+                            if (!dbValue) return null;
+                            return (
                                 <div key={key} className='spec-item-card'>
                                     <span className='spec-icon'>{config.icon}</span>
                                     <span className='spec-label'>{config.label}</span>
@@ -172,7 +180,7 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                         <h2>Posizione</h2>
                         <div className='mock-map-wrapper'>
                             <div className='map-radar-circle'>
-                                <div className='map-pin'><MapPinHouse/></div>
+                                <div className='map-pin'><MapPinHouse /></div>
                             </div>
                             <div className='map-floating-overlay'>
                                 La locazione esatta verrà rivelata solo dopo aver preso contatto con l'Host
@@ -192,12 +200,13 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                                 {roomData.inquiliniAssegnati.map((inquilino) => (
                                     <div key={inquilino._id || inquilino.id} className="tenant-chat-row">
                                         <div className="tenant-meta">
-                                            <div className="host-avatar-small"><UserRound size={16}/></div>
+                                            <div className="host-avatar-small"><UserRound size={16} /></div>
                                             <span>{inquilino.nome} {inquilino.cognome || ''}</span>
                                         </div>
-                                        <button 
-                                            className="btn-send-message-tenant" 
-                                            onClick={() => handleStartChat(inquilino._id || inquilino.id)}>Contatta {inquilino.nome}<SendHorizontal size={14}/>
+                                        <button
+                                            className="btn-send-message-tenant"
+                                            onClick={() => handleStartChat(inquilino._id || inquilino.id, inquilino.nome)}>
+                                            Contatta {inquilino.nome}<SendHorizontal size={14} />
                                         </button>
                                     </div>
                                 ))}
@@ -210,7 +219,7 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                                 <p className="fittizi-title-label">Altri abitanti nella casa:</p>
                                 {roomData.abitantiNonRegistrati.map((nome, idx) => (
                                     <div key={idx} className="tenant-fittizio-row">
-                                        <span><UserRound/> {nome}</span>
+                                        <span><UserRound /> {nome}</span>
                                     </div>
                                 ))}
                             </div>
@@ -225,10 +234,10 @@ export default function Dettagli({isLoggedIn, currentUser}) {
                             {roomData.creatoDa?.bio && (
                                 <p className='profile-bio-text'>"{roomData.creatoDa.bio}"</p>
                             )}
-                            
+
                             {/* Bottone principale per contattare l'Host */}
-                            <button 
-                                className='btn-send-message' 
+                            <button
+                                className='btn-send-message'
                                 onClick={() => handleStartChat(roomData.creatoDa?._id || roomData.creatoDa?.id)}
                             >
                                 <SendHorizontal /> Contatta il proprietario
