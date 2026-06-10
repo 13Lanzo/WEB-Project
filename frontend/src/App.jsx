@@ -1,4 +1,3 @@
-// src/App.jsx
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
@@ -13,17 +12,11 @@ import New from './components/New/New';
 import { useState } from 'react';
 
 function App() {
-  //stato per tenere traccia dell'utente loggato, inizialmente null (non loggato)
-  const [currentUser, setCurrentUser]=useState(() => {
-    try{
-    const saved = localStorage.getItem('user');
-    return (saved && saved !== 'undefined')? JSON.parse(saved) : null;
-  }catch (error) {
-    console.error("Errore nel parsing del localStorage:", error);
-    localStorage.removeItem('user'); // Rimuovi il dato corrotto
-    return null;}});
+  //utente inizialmente null (non loggato)
+  const [currentUser, setCurrentUser]=useState(null)
   
   const isLoggedIn=!!currentUser;
+
   //funzione per gestire il logout: pulisce localStorage e aggiorna stato
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -47,15 +40,15 @@ function App() {
           <Route path='/' element={<Home isLoggedIn={isLoggedIn}/>}/>
 
           <Route path='/ricerca' element={<Ricerca />}/>
-          <Route path='/profilo' element={<Profilo currentUser={currentUser} onLogout={handleLogout} />}/>
+          <Route path='/profilo' element={isLoggedIn ? <Profilo currentUser={currentUser} onLogout={handleLogout} />: <Login onLoginSuccess={handleLoginSuccess}/>}/>
           <Route path='/dettagli/:id' element={<Dettagli isLoggedIn={isLoggedIn} currentUser={currentUser}/>}/>
-          <Route path='/chat' element={<Chat currentUser={currentUser} />}/>
-          <Route path='/area-riservata' element={<Annunci currentUser={currentUser}/>}/>
-          <Route path='/new' element={<New currentUser={currentUser}/>}/>
+          <Route path='/chat' element={isLoggedIn? <Chat currentUser={currentUser} />: <Login onLoginSuccess={handleLoginSuccess}/>}/>
+          <Route path='/area-riservata' element={isLoggedIn ? <Annunci currentUser={currentUser}/>: <Login onLoginSuccess={handleLoginSuccess}/>}/>
+          <Route path='/new' element={isLoggedIn ? <New currentUser={currentUser}/> : <Login onLoginSuccess={handleLoginSuccess}/>}/>
           <Route path='/login' element={<Login onLoginSuccess={handleLoginSuccess}/>}/>
         </Routes>
+        <Footer />
       </Router>
-      <Footer />
     </div>  
   );
 }

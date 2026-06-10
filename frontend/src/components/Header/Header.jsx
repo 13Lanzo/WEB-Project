@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 import './Header.css'
 import {HouseHeartIcon, BellRing, CircleFadingPlus, Globe, MoveRight} from 'lucide-react'
 //import { io } from 'socket.io-client'
@@ -10,7 +10,6 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     // Diamo un valore di fallback ('accedi') se initialTab è undefined al primo avvio
     const [activeTab, setActiveTab] = useState(initialTab || 'accedi');
     const navigate=useNavigate();
-    
     // STATI IN ITALIANO ALLINEATI AL DATABASE MONGOOB
     const [nome, setNome] = useState('');
     const [cognome, setCognome] = useState('');
@@ -271,7 +270,7 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
         setInitialTab(tab);
         setIsModalOpen(true);
     };
-    const [activeLink, setActiveLink]=useState('Scopri');
+    const location=useLocation();
     const navigate =useNavigate();
 
     // const [contacts, setContacts] = useState([]);
@@ -323,10 +322,10 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
                 {isLoggedIn ? (
                     <>
                         <nav className='header-navigation'>
-                            <button className={`nav-item ${activeLink=== 'Scopri' ? 'active' :''}`} onClick={()=> {setActiveLink('Scopri'); navigate('/ricerca');}}>Scopri</button>  
-                            <button className={`nav-item ${activeLink=== 'Messaggi'? 'active':''}`} onClick={()=> {setActiveLink('Messaggi'); navigate('/chat');}}>Messaggi</button>
-                            <button className={`nav-item ${activeLink=== 'Profilo' ? 'active': ''}`} onClick={()=> {setActiveLink('Profilo'); navigate('/profilo');}}>Profilo</button>
-                            <button className={`nav-item ${activeLink=== 'Annuncio'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/area-riservata');}}>Annunci</button>
+                            <button className={`nav-item ${location.pathname === '/ricerca' ? 'active' :''}`} onClick={()=> navigate('/ricerca')}>Scopri</button>  
+                            <button className={`nav-item ${location.pathname==='/chat' ? 'active':''}`} onClick={()=> navigate('/chat')}>Messaggi</button>
+                            <button className={`nav-item ${location.pathname=== '/profilo' ? 'active': ''}`} onClick={()=> navigate('/profilo')}>Profilo</button>
+                            <button className={`nav-item ${location.pathname=== '/area-riservata'? 'active':''}`} onClick={()=> navigate('/area-riservata')}>Area Riservata</button>
                         </nav>
                         
                         <div className='logged-in-actions'>

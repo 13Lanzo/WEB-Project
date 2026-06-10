@@ -16,7 +16,7 @@ export default function New() {
     // 1. PROTEZIONE DELLA PAGINA: se l'utente non è proprietario, redirect a /annunci
     useEffect(() => {
         if (ruolo !== 'proprietario'){
-            navigate('/annunci');
+            navigate('/area-riservata');
         }
     }, [ruolo, navigate]);
 
@@ -29,14 +29,13 @@ export default function New() {
 
     // Stili del Form ampliati con i nuovi campi richiesti
     const [formData, setFormData] = useState({
-        citta: 'Bari...',
-        indirizzo: 'Via/Viale/Piazza...',
-        titolo: 'Stanza singola..',
-        descrizione: 'Casa spaziosa...',
-        prezzo: '€',
-        superficie: '30',
-        arredamento: 'Completo',
-        disponibilita: 'Immediata',
+        citta: '',
+        indirizzo:'',
+        descrizione: '',
+        prezzo: '',
+        superficie: '',
+        arredamento: '',
+        disponibilita: '',
         postiLettoTotali: '',
         postiLettoDisponibili: '',
         immagineUrl: defaultImages[0]
@@ -108,7 +107,7 @@ export default function New() {
 
             if (res.ok || data.success) {
                 alert('Annuncio pubblicato con successo su Room4U');
-                navigate('/annunci');
+                navigate('/area-riservata');
             } else {
                 alert('Errore durante la pubblicazione: ' + (data.messaggio || data.errore || 'Errore generico'));
             }
@@ -139,12 +138,7 @@ export default function New() {
                             <div className="input-row-2">
                                 <div className="input-group">
                                     <label>Città</label>
-                                    <select name="citta" value={formData.citta} onChange={handleChange} className="input-field">
-                                        <option value='Bari'>Bari</option>
-                                        <option value="Milano">Milano</option>
-                                        <option value="Torino">Torino</option>
-                                        <option value="Pavia">Pavia</option>
-                                    </select>
+                                    <input type="text" name="citta" value={formData.citta} onChange={handleChange} placeholder="Bari, Milano..." className="input-field" required/>
                                 </div>
                                 <div className="input-group">
                                     <label>Indirizzo</label>
@@ -284,7 +278,7 @@ export default function New() {
                                 </div> 
                                 <div className="form-actions">
                                     <button type="submit" className="btn-pubblica"><Sparkle/> Pubblica Annuncio</button>
-                                    <button type="button" className="btn-annulla" onClick={()=> navigate('/annunci')}>Annulla</button>
+                                    <button type="button" className="btn-annulla" onClick={()=> navigate('/area-riservata')}>Annulla</button>
                                 </div>        
                         </form>
                     </div>

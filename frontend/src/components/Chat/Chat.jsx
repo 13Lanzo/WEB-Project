@@ -53,7 +53,13 @@ export default function Chat({currentUser}) {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await res.json();
-                setMessageList(data.dati || []); 
+                if (Array.isArray(data)){
+                    setMessageList(data);
+                }else if (data && data.dati){
+                    setMessageList(data.dati);
+                }else{
+                    setMessageList([]);
+                }
             };
             fetchMessaggi();
         }

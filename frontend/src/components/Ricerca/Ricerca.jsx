@@ -24,7 +24,6 @@ export default function Ricerca() {
     
 
     useEffect(()=>{
-
         const fetchStanze= async()=>{
         let url=`http://localhost:5000/api/rooms?`;
         if(citta) url += `citta=${citta}&`;
@@ -61,9 +60,9 @@ export default function Ricerca() {
                 <div className='filter-group'>
                     <label>Range di prezzo</label>
                     <div className='price-range-inputs'>
-                        <input type='number' placeholder='Min' value={prezzoMin} onChange={(e)=> setPrezzoMin(e.target.value)}/>
+                        <input type='number' placeholder='Min' min={0} value={prezzoMin} onChange={(e)=> setPrezzoMin(e.target.value)}/>
                         <span className='range-divider'>-</span>
-                        <input type='number' placeholder='Max' value={prezzoMax} onChange={(e)=> setPrezzoMax(e.target.value)}/>
+                        <input type='number' placeholder='Max' min={0} value={prezzoMax} onChange={(e)=> setPrezzoMax(e.target.value)}/>
                     </div>
                 </div>
 
