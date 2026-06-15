@@ -1,109 +1,182 @@
 import './Chat.css'
 import { useEffect, useState } from 'react'
-import {User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis  } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis } from 'lucide-react'
 import io from 'socket.io-client'
+import { getConversations, getMessages, createMessage } from '../../services/api';
 
-const myRandomId =Math.floor(Math.random()*1000).toString();
-const socket=io.connect('http://localhost:5000');
+// Connessione al server Socket.IO (relativa per supportare il proxying)
+const socket = io();
 
-export default function Chat() {
-    const [message, setMessage]=useState('');
-    //salvataggio messaggi veri
-    const [messageList, setMessageList]=useState([]);
+export default function Chat({ currentUser }) {
+    const location = useLocation(); //per avere l'indirizzamento da Dettagli.js
+    const [message, setMessage] = useState('');
+    const [messageList, setMessageList] = useState([]);
+    const [conversations, setConversations] = useState([]);
+    const [attivoConChiId, setAttivoConChiId] = useState(location.state?.aperturaDirettaConChi || null);
+    const [nomeContattoCorrente, setNomeContattoCorrente] = useState(location.state?.aperturaDirettaNome || "");
 
-    const [contacts, setContacts] = useState([
-    { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-    ]);
-
-    const updateLastMessage=(newText, newTime)=>{
-            setContacts(prevContacts =>
-                prevContacts.map(contact=>{
-                    if (contact.active){
-                        return{...contact, lastMsg: newText, time: newTime};
-                    }
-                return contact;
-                })
-            );
+    // Recupera il token di sicurezza salvato al momento del Login
+    // const token = localStorage.getItem('token'); --> viene recuperato automaticamente dal server attraverso le API
+    const myUserId = currentUser?.id || currentUser?._id;
+    // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
+    useEffect(() => {
+        // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
+        // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
+        const caricaConversazioni = async () => {
+            try {
+                const data = await getConversations();
+                if (data.success) {
+                    setConversations(data.dati);
+                }
+            } catch (errore) {
+                console.error("Errore nel caricamento delle conversazioni:", errore);
+            }
         };
-    //per ascoltare i messaggi in arrivo
-    useEffect(()=>{
-        socket.on('ricevi_messaggio',(data)=>{
-            setMessageList((list)=>[...list,data]);
-            updateLastMessage(data.text, data.time);
-        });
-        return()=> socket.off('ricevi_messaggio')
-    }, []);
 
-    //per inviare messaggio
-    const sendMessage= async()=>{
-        if(message!=='') {
-            const currentTime = new Date(Date.now()).getHours+':'+ new Date(Date.now().getMinutes());
-            const messageData={
-                author: myRandomId,
-                text: message,
-                time: currentTime
+        if (myUserId) {
+            socket.emit('registra_utente', myUserId);
+            caricaConversazioni();
+        }
+    }, [myUserId]);
+
+    // EFFECT 2: Quando cambia l'utente attivo
+    useEffect(() => {
+        if (attivoConChiId) {
+            const fetchMessaggi = async () => {
+                try {
+                    const data = await getMessages(attivoConChiId);
+                    if (Array.isArray(data)) {
+                        setMessageList(data);
+                    } else if (data && data.dati) {
+                        setMessageList(data.dati);
+                    } else {
+                        setMessageList([]);
+                    }
+                } catch (error) {
+                    console.error("Errore nel caricamento dei messaggi:", error);
+                    setMessageList([]);
+                }
             };
-            await socket.emit('invia_messaggio', messageData);
-            setMessageList((list)=>[...list, messageData]);
-            setMessageList((list)=>[...list, messageData]);
-            setMessage('');
+            fetchMessaggi();
+        }
+    }, [attivoConChiId]);
+
+
+    // EFFECT 3: Resta in ascolto di nuovi messaggi in arrivo (Real-Time)
+    useEffect(() => {
+        const gestisciNuovoMessaggio = (data) => {
+            const mittenteReale = data.mittente?._id || data.mittente;
+            if (mittenteReale === attivoConChiId || mittenteReale === myUserId) {
+                setMessageList((list) => [...list, data]);
+            }
+        };
+
+        socket.on('ricevi_messaggio', gestisciNuovoMessaggio);
+        return () => socket.off('ricevi_messaggio', gestisciNuovoMessaggio);
+    }, [attivoConChiId, myUserId]);
+
+    // 3. INVIA IL MESSAGGIO (Salva nel DB + Invia su Socket)
+    const sendMessage = async () => {
+        if (message.trim() !== '' && attivoConChiId) {
+            try {
+                const dataModificata = await createMessage(attivoConChiId, message);
+                const messaggioEffettivo = dataModificata.dati || dataModificata;
+                // B. Trasmissione istantanea (Socket.IO) per il destinatario
+                const messageData = {
+                    destinatarioId: attivoConChiId,
+                    mittente: myUserId,
+                    testo: message,
+                    createdAt: messaggioEffettivo.createdAt || new Date()
+                };
+
+                socket.emit('invia_messaggio', messageData);
+
+                // C. Aggiorna lo schermo immediatamente per chi scrive
+                setMessageList((list) => [...list, messaggioEffettivo]);
+                setMessage('');
+
+            } catch (errore) {
+                console.error("Errore durante l'invio del messaggio:", errore);
+            }
         }
     };
 
-    return(
+    return (
         <div className='chat-page'>
             <div className='chat-container'>
                 <aside className='chat-sidebar'>
                     <div className='sidebar-header'>
                         <div className="search-bar">
-                            <span className='icon'><Search/></span>
-                            <input type='text' placeholder='Cerca conversazioni...'/>
+                            <span className='icon'><Search /></span>
+                            <input type='text' placeholder='Cerca conversazioni...' />
                         </div>
-                        <button className='filter-btn'><GripHorizontal/></button>
+                        <button className='filter-btn'><GripHorizontal /></button>
                     </div>
-                    
+
                     <div className='constacts-list'>
-                        {contacts.map(contact =>(
-                            <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`}>
-                                <div className='avatar-small'><User size={40}/></div>
-                                <div className='contact-info'>
-                                    <div className='contact-top'>
-                                        <span className='contact-name'>{contact.name}</span>
-                                        <span className='contact-time'>{contact.time}</span>
+                        {conversations.map((altroUtente) => {
+                            const isActive = altroUtente._id === attivoConChiId;
+
+                            return (
+                                <div
+                                    key={altroUtente._id}
+                                    className={`contact-item ${isActive ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setAttivoConChiId(altroUtente._id);
+                                        setNomeContattoCorrente(`${altroUtente.nome} ${altroUtente.cognome}`);
+                                    }}
+                                >
+                                    <div className='avatar-small'><User size={40} /></div>
+                                    <div className='contact-info'>
+                                        <div className='contact-top'>
+                                            <span className='contact-name'>{altroUtente.nome} {altroUtente.cognome}</span>
+                                        </div>
+                                        <p className='contact-msg'>
+                                            Clicca per aprire la chat
+                                        </p>
                                     </div>
-                                    <p className='contact-msg'>{contact.lastMsg}</p>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </aside>
 
                 <main className='chat-main'>
                     <header className='chat-header'>
                         <div className='header-user'>
-                            <div className='avatar-medium'><User size={40}/></div>
+                            <div className='avatar-medium'><User size={40} /></div>
                             <div>
-                                {contacts.map(contact =>(
-                                    <h4>{contact.name}</h4>))};
-                                <span className='status'>Online</span>
+                                <h4>{nomeContattoCorrente || "Seleziona una chat"}</h4>
+                                {attivoConChiId && <span className='status'>Online</span>}
                             </div>
                         </div>
                         <div className='header-actions'>
-                            <button className='filter-btn header actions'><PhoneForwarded/></button>
-                            <button className='filter-btn header actions'><Video/></button>
-                            <button className='filter-btn header actions'><Ellipsis/></button>
+                            <button className='filter-btn header actions'><PhoneForwarded /></button>
+                            <button className='filter-btn header actions'><Video /></button>
+                            <button className='filter-btn header actions'><Ellipsis /></button>
                         </div>
                     </header>
-                    
+
                     <div className='messages-area'>
-                        <div className='date-separator'><span>Oggi</span></div>
-                        {messageList.map((msgContent, index)=>{
-                            const isMe=msgContent.author===myRandomId;
-                            return(
-                                <div key={index} className={`msg-wrapper ${isMe ? 'sent' : 'received'}`}>{isMe && <div className='avatar-msg'><User/></div>}
+                        <div className='date-separator'><span>Cronologia Chat</span></div>
+
+                        {messageList.map((msgContent, index) => {
+                            const mittenteId = msgContent.mittente?._id || msgContent.mittente;
+                            const myUserId = currentUser?.id || currentUser?._id;
+                            const isMe = mittenteId === myUserId;
+
+                            return (
+                                <div key={index} className={`msg-wrapper ${isMe ? 'sent' : 'received'}`}>
+                                    {!isMe && <div className='avatar-msg'><User /></div>}
                                     <div className='msg-bubble'>
-                                        <p>{msgContent.text}</p>
-                                        <span className='msg-time'>{msgContent.time} {isMe && <CheckCheck size={14}/>}</span>
+                                        <p>{msgContent.testo}</p>
+                                        <span className='msg-time'>
+                                            {msgContent.createdAt
+                                                ? new Date(msgContent.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                : ''}
+                                            {isMe && <CheckCheck size={14} style={{ marginLeft: '5px' }} />}
+                                        </span>
                                     </div>
                                 </div>
                             );
@@ -112,15 +185,27 @@ export default function Chat() {
 
                     <footer className='chat-input-container'>
                         <div className='input-actions'>
-                            <button className='action-btn'><Plus/></button>
-                            <button className='action-btn'><Laugh/></button>
+                            <button className='action-btn'><Plus /></button>
+                            <button className='action-btn'><Laugh /></button>
                         </div>
-                        <input type='text' placeholder='Scrivi un messaggio...' value={message} onChange={(e)=>setMessage(e.target.value)} onKeyPress={(e)=> {e.key === 'Enter' && sendMessage();} }/>
-                        <button className='send-btn' onClick={sendMessage}>{message.length>0 ? <SendHorizonal/> : <Mic />}</button>
+                        <input
+                            type='text'
+                            placeholder='Scrivi un messaggio...'
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={(e) => { e.key === 'Enter' && sendMessage(); }}
+                            disabled={!attivoConChiId}
+                        />
+                        <button
+                            className='send-btn'
+                            onClick={sendMessage}
+                            disabled={!attivoConChiId}
+                        >
+                            {message.length > 0 ? <SendHorizonal /> : <Mic />}
+                        </button>
                     </footer>
                 </main>
             </div>
-            
         </div>
     );
 }

@@ -1,22 +1,30 @@
 import {useState, useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useLocation} from 'react-router-dom'
 import './Header.css'
-import {HouseHeartIcon, BellRing, CircleFadingPlus, GlobeCheck, User, MoveRight} from 'lucide-react'
-import { io } from 'socket.io-client'
+import {HouseHeartIcon, BellRing, CircleFadingPlus, Globe, MoveRight} from 'lucide-react'
+import { login, register } from '../../services/api';
 
-const socket=io.connect('http://localhost:5000');
+//const socket=io.connect('http://localhost:5000');
 
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
-    const [activeTab, setActiveTab] = useState(initialTab);
+    // Diamo un valore di fallback ('accedi') se initialTab è undefined al primo avvio
+    const [activeTab, setActiveTab] = useState(initialTab || 'accedi');
     const navigate=useNavigate();
-    const [name, setName]=useState('');
-    const [lastname, setLastname]=useState('');
-    const [faculty, setFaculty]=useState('');
-    const [role, setRole]=useState('Inquilino');
-    const [email, setEmail]=useState('');
-    const [password, setPassword]=useState('');
-    const [confirmPassword, setConfirmPassword]=useState('');
-    const [errorMessage, setErrorMessage]= useState('');
+    // STATI IN ITALIANO ALLINEATI AL DATABASE MONGOOB
+    const [nome, setNome] = useState('');
+    const [cognome, setCognome] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [bio, setBio] = useState('');
+    const [eta, setEta] = useState('');
+    const [tags, setTags] = useState([]);
+    const [facolta, setFacolta] = useState('');
+    
+    // Ruolo iniziale in minuscolo per evitare conflitti con i controller del server
+    const [ruolo, setRuolo] = useState('inquilino');
+
     const LoginGoogle =()=>{
         window.open('https://www.google.com');
     };
@@ -24,38 +32,82 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
         window.open('https://www.instagram.com');
     };
 
-    //credenziali fittizie per visualizzare frontend da eliminare
-    const EMAIL='cioccafra@gmail.com';
-    const PW='password5';
+    const handleCheckboxChange = (e) => {
+        const {value, checked} = e.target;
+        if(checked){
+            setTags([...tags, value]);
+        } else {
+            setTags(tags.filter((tag) => tag !== value));
+        }
+    }
     
-    //controllo password
-    const handleSubmit = (e)=> {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
 
-        if(activeTab === 'registrati') {
-            if(confirmPassword !== password){
-                setErrorMessage('Le password non coincidono. Riprova. ');
+        if (activeTab === 'registrati') {
+            if (confirmPassword !== password) {
+                setErrorMessage('Le password non coincidono. Riprova.');
                 return;
             }
-            if(password.length<6){
+            if (password.length < 6) {
                 setErrorMessage('La password deve avere almeno 6 caratteri.');
                 return;
             }  
-            alert('Profilo creato con successo!!');
-            onLoginSuccess();
-            navigate('/profilo');
-            onClose();
-            //credenziali fittizie da eliminare  
-        } else{
-            if(email=== EMAIL && password===PW){
-                onLoginSuccess();
+            if (Number(eta) < 18) {
+                setErrorMessage('Devi essere maggiorenne per registrarti.');
+                return;
+            }
+
+            try {
+                const payload = {
+                    nome: nome, 
+                    cognome: cognome,
+                    ruolo: ruolo, 
+                    facolta: ruolo === 'inquilino' ? facolta : undefined,
+                    eta: Number(eta),
+                    bio: bio,
+                    tags: tags,
+                    email: email,
+                    password: password
+                };
+
+                const data = await register(payload);
+
+                const utenteRegistrato = data.user || data.utente;
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(utenteRegistrato)); // UNIFICATO SU 'user'
+                }
+
+                alert('Profilo creato con successo!!');
+                onLoginSuccess(utenteRegistrato);
+                navigate('/profilo'); 
                 onClose();
-            }else{
-                setErrorMessage('Email o password errate. Riprova!');
+            } catch (err) {
+                console.error('Errore registrazione:', err);
+                setErrorMessage(err.message || 'Server irraggiungibile.');
+            }
+                
+        } else {
+            try {
+                const data = await login(email, password);
+
+                const utenteLoggato = data.utente || data.user;
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(utenteLoggato)); // UNIFICATO SU 'user'
+                }
+
+                onLoginSuccess(utenteLoggato);
+                navigate('/profilo');
+                onClose();
+            } catch (err) {
+                setErrorMessage(err.message || 'Server irraggiungibile.');
             }
         }
     };
+
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -85,25 +137,25 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                         <div className='form-row-double'>
                             <div className='form-group'>
                                 <label className='form-label'>Nome</label>
-                                <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={name} onChange={(e)=>setName(e.target.value)} required/>
+                                <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={nome} onChange={(e)=>setNome(e.target.value)} required/>
                             </div>
                             <div className='form-group'>
                                 <label className='form-label'>Cognome</label>
-                                <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={lastname} onChange={(e)=>setLastname(e.target.value)} required/>
+                                <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={cognome} onChange={(e)=>setCognome(e.target.value)} required/>
                             </div>
                         </div>
-                        <div className={role=== 'Inquilino' ? 'form-row-double': 'form-group'}>
+                        <div className={ruolo=== 'inquilino' ? 'form-row-double': 'form-group'}>
                             <div className='form-group'>
-                                        <label className='form-label'>Ruolo Utente</label>
-                                        <select className='form-input' value={role} onChange={(e) => {setRole(e.target.value); if(e.target.value==='Proprietario'){setFaculty('');}}} required>
-                                            <option value="Inquilino">Inquilino</option>
-                                            <option value="Proprietario">Proprietario</option>
-                                        </select>
-                                    </div>
-                            {role==='Inquilino' &&(
+                                <label className='form-label'>Ruolo Utente</label>
+                                <select className='form-input' value={ruolo} onChange={(e) => {setRuolo(e.target.value); if(e.target.value==='proprietario'){setFacolta('');}}} required>
+                                    <option value="inquilino">Inquilino</option>
+                                    <option value="proprietario">Proprietario</option>
+                                </select>
+                            </div>
+                            {ruolo==='inquilino' &&(
                             <div className='form-group'>
                                 <label className='form-label'>Seleziona Facoltà</label>
-                                <select className='form-input' value={faculty} onChange={(e)=> setFaculty(e.target.value)} required>
+                                <select className='form-input' value={facolta} onChange={(e)=> setFacolta(e.target.value)} required>
                                     <option value='' disabled>Scegli</option>
                                     <option value='Ingegneria'>Ingegneria</option>
                                     <option value='Medicina'>Medicina</option>
@@ -112,13 +164,53 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                                 </select>
                             </div>
                             )}
+                        </div>
+
+                        <div className='form-group'>
+                            <label className='fomr-label'>Età</label>
+                            <input type='number' min='0' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=> setEta(e.target.value)} required/>
+                        </div>
+
+                        <div className='form-group'>
+                            <label className='form-label'>Bio</label>
+                            <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
+                        </div>
+
+                        <div className='form-group checkboxes-wrapper'>
+                            <label className='form-label'>Tag e Preferenze</label>
+                            <div className='checkboxes-grid'>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Non Fumatore' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Pet Friendly' checked={tags.includes('Pet Friendly')} onChange={handleCheckboxChange}/><span>Pet Friendly</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Tranquillo' checked={tags.includes('Tranquillo')} onChange={handleCheckboxChange}/><span>Tranquillo</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Eco-friendly' checked={tags.includes('Eco-friendly')} onChange={handleCheckboxChange}/><span>Eco-friendly</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Luminoso' checked={tags.includes('Luminoso')} onChange={handleCheckboxChange}/><span>Luminoso</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Terrazzo' checked={tags.includes('Terrazzo')} onChange={handleCheckboxChange}/><span>Terrazzo</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Aria Condizionata' checked={tags.includes('Aria Condizionata')} onChange={handleCheckboxChange}/><span>Aria Condizionata</span>
+                                </label>
+                                <label className='checkbox-label'>
+                                    <input type='checkbox' value='Lavastoviglie' checked={tags.includes('Lavastoviglie')} onChange={handleCheckboxChange}/><span>Lavastoviglie</span>
+                                </label>
                             </div>
+                        </div>
                         </>
                     )}
                     <div className='form-group'>
                         <label className='form-label'>Email</label>
                         <input type="email" placeholder='inserisci emali' className='form-input' value={email} onChange={(e)=> setEmail(e.target.value)} required/>
-                        </div>
+                    </div>
                     <div className='form-group'>
                         <label className='form-label'>Password</label>
                         <input type='password' placeholder='........' className='form-input' value={password} onChange={(e)=> setPassword(e.target.value)} required/>
@@ -142,7 +234,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                     <div className='divider-line'></div>
                 </div>
                 <div className='social-grid'>
-                    <button type='button' className='btn-social' onClick={LoginGoogle}><GlobeCheck color='blue'/><span className='social-label'>Google</span></button>
+                    <button type='button' className='btn-social' onClick={LoginGoogle}><Globe color='blue'/><span className='social-label'>Google</span></button>
                     <button type='button' className='btn-social' onClick={LoginInsta}><CircleFadingPlus color='#e1306c'/><span className='social-label' style={{ fontWeight:600 }}>Instagram</span></button>
                 </div>
             </div>
@@ -150,7 +242,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     );
 }
 
-export default function Header({isLoggedIn, onLogout, onLogin}){
+export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [initialTab, setInitialTab] = useState('registrati');
     const [isNotifOpen, setIsNotifOpen]=useState(false);
@@ -158,49 +250,62 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
         setInitialTab(tab);
         setIsModalOpen(true);
     };
-    const [activeLink, setActiveLink]=useState('Scopri');
+    const location=useLocation();
     const navigate =useNavigate();
 
-    const [contacts, setContacts] = useState([
-        { id: 1, name: "Giuseppe Pierpaolo", lastMsg: "Sounds good! Let's check the room to...", time: "10:43 AM", active: true },
-        ]);
+    // const [contacts, setContacts] = useState([]);
 
-    const updateLastMessage = (newText, newTime) => {
-        setContacts(prevContacts =>
-            prevContacts.map(contact => {
-                // Aggiorna il contatto attivo
-                if (contact.active) {
-                    return { ...contact, lastMsg: newText, time: newTime };
-                }
-                return contact;
-            })
-        );
-    };
+    // const updateLastMessage = (idMittente, nomeMittente, nuovoTesto, nuovoOrario) => {
+    //     setContacts(prevContacts =>
+    //         prevContacts.map(contact => {
+    //             const exist= prevContacts.some(c=>c._id=== idMittente || c.id=== idMittente);
+    //             if(exist){
+    //                 const updated= prevContacts.map(c=>{
+    //                     const currentCId=c._id|| c.id;
+    //                     if(currentCId===idMittente){
+    //                         return{...c,lastMsg: nuovoTesto, time:nuovoOrario};
+    //                     }
+    //                     return c;
+    //                 });
+    //                 const target=updated.find(c=>(c._id||c.id)===idMittente);
+    //                 const filtered=updated.filter(c=>(c.id ||c._id)!== idMittente);
+    //                 return[target,...filtered];
+    //             }else{
+    //                 return[{
+    //                     _id:idMittente, name: nomeMittente, lastMsg: nuovoTesto, time: nuovoOrario}, ...prevContacts];
+    //             }
+    //         })
+    //     );
+    // };
+     useEffect(()=>{
+         if(currentUser){
+             console.log('Utente loggato:', currentUser?.nome)
+         }
+     }, [currentUser]);
 
-    // 2. Mettiti in ascolto dei nuovi messaggi in arrivo
-    useEffect(() => {
-        socket.on('ricevi_messaggio', (data) => {
-            // Quando arriva un messaggio, aggiorna la finestrina!
-            updateLastMessage(data.text, data.time);
-        });
+    // useEffect(() => {
+    //     socket.on('ricevi_messaggio', (data) => {
+    //         const orarioArrivo = data.createdAt
+    //             ? new Date(data.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    //             : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    //         updateLastMessage(data.testo, orarioArrivo);
+    //     });
 
-        // Pulisce l'ascolto se cambi pagina
-        return () => socket.off('ricevi_messaggio');
-    }, []);    
+    //     return () => socket.off('ricevi_messaggio');
+    // }, []);    
     
     return (
         <div>
         <header className='site-header font-sans'>
-            <div className='header-logo'><HouseHeartIcon/></div>
+            <div className='header-logo' onClick={() => navigate('/')}><HouseHeartIcon/></div>
             
-                {/*rendering condizionale per vedere lo stato attivo del log*/}
                 {isLoggedIn ? (
                     <>
                         <nav className='header-navigation'>
-                            <button className={`nav-item ${activeLink=== 'Scopri' ? 'active' :''}`} onClick={()=> {setActiveLink('Scopri'); navigate('/ricerca');}}>Scopri</button>  
-                            <button className={`nav-item ${activeLink=== 'Messaggi'? 'active':''}`} onClick={()=> {setActiveLink('Messaggi'); navigate('/chat');}}>Messaggi</button>
-                            <button className={`nav-item ${activeLink=== 'Profilo' ? 'active': ''}`} onClick={()=> {setActiveLink('Profilo'); navigate('/profilo');}}>Profilo</button>
-                            <button className={`nav-item ${activeLink=== 'New'? 'active':''}`} onClick={()=>{setActiveLink('Annuncio'); navigate('/annunci');}}>Annunci</button>
+                            <button className={`nav-item ${location.pathname === '/ricerca' ? 'active' :''}`} onClick={()=> navigate('/ricerca')}>Scopri</button>  
+                            <button className={`nav-item ${location.pathname==='/chat' ? 'active':''}`} onClick={()=> navigate('/chat')}>Messaggi</button>
+                            <button className={`nav-item ${location.pathname=== '/profilo' ? 'active': ''}`} onClick={()=> navigate('/profilo')}>Profilo</button>
+                            <button className={`nav-item ${location.pathname=== '/area-riservata'? 'active':''}`} onClick={()=> navigate('/area-riservata')}>Area Riservata</button>
                         </nav>
                         
                         <div className='logged-in-actions'>
@@ -211,7 +316,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                                         <h4>Messaggi Recenti</h4>
                                     </div>
                                     
-                                    <div className='constacts-list'>
+                                    {/* <div className='constacts-list'>
                                         {contacts.map(contact =>(
                                             <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`} onClick={()=>{ navigate('/chat'); setIsNotifOpen(false);}}>
                                                 <div className='notif-avatar'><User size={40}/></div>
@@ -224,7 +329,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                                                 </div>
                                             </div>
                                         ))}
-                                    </div>
+                                    </div> */}
                                     <div className='notif-footer' onClick={()=>{navigate('/chat'); setIsNotifOpen(false);}}>Vai alla Chat <MoveRight size={10}/></div>
                                 </div>
                             )}
@@ -242,7 +347,7 @@ export default function Header({isLoggedIn, onLogout, onLogin}){
                 onClose={()=> setIsModalOpen(false)} 
                 initialTab={initialTab} 
                 key={`${isModalOpen}-${initialTab}`} 
-                onLoginSuccess={onLogin}/>
+                onLoginSuccess={onLogin} />
         </div>
     );
 }

@@ -4,25 +4,38 @@
   padding: 30px 20px;
   background-color: #ffffff;
   color: #1e293b;
+  box-sizing: border-box;
 }
 
 .font-sans {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* ==========================================
-   GRIGLIA IMMAGINI (TOP GALLERY)
-   ========================================== */
+/* FIX: Aggiunta la classe mancante per la schermata di errore */
+.error-container {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ef4444;
+}
+
 .image-gallery-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1fr 1.5fr;
   gap: 16px;
   margin-bottom: 40px;
+  height: 400px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .main-image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
+  min-height: 0;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -31,6 +44,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.3s ease;
 }
 
@@ -40,17 +54,21 @@
 
 .sub-images {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  height: 100%;
+  min-height: 0;
 }
 
 .sub-img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   border-radius: 16px;
   overflow: hidden;
 }
 
-/* La terza immagine si estende su tutta la riga inferiore */
 .sub-images .sub-img:nth-child(3) {
   grid-column: span 2;
 }
@@ -72,6 +90,11 @@
   font-size: 0.85rem;
   cursor: pointer;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s;
+}
+
+.btn-all-photos:hover {
+  background-color: #ffffff;
 }
 
 /* ==========================================
@@ -87,7 +110,6 @@
   flex: 1;
 }
 
-/* Intestazione Titolo e Prezzo */
 .title-header-box {
   display: flex;
   justify-content: space-between;
@@ -101,14 +123,26 @@
   font-weight: 800;
   color: #0f172a;
   margin: 0 0 8px 0;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
 }
 
+/* FIX: Aggiunto flex per allineare l'icona segnaposto all'indirizzo */
 .geo-location {
   color: #64748b;
   font-size: 0.95rem;
   margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+.geo-location svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* FIX: Allineate le icone interne al badge di affinità */
 .match-score-badge {
   display: inline-flex;
   align-items: center;
@@ -119,6 +153,16 @@
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 700;
+}
+
+.match-score-badge .checkmark {
+  display: flex;
+  align-items: center;
+}
+
+.match-score-badge svg {
+  width: 14px;
+  height: 14px;
 }
 
 .price-tag-box {
@@ -167,8 +211,15 @@
 }
 
 .spec-icon {
-  font-size: 1.5rem;
   margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spec-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .spec-label {
@@ -183,7 +234,6 @@
   color: #1e3a8a;
 }
 
-/* Sezioni Testuali standard */
 .room-main-info h2 {
   font-size: 1.25rem;
   font-weight: 700;
@@ -224,7 +274,6 @@
   overflow: hidden;
 }
 
-/* Effetto cerchio radar intorno al pin */
 .map-radar-circle {
   width: 80px;
   height: 80px;
@@ -238,7 +287,14 @@
 }
 
 .map-pin {
-  font-size: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.map-pin svg {
+  width: 28px;
+  height: 28px;
+  color: #2563eb;
 }
 
 .map-floating-overlay {
@@ -276,23 +332,102 @@
   margin: 0 0 16px 0;
 }
 
-.profile-user-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.inquilini-reali-list, 
+.inquilini-fittizi-list {
   margin-bottom: 20px;
 }
 
-.profile-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #10b981;
+.tenant-chat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s;
 }
 
-.profile-user-header h4 {
-  margin: 0 0 2px 0;
+.tenant-chat-row:hover {
+  background-color: #f1f5f9;
+}
+
+.tenant-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* FIX: Allineata l'icona Lucide per gli abitanti fittizi */
+.tenant-fittizio-row {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: #64748b;
+  border-left: 3px solid #e2e8f0;
+  margin-bottom: 4px;
+}
+
+.tenant-fittizio-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tenant-fittizio-row svg {
+  width: 14px;
+  height: 14px;
+}
+
+.fittizi-title-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.btn-send-message-tenant {
+  background: none;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-send-message-tenant:hover {
+  background-color: #046a38;
+  color: white;
+  border-color: #046a38;
+}
+
+.host-avatar-small {
+  width: 24px;
+  height: 24px;
+  background-color: #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FIX: Modellata la classe mancante per il tag hr divisorio della barra laterale */
+.sidebar-divider {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 20px 0;
+}
+
+.host-main-profile-block h4 {
+  margin: 0 0 4px 0;
   font-size: 1rem;
   font-weight: 700;
 }
@@ -301,34 +436,22 @@
   font-size: 0.75rem;
   color: #10b981;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* Tag Coinquilino */
-.profile-tags-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.profile-spec-tag {
-  background-color: #f1f5f9;
-  color: #475569;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
+/* FIX: Modellata la classe mancante per la citazione bio del proprietario */
 .profile-bio-text {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-style: italic;
-  line-height: 1.6;
   color: #475569;
-  margin: 0 0 24px 0;
+  line-height: 1.4;
+  margin: 10px 0 16px 0;
+  background-color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
 }
 
-/* Bottone Invia Messaggio */
 .btn-send-message {
   width: 100%;
   background-color: #046a38;
@@ -350,6 +473,7 @@
   background-color: #03522c;
 }
 
+/* FIX: Allineate le icone del footer della sidebar trust */
 .host-trust-footer {
   display: flex;
   justify-content: space-between;
@@ -359,17 +483,36 @@
   font-weight: 500;
 }
 
-/* Card Linee Guida Sicurezza */
+.host-trust-footer span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.host-trust-footer svg {
+  width: 14px;
+  height: 14px;
+}
+
 .safety-guidelines-box {
   background-color: #eff6ff;
   border-radius: 12px;
   padding: 16px;
   display: flex;
   gap: 12px;
+  margin-top: 16px;
 }
 
 .safety-icon {
-  font-size: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  margin-top: 2px;
+}
+
+.safety-icon svg {
+  width: 16px;
+  height: 16px;
+  color: #1e3a8a;
 }
 
 .safety-guidelines-box h5 {
@@ -387,22 +530,24 @@
 }
 
 /* ==========================================
-   STILI PER LA GALLERIA AD ALBERO ESCURSIVO
+   STILI PER LA GALLERIA OVERLAY FOTO
    ========================================== */
 .gallery-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100; /* Superiore all'header e alle modali di login */
+  z-index: 9999; /* Aumentato per stare sopra a qualunque cosa */
+}
+
+/* FIX: Trasformato il backdrop in un contenitore flex per allineare al centro la modale */
+.gallery-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-}
-
-.gallery-backdrop {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.85); /* Sfondo scuro opaco */
+  box-sizing: border-box;
 }
 
 .gallery-modal-container {
@@ -414,7 +559,8 @@
   padding: 30px;
   z-index: 10;
   max-height: 85vh;
-  overflow-y: auto; /* Permette di scorrere le foto verso il basso */
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .gallery-modal-header {
@@ -446,7 +592,6 @@
   background-color: #e2e8f0;
 }
 
-/* Griglia interna per mostrare le immagini a coppie o triplette */
 .gallery-pictures-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -468,7 +613,7 @@
 
 @media (max-width: 768px) {
   .gallery-pictures-grid {
-    grid-template-columns: 1fr; /* Una sola foto per riga su mobile */
+    grid-template-columns: 1fr;
   }
 }
 
@@ -489,8 +634,8 @@
 }
 
 @media (max-width: 600px) {
-  .image-gallery-grid { grid-template-columns: 1fr; }
-  .sub-images { display: none; } /* Nasconde le foto piccole su mobile per pulizia */
+  .image-gallery-grid { grid-template-columns: 1fr; height: auto; } /* FIX: Sistemata l'altezza della griglia su mobile */
+  .sub-images { display: none; }
   .title-header-box { flex-direction: column; align-items: flex-start; }
   .features-specs-grid { grid-template-columns: 1fr; }
 }

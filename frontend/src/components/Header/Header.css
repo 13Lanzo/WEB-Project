@@ -2,9 +2,8 @@
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-
 .site-header {
-  width: auto;
+  width: 100%; /* FIX: Cambiato da auto a 100% per garantire la consistenza su tutti i monitor */
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   padding: 1rem 1.5rem;
@@ -12,6 +11,7 @@
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
 .header-logo {
@@ -21,24 +21,37 @@
   color: #1e3a8a; 
   cursor: pointer;
   flex-shrink: 0;
-}
-
-/* Il contenitore relativo ci permette di posizionare la tendina in modo assoluto rispetto ad esso */
-.notification-container {
   display: flex;
   align-items: center;
 }
 
+/* Raggruppamento icone di destra */
+/* FIX: Aggiunto position: relative per fare da ancora stabile alla tendina delle notifiche */
+.logged-in-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: auto;
+  position: relative; 
+}
+
+/* Mantenuto per retrocompatibilità */
+.notification-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .notif-dropdown {
   position: absolute;
-  top: 45px; /* Distanza dal bottone campanella */
+  top: 40px; /* FIX: Adattato leggermente per allinearsi perfettamente sotto la campanella */
   right: 0;
   width: 320px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
-  z-index: 1000; /* Assicura che stia sopra a tutto il resto del sito */
+  z-index: 1000;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -59,10 +72,9 @@
 
 .notif-list {
   max-height: 300px;
-  overflow-y: auto; /* Aggiunge la barra di scorrimento se ci sono troppi messaggi */
+  overflow-y: auto;
 }
 
-/* Stile simile a Chat.jsx per i singoli messaggi */
 .notif-item {
   display: flex;
   align-items: center;
@@ -118,7 +130,7 @@
   color: #6b7280;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Aggiunge i puntini sospensivi se il testo è lungo */
+  text-overflow: ellipsis;
 }
 
 .notif-footer {
@@ -126,10 +138,14 @@
   text-align: center;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #065f46; /* Verde del tuo tema */
+  color: #065f46;
   background-color: #f8fafc;
   cursor: pointer;
   transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 
 .notif-footer:hover {
@@ -162,7 +178,6 @@
   color: #1e3a8a;
 }
 
-/* Effetto sottolineatura blu solida visibile nelle immagini fornite */
 .nav-item.active {
   color: #1e3a8a;
 }
@@ -170,7 +185,7 @@
 .nav-item.active::after {
   content: '';
   position: absolute;
-  bottom: -1rem; /* Allinea la linea al bordo inferiore dell'header */
+  bottom: -1rem; 
   left: 0;
   width: 100%;
   height: 2px;
@@ -181,14 +196,6 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-/* Raggruppamento icone di destra */
-.logged-in-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  margin-left: auto;
 }
 
 .btn-link {
@@ -241,24 +248,25 @@
 
 .btn-logout {
   background: none;
-  border: 1px solid  #1e3a8a;
+  border: 1px solid #1e3a8a;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
   transition: 0.2s;
-  color:#1e3a8a;
+  color: #1e3a8a;
 }
 
 .btn-logout:hover {
   background-color: #f9fafb;
-  border-color:  #1e3a8a;
+  border-color: #1e3a8a;
 }
 
+/* MODALE SINO-IN / REGISTRAZIONE */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 9999; /* Aumentato per stare sicuramente sopra a mappe o griglie */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,9 +291,10 @@
   z-index: 10;
   color: #1f2937;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
-.modal-container::-webkit-scrollbar{
+.modal-container::-webkit-scrollbar {
   display: none;
 }
 
@@ -331,7 +340,7 @@
 .form-row-double {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem; /* Spazio tra le due colonne */
+  gap: 1rem;
   width: 100%;
 }
 
@@ -349,18 +358,32 @@
 
 .form-input {
   width: 100%;
-  padding: 0.50rem 0.2rem;
+  padding: 0.6rem 0.75rem; /* FIX: Ottimizzato il padding interno per dare respiro al testo */
   font-size: 0.9rem;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;
   outline: none;
   background-color: #ffffff;
   color: #4b5563;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
   border-color: #10b981;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* FIX: Definita ed implementata la classe per i messaggi di errore della modale */
+.errore {
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  text-align: center;
 }
 
 .btn-submit {
@@ -431,4 +454,37 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #374151;
+}
+
+.checkboxes-wrapper {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.checkboxes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #10b981; 
+  cursor: pointer;
 }

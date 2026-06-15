@@ -14,45 +14,34 @@
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* FIX: Aggiunto flex per affiancare testo e bottone su desktop */
 .annunci-container {
   width: 100%;
   max-width: 1100px;
+  display: flex;                /* Attiva il Flexbox per affiancare testo e bottone */
+  justify-content: space-between; /* Spinge il testo a sinistra e il bottone a destra */
+  align-items: flex-end;        /* Allinea perfettamente la base del testo con la base del bottone */
+  gap: 2rem;
+  margin-bottom: 2rem;          /* Crea spazio sotto l'header prima della griglia */
 }
 
 .test-controls {
   margin-bottom: 2rem;
 }
 
-.test-controls button {
-  background-color: #e5e7eb;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.annunci-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 3rem;
-  gap: 2rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 2rem;
-}
-
 .header-text-block {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  text-align: left;             /* Forza l'allineamento a sinistra per bilanciare il bottone a destra */
 }
 
 .area-badge {
   display: flex;
   align-items: center;
+  justify-content: center; /* Centra l'icona e il testo nel badge */
   gap: 0.4rem;
-  color: #065f46; /* Verde Smeraldo Scuro */
+  color: #065f46;
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -74,7 +63,7 @@
 }
 
 .btn-nuovo-annuncio {
-  background-color: #ff5a00; /* Arancione UniRoom del Mockup */
+  background-color: #ff5a00; /* Arancione UniRoom */
   color: #ffffff;
   border: none;
   border-radius: 2rem;
@@ -85,20 +74,31 @@
   box-shadow: 0 4px 6px -1px rgba(255, 90, 0, 0.3);
   transition: all 0.2s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+/* FIX: Cambiato da verde ad arancione scuro per coerenza cromatica */
 .btn-nuovo-annuncio:hover {
-  background-color: #044e3a;
+  background-color: #cc4800;
   transform: translateY(-2px);
 }
 
 /* ==========================================
    GRIGLIA E CARD DEGLI ANNUNCI
    ========================================== */
-.annunci-grid {
+/* FIX: Aggiunto max-width per allineare la griglia all'header sui monitor grandi */
+.rooms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 2rem;
+  /* Al posto di 3 colonne fisse, lasciamo che le colonne si creino dinamicamente */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 360px));
+  /* QUESTO COMPONENTE CENTRA LE CARD SULLO SCHERMO */
+  justify-content: center; 
+  gap: 24px;
+  margin: 2rem auto 32px auto;
+  width: 100%;
+  max-width: 1100px; /* Allineato alla larghezza massima dell'header container */
 }
 
 .annuncio-card {
@@ -148,6 +148,9 @@
   font-weight: 700;
   z-index: 2;
   backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 /* Contenuto testuale */
@@ -170,6 +173,95 @@
   font-weight: 800;
   color: #111827;
   line-height: 1.3;
+}
+
+/* ==========================================
+   STILI LOADING E EMPTY STATES
+   ========================================== */
+
+.loading-container {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.empty-state-box {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.25rem;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  margin: 2rem auto;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-icon {
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-box h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.empty-state-box p {
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.btn-nuovo-annuncio-empty {
+  background-color: #ff5a00;
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.85rem 2rem;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(255, 90, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-nuovo-annuncio-empty:hover {
+  background-color: #cc4800;
+  transform: translateY(-2px);
+}
+
+.btn-cerca-camere {
+  background-color: #065f46;
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.85rem 2rem;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(6, 95, 70, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-cerca-camere:hover {
+  background-color: #044e3a;
+  transform: translateY(-2px);
 }
 
 /* Specifiche: Prezzo, Spazio, Disp */
@@ -212,7 +304,7 @@
 .btn-dettaglio {
   background: none;
   border: none;
-  color: #ff5a00; /* Arancione */
+  color: #ff5a00;
   font-weight: 800;
   font-size: 0.85rem;
   cursor: pointer;
@@ -234,21 +326,27 @@
 }
 
 .btn-delete:hover {
-  color: #ef4444; /* Diventa rosso al passaggio del mouse */
+  color: #ef4444;
 }
 
 /* ==========================================
    MEDIA QUERIES (Mobile)
    ========================================== */
 @media (max-width: 768px) {
-  .annunci-header {
-    flex-direction: column;
-    align-items: flex-start;
+  /* FIX: Cambiato da .annunci-header (che non esiste nel JSX) a .annunci-container */
+  .annunci-container {
+    flex-direction: column;     /* Su mobile il bottone va sotto il testo */
+    align-items: flex-start;    /* Allinea tutto a sinistra su smartphone */
+    gap: 1.5rem;
   }
+  
   .btn-nuovo-annuncio {
-    width: 100%;
+    width: 100%;                /* Il bottone prende tutta la larghezza su mobile */
+    display: flex;
+    justify-content: center;
   }
-  .annunci-grid {
+  
+  .rooms-grid {
     grid-template-columns: 1fr;
   }
 }

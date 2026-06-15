@@ -1,39 +1,14 @@
 import './Ricerca.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom'
 import {MapPinHouse, Zap} from 'lucide-react'
-
-const ROOMS_DATA = [
-    {
-        id: 1,
-        title: "Bloomsbury Loft",
-        location: "London, WC1",
-        price: 850,
-        match: 98,
-        image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=500&q=80",
-        tags: [" Pets", " Quiet"]
-    },
-    {
-        id: 2,
-        title: "Modern Shared Flat",
-        location: "Manchester City Center",
-        price: 620,
-        match: 85,
-        image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=500&q=80",
-        tags: [" No Smoking", " Mixed Faculty"]
-    },
-    {
-        id: 3,
-        title: "Oxford Central Studio",
-        location: "Oxford, Summertown",
-        price: 950,
-        match: 92,
-        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80",
-        tags: [" Study-first", " Sustainable"]
-    }
-];
+import { getRooms } from '../../services/api';
 
 export default function Ricerca() {
+    const [rooms, setRooms] = useState([]);
+    const [citta, setCitta] = useState('');
+    const [prezzoMin, setPrezzoMin] = useState(''); 
+    const [prezzoMax, setPrezzoMax] = useState('');
     const [selectedPreferences, setSelectedPreferences]=useState(["Non fumatori"]);
     
     const[currentPage, setCurrentPage]=useState(1);
@@ -45,10 +20,25 @@ export default function Ricerca() {
             setSelectedPreferences([...selectedPreferences, prefName]);
         }
     };
-    const handleApplyFilters=() =>{
-        alert('Filtri applicati!');
-    };
+    
     const navigate=useNavigate();
+    
+
+    useEffect(()=>{
+        const fetchStanze= async()=>{
+            try{
+                const data = await getRooms({ citta, prezzoMin, prezzoMax });
+                if(data.success){
+                    setRooms(data.dati);
+                }
+            }catch (error){
+                console.error('Errore nel recupero stanze:',error);
+            }
+        };
+        fetchStanze();
+    }, [citta, prezzoMin, prezzoMax]);
+
+
     return(
         <div className='search-page-container'>
 
@@ -59,46 +49,36 @@ export default function Ricerca() {
                     <label>Città o Quartiere</label>
                     <div className='input-with-icon'>
                         <span className='input-icon'><MapPinHouse/></span>
-                        <input type='text' placeholder='Bari...'/>
+                        <input type='text' className='filters-sidebar' placeholder='Bari...' value={citta} onChange={(e)=> setCitta(e.target.value)}/>
                     </div>
-                </div>
-
-                <div className='filter-group'>
-                    <label>Università</label>
-                    <select defaultValue='all'>
-                        <option value='all'>Tutte le facoltà</option>
-                        <option value='ing'>Ingegneria</option>
-                        <option value='med'>Medicine</option>
-                        <option value='lav'>Lavoro</option>
-                    </select>
                 </div>
 
                 <div className='filter-group'>
                     <label>Range di prezzo</label>
                     <div className='price-range-inputs'>
-                        <input type='number' placeholder='Min'/>
+                        <input type='number' placeholder='Min' min={0} value={prezzoMin} onChange={(e)=> setPrezzoMin(e.target.value)}/>
                         <span className='range-divider'>-</span>
-                        <input type='number' placeholder='Max'/>
+                        <input type='number' placeholder='Max' min={0} value={prezzoMax} onChange={(e)=> setPrezzoMax(e.target.value)}/>
                     </div>
                 </div>
 
                 <div className='filter-group'>
                     <label>Preferenza Coinquilini</label>
-                    <div className='preferences-tag'>
+                    <div className='preferences-tags'>
                         <button className={`pref-tag ${selectedPreferences.includes('Non fumatori') ? 'active': ''}`} onClick={()=>togglePreference('Non fumatori')}>Non fumatori</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Pet-friendly') ? 'active': ''}`} onClick={()=>togglePreference('Pet-frindly')}>Pet-friendly</button>
-                        <button className={`pref-tag ${selectedPreferences.includes('Sileziosi') ? 'active':''}`} onClick={()=>togglePreference('Silenziosi')}>Silenziosi</button>
+                        <button className={`pref-tag ${selectedPreferences.includes('Pet-friendly') ? 'active': ''}`} onClick={()=>togglePreference('Pet-friendly')}>Pet-friendly</button>
+                        <button className={`pref-tag ${selectedPreferences.includes('Silenziosi') ? 'active': ''}`} onClick={()=>togglePreference('Silenziosi')}>Silenzioso</button>
                         <button className={`pref-tag ${selectedPreferences.includes('Studenti') ? 'active':''} `} onClick={()=> togglePreference('Studenti')}>Studenti</button>
                         <button className={`pref-tag ${selectedPreferences.includes('Lavoratori') ? 'active': ''}`} onClick={()=> togglePreference('Lavoratori')}>Lavoratori</button>
                         <button className={`pref-tag ${selectedPreferences.includes('Non coppie') ? 'active': ''}`} onClick={()=> togglePreference('Non coppie')}>Non coppie</button>
                     </div>
                 </div>
                 
-                <button className='btn-apply-filters' onClick={handleApplyFilters}>Applica filtri</button>
+                <button className='btn-apply-filters'>Applica filtri</button>
             </aside>
 
             <main className='results-container'>
-                <header className='results-container'>
+                <header className='results-header'>
                     <div className='header-left'>
                         <h1>Stanza disponibile</h1>
                         <p className='results-count'>Trova match con il tuo profilo</p>
@@ -114,31 +94,28 @@ export default function Ricerca() {
                 </header>
 
                 <div className='rooms-grid'>
-                    {ROOMS_DATA.map((room)=>(
-                        <div key={room.id} className='room-card'>
+                    {rooms.map((room)=>(
+                        <div key={room._id} className='room-card'>
                             <div className='room-image-wrapper'>
-                                <img src={room.image} alt={room.title} className='room-img'/>
-                                <span className='match-badge'><Zap/>{room.match}% Match</span>
+                                <img src={room.immagineUrl || room.image || room.immagine || 
+                                    "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=600&q=80" } 
+                                    alt={room.titolo} 
+                                    className='room-img'/>
+                                <span className='match-badge'><Zap/>% Match</span>
                             </div>
                         
                             <div className='room-card-content'>
                                 <div className='room-card-main-info'>
                                     <div className='title-and-geo'>
-                                        <h3>{room.title}</h3>
-                                        <p className='room-location'><MapPinHouse/>{room.location}</p>
+                                        <h3>{room.titolo}</h3>
+                                        <p className='room-location'><MapPinHouse/>{room.indirizzo}</p>
                                     </div>
                                     <div className='room-price-box'>
-                                        <span className='price-amount'> €{room.price}</span>
-                                        <span claaName='price-period'>/mese</span>
+                                        <span className='price-amount'> €{room.prezzo}</span>
+                                        <span className='price-period'>/mese</span>
                                     </div>
                                 </div>
-
-                                <div className='room-tags-container'>
-                                    {room.tags.map((tag, idx)=>(
-                                        <span key={idx} className='room-spec-tag'>{tag}</span>
-                                    ))}
-                                </div>
-                                <button className='btn-view-details' onClick={()=>  navigate('/dettagli')}>Maggiori dettagli</button>
+                                <button className='btn-view-details' onClick={()=>  navigate(`/dettagli/${room._id}`)}>Maggiori dettagli</button>
                             </div>
                         </div> 
                     ))}

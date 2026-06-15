@@ -3,9 +3,17 @@ import image from '../assets/image.png'
 import {useNavigate} from 'react-router-dom'
 import {Search, HouseHeart, Building, Puzzle, MessageCircleHeart } from 'lucide-react';
 
-export default function Home() {
+export default function Home({isLoggedIn}) {
 
     const navigate=useNavigate();
+    const handlePubblicaAnnuncio=()=>{
+        if(isLoggedIn){
+            navigate('/area-riservata');
+        }else{
+            navigate('login');
+        }
+    };
+    
     return (
         
         <div className='homePage'>
@@ -13,10 +21,10 @@ export default function Home() {
             <section className='heroSection'>
                 <div className='homeContent'>
                     <h1 className='homeTitle'>
-                        Trova la tua stanza, incontra i tuoi futuri coinquilini
+                        Room4U: trova la tua stanza, incontra i tuoi futuri coinquilini
                     </h1>
                     <p className='homedescription'>
-                        Tinder è la piattaforma definitiva per aiutarti a trovare la tua stanza dei sogni. 
+                        Room4U è la piattaforma definitiva per aiutarti a trovare la tua stanza dei sogni. 
                         Semplifica la ricerca di alloggi e la selezione dei coinquilini ideali grazie alnostro algoritmo di compatibilità.
                     </p>
 
@@ -25,7 +33,8 @@ export default function Home() {
                             <span className='icon'><Search /></span>
                             Inizia la ricerca
                         </button>
-                        <button className='btnTwo' onClick={()=> navigate('login')}><HouseHeart />Pubblica annuncio</button>
+                        <button className='btnTwo' onClick={handlePubblicaAnnuncio}>
+                            <HouseHeart />Pubblica annuncio</button>
                     </div>
                 </div>
             </section>
@@ -75,7 +84,7 @@ export default function Home() {
                         <div className='card cardcompatibility gridcolspan2'>
                             <div className='textside'>
                                 <h3>Penteggio di compatibilità</h3>
-                                <p>Solo su Tinder: vedi quanto sei compatibile con i tuoi potenziali inquilini prima di contattarli.</p>
+                                <p>Solo su Room4U: vedi quanto sei compatibile con i tuoi potenziali inquilini prima di contattarli.</p>
                             </div>
                             <div className='scorecircle'>94%</div>
                         </div>

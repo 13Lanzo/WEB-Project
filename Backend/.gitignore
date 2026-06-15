@@ -3,4 +3,3 @@ dist/
 build/
 .env
 .env.local
-.idea/

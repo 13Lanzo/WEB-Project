@@ -9,16 +9,22 @@ const router = express.Router();
 const verificaToken = require('../middleware/authMiddleware');
 const MessageController = require('../controllers/messageController');
 
-// 1. CREATE: Salva un nuovo messaggio nel DB
-router.post('/:id/messages', verificaToken, MessageController.createMessage);
+//recupera la lista delle persone con cui parlavi
+router.get('/conversations', verificaToken, MessageController.getConversations);
 
-// 2. READ: Recupera la conversazione tra l'utente loggato e un altro utente
-router.get('/:id/messages/:conChiId', verificaToken, MessageController.getMessages);
+//recupera i messaggi non letti
+router.get('/unread', verificaToken, MessageController.getUnread);
 
-// 3. UPDATE: Segna come letti tutti i messaggi ricevuti in una conversazione
-router.patch('/:id/messages/:mittenteId', verificaToken, MessageController.updateMessage);
+//recupera tutti i messaggi nella chat
+router.get('/:conChiId', verificaToken, MessageController.getMessages);
 
-// 4. DELETE: Elimina un singolo messaggio tramite il suo ID
-router.delete('/:id/messages/:messaggioId', verificaToken, MessageController.deleteMessage);
+//carica mex
+router.post('/', verificaToken,MessageController.createMessage);
+
+//segna come letti i messaggi ricevuti
+router.patch('/read/:mittenteId',verificaToken,MessageController.updateMessage);
+
+//elimina il messaggio
+router.delete('/:messaggioId',verificaToken,MessageController.deleteMessage);
 
 module.exports = router;

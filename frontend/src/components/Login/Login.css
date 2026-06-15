@@ -87,6 +87,8 @@
   border: 1px solid #f1f5f9;
   box-sizing: border-box;
   flex-shrink: 0;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Contenitore e stile delle Tab superiori */
@@ -127,7 +129,7 @@
 .form-row-double {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem; /* Spazio tra le due colonne */
+  gap: 1rem;
   width: 100%;
 }
 
@@ -145,13 +147,14 @@
 
 .form-input {
   width: 100%;
-  padding: 0.50rem 0.2rem;
+  padding: 0.6rem 0.75rem; /* FIX: Ottimizzato il padding per dare respiro al testo */
   font-size: 0.9rem;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;
   outline: none;
   background-color: #ffffff;
   color: #4b5563;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -228,6 +231,7 @@
   font-weight: 600;
   color: #374151;
 }
+
 .auth-error-alert {
   background-color: #fef2f2;
   border: 1px solid #fee2e2;
@@ -255,4 +259,37 @@
   .auth-right-form-box {
     width: 100%;
   }
+}
+
+.checkboxes-wrapper {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.checkboxes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #10b981; 
+  cursor: pointer;
 }

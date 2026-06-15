@@ -1,4 +1,3 @@
-// src/App.jsx
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
@@ -11,36 +10,53 @@ import Dettagli from './components/Dettagli/Dettagli';
 import Annunci from './components/Annunci/Annunci';
 import New from './components/New/New';
 import { useState } from 'react';
-//rendering per lo stato loggato o meno
-//ICONE: LUCIDE
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn]= useState(false);
+  //utente caricato da localStorage per mantenere la sessione al reload
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    try {
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      console.error("Errore durante il parsing dell'utente salvato:", e);
+      return null;
+    }
+  });
   
-  const handleLogout=()=>{
-    setIsLoggedIn(false);
-  };
-  const handleLogin=()=>{
-    setIsLoggedIn(true);
+  const isLoggedIn=!!currentUser;
+
+  //funzione per gestire il logout: pulisce localStorage e aggiorna stato
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setCurrentUser(null);
   };
 
+  //funzione che viene passata a Login.jsx per aggiornare lo stato di autenticazione dopo un login riuscito
+  const handleLoginSuccess = (userObj) => {
+    console.log("Ricevuto utente in App:", userObj);
+    setCurrentUser(userObj);
+    localStorage.setItem('user', JSON.stringify(userObj));
+  };
+  
   return (
     <div>
       
       <Router>
-        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} onLogin={handleLogin}/>
+        <Header isLoggedIn={isLoggedIn} currentUser={currentUser} onLogout={handleLogout} onLogin={handleLoginSuccess}/>
         <Routes>
-          <Route path='/' element={<Home />}/>
+          <Route path='/' element={<Home isLoggedIn={isLoggedIn}/>}/>
 
           <Route path='/ricerca' element={<Ricerca />}/>
-          <Route path='/profilo' element={<Profilo onLogout={()=>setIsLoggedIn(false)} />}/>
-          <Route path='/dettagli' element={<Dettagli isLoggedIn={isLoggedIn} />}/>
-          <Route path='/chat' element={<Chat onLoginSuccess={handleLogin}/>}/>
-          <Route path='/annunci' element={<Annunci onLoginSuccess={handleLogin}/>}/>
-          <Route path='/new' element={<New onLoginSuccess={handleLogin}/>}/>
-          <Route path='/login' element={<Login onLoginSuccess={handleLogin}/>}/>
+          <Route path='/profilo' element={isLoggedIn ? <Profilo currentUser={currentUser} onLogout={handleLogout} />: <Login onLoginSuccess={handleLoginSuccess}/>}/>
+          <Route path='/dettagli/:id' element={<Dettagli isLoggedIn={isLoggedIn} currentUser={currentUser}/>}/>
+          <Route path='/chat' element={isLoggedIn? <Chat currentUser={currentUser} />: <Login onLoginSuccess={handleLoginSuccess}/>}/>
+          <Route path='/area-riservata' element={isLoggedIn ? <Annunci currentUser={currentUser}/>: <Login onLoginSuccess={handleLoginSuccess}/>}/>
+          <Route path='/new' element={isLoggedIn ? <New currentUser={currentUser}/> : <Login onLoginSuccess={handleLoginSuccess}/>}/>
+          <Route path='/login' element={<Login onLoginSuccess={handleLoginSuccess}/>}/>
         </Routes>
+        <Footer />
       </Router>
-      <Footer />
     </div>  
   );
 }

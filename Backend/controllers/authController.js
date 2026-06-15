@@ -3,7 +3,7 @@ const User = require('../models/User'); //importa il modello User per interagire
 
 async function register(req, res) {
     try {
-            const {nome, cognome, email, password, eta, ruolo, tagPreferenze, bio} = req.body;
+            const {nome, cognome, email, password, eta, ruolo, facolta, tagPreferenze, bio} = req.body;
     
             //verifichiamo se l'utente esiste già
             const utenteEsistente = await User.findOne({email: req.body.email});
@@ -16,13 +16,28 @@ async function register(req, res) {
             
             //creiamo un nuovo utente 
     
-            const nuovoUtente = new User({nome, cognome, email, password, eta, ruolo, tagPreferenze, bio});
+            const nuovoUtente = new User({nome, cognome, email, password, eta, ruolo, facolta, tagPreferenze, bio});
             await nuovoUtente.save();
     
+            // Generiamo il token per il login automatico post-registrazione
+            const payload = {id: nuovoUtente._id, ruolo: nuovoUtente.ruolo};
+            const jwtSecretKey = process.env.JWT_SECRET;
+            const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '24h'});
+
             return res.status(201).json({
                 success: true,
                 messaggio: "Utente registrato con successo!",
-                dati: nuovoUtente
+                token: token,
+                utente: {
+                    id: nuovoUtente._id,
+                    nome: nuovoUtente.nome,
+                    email: nuovoUtente.email,
+                    ruolo: nuovoUtente.ruolo,
+                    facolta: nuovoUtente.facolta,
+                    cognome: nuovoUtente.cognome,
+                    bio: nuovoUtente.bio,
+                    tagPreferenze: nuovoUtente.tagPreferenze
+                }
             });
     
     } catch (err) {
@@ -60,7 +75,7 @@ try{
 
         //creo le jwt
 
-        const payload = {id: utente._id};
+        const payload = {id: utente._id, ruolo: utente.ruolo};
 
         //firmiamo il toker
         const jwtSecretKey = process.env.JWT_SECRET; //prende la chiave segreta per cifrare il token dal file .env
@@ -76,7 +91,11 @@ try{
                 id: utente._id,
                 nome: utente.nome,
                 email: utente.email,
-                ruolo: utente.ruolo
+                ruolo: utente.ruolo,
+                facolta: utente.facolta,
+                cognome: utente.cognome,
+                bio: utente.bio,
+                tagPreferenze: utente.tagPreferenze
             }
         });
     } catch (err){

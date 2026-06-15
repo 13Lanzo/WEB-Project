@@ -1,21 +1,20 @@
 const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
 
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Uniroom API Documentazione",
+      title: "Room4U API Documentazione",
       version: "1.0.0",
       description:
-        "Documentazione ufficiale delle API REST per la piattaforma UniRoom\n\nrealizzato da Giuseppe, Francesca e Pierpaolo",
+        "Documentazione ufficiale delle API REST per la piattaforma Room4U\n\nrealizzato da Giuseppe, Francesca e Pierpaolo",
       contact: {
         name: "Giuseppe, Francesca e Pierpaolo",
       },
     },
     servers: [
       {
-        url: "http://localhost:" + (process.env.PORT || 5000),
+        url: "http://localhost:3000",
         description: "Server di Sviluppo Locale",
       },
     ],
@@ -27,7 +26,7 @@ const swaggerOptions = {
       { name: "default", description: "Health check" }
     ],
     paths: {
-      "/api/auth/register": {
+      "/api/v1/auth/register": {
         post: {
           tags: ["AuthController"],
           summary: "Registrazione nuovo utente",
@@ -59,7 +58,7 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/auth/login": {
+      "/api/v1/auth/login": {
         post: {
           tags: ["AuthController"],
           summary: "Login utente",
@@ -91,7 +90,7 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/users/users": {
+      "/api/v1/users/users": {
         get: {
           tags: ["UserController"],
           summary: "Elenco utenti",
@@ -113,10 +112,29 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/users/{id}/user": {
+      "/api/v1/users/search": {
+        get: {
+          tags: ['UserController'],
+          summary: 'Cerca utenti',
+          description: 'Cerca attraverso input i nomi degli utenti nel DB',
+          parameters: [{
+            name: 'q', 
+            in: 'query', 
+            required: true, 
+            schema: { type: 'string' }, 
+            description: 'Nome, cognome o email da cercare'
+          }],
+          responses: { 200: { description: 'Risultati ricerca.' } }
+        },
+        500: {
+          description: "Errore nella ricerca utenti."
+        }
+      },
+      "/api/v1/users/{id}/user": {
         get: {
           tags: ["UserController"],
-          summary: "Dettaglio utente", // Matching screenshot style or description
+          summary: "Dettaglio utente",
+          security: [{ bearerAuth: [] }],
           description: "Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.",
           parameters: [
             {
@@ -148,6 +166,7 @@ const swaggerOptions = {
         put: {
           tags: ["UserController"],
           summary: "Aggiorna profilo",
+          security: [{ bearerAuth: [] }],
           description: "Permette di modificare la bio, l'età o l'array dei tag delle preferenze.",
           parameters: [
             {
@@ -218,122 +237,88 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/rooms/{id}/rooms": {
-        post: {
-          tags: ["RoomsController"],
-          summary: "Crea stanza",
-          description: "Permette a un utente proprietario o coinquilino di pubblicare un annuncio per una stanza.",
+      "/api/v1/rooms": {
+        get: {
+          tags: ['RoomsController'],
+          summary: 'Elenco stanze',
+          description: 'Cerca stanze in Ricerca.jsx',
           parameters: [
             {
-              name: "id",
-              in: "path",
-              required: true,
-              schema: {
-                type: "string"
-              },
-              description: "L'ID dell'utente che crea la stanza"
+              name: 'citta',
+              in: 'query',
+              schema: { type: 'string' }
+            },
+            {
+              name: 'prezzoMin',
+              in: 'query',
+              schema: { type: 'number' }
+            },
+            {
+              name: 'prezzoMax',
+              in: 'query',
+              schema: { type: 'number' }
             }
           ],
+          responses: { 200: { description: 'Elenco stanze' } }
+        },
+        post: {
+          tags: ['RoomsController'],
+          summary: 'Solo il proprietario può creare una nuova stanza',
+          description: "creazione della stanza dopo la verifica che l'utente sia proprietario",
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
-                  required: ["titolo", "descrizione", "prezzo", "citta", "indirizzo"],
+                  type: 'object',
+                  required: ['titolo', 'descrizione','prezzo','citta','indirizzo','superficie','arredamento'],
                   properties: {
-                    titolo: { type: "string", example: "Splendida singola vicino a Poliba" },
-                    descrizione: { type: "string", example: "Luminosa, silenziosa, con balcone privato." },
+                    titolo: { type: 'string', example: 'Stanza Luminosa' },
+                    descrizione: { type: "string", example: "Ottima per studenti" },
                     prezzo: { type: "number", example: 300 },
                     citta: { type: "string", example: "Bari" },
-                    indirizzo: { type: "string", example: "Via Re David 10" },
-                    serviziInclusi: { type: "array", items: { type: "string" }, example: ["Wi-Fi", "Aria Condizionata"] }
+                    indirizzo: { type: "string", example: "Via Roma 10" },
+                    superficie: { type: "number", example: 20 },
+                    arredamento: { type: "number", example: "completo" },
+                    disponibilita: { type: 'string', example: '2 giugno' },
+                    postiLettoTotali: { type: "number", example: 1 },
+                    postiLettoDisponibili: { type: "number", example: 1 },
+                    inquiliniAssegnati: { type: "string", example: "" },
+                    abitantiNonRegistrati: { type: "string", example: "Mario Rossi" }
                   }
                 }
               }
             }
           },
           responses: {
-            201: {
-              description: "Stanza creata con successo.",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/Room"
-                  }
-                }
-              }
-            }
+            201: { description: 'Stanza creata' }
           }
         }
       },
-      "/api/rooms/rooms": {
+      "/api/v1/rooms/mine": {
         get: {
-          tags: ["RoomsController"],
-          summary: "Elenco stanze",
-          description: "Restituisce un array contenente tutti gli annunci delle stanze disponibili.",
-          responses: {
-            200: {
-              description: "Elenco delle stanze recuperato con successo.",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "array",
-                    items: {
-                      $ref: "#/components/schemas/Room"
-                    }
-                  }
-                }
-              }
-            }
-          }
+          tags: ['RoomsController'],
+          summary: 'Area Riservata',
+          description: 'Cerca le stanze compatibili al mio Id per la mia area riservata',
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+          responses: { 200: { description: "Elenco stanze del proprietario loggato." } }
         }
       },
-      "/api/rooms/{id}/rooms/{stanzaId}": {
+      "/api/v1/rooms/{id}": {
         get: {
           tags: ["RoomsController"],
-          summary: "Dettaglio stanza",
-          description: "Mostra le informazioni dettagliate su una stanza specifica tramite il suo ID.",
-          parameters: [
-            {
-              name: "id",
-              in: "path",
-              required: true,
-              schema: { type: "string" },
-              description: "L'ID dell'utente"
-            },
-            {
-              name: "stanzaId",
-              in: "path",
-              required: true,
-              schema: { type: "string" },
-              description: "L'ID della stanza"
-            }
-          ],
-          responses: {
-            200: {
-              description: "Dettagli stanza recuperati con successo.",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/Room"
-                  }
-                }
-              }
-            },
-            404: {
-              description: "Stanza non trovata."
-            }
-          }
+          summary: "Dettaglio singola stanza",
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+          responses: { 200: { description: "Dettagli stanza recuperati." } }
         },
         put: {
           tags: ["RoomsController"],
-          summary: "Modifica stanza",
-          description: "Permette di aggiornare i campi dell'annuncio della stanza da parte del proprietario.",
-          parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "string" } },
-            { name: "stanzaId", in: "path", required: true, schema: { type: "string" } }
-          ],
+          summary: "Modifica annuncio stanza",
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
           requestBody: {
             content: {
               "application/json": {
@@ -341,132 +326,87 @@ const swaggerOptions = {
                   type: "object",
                   properties: {
                     titolo: { type: "string" },
-                    descrizione: { type: "string" },
                     prezzo: { type: "number" }
                   }
                 }
               }
             }
           },
-          responses: {
-            200: {
-              description: "Stanza aggiornata con successo."
-            }
-          }
+          responses: { 200: { description: "Stanza aggiornata." } }
         },
         delete: {
           tags: ["RoomsController"],
           summary: "Cancella stanza",
-          description: "Permette al proprietario di cancellare definitivamente l'annuncio.",
-          parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "string" } },
-            { name: "stanzaId", in: "path", required: true, schema: { type: "string" } }
-          ],
-          responses: {
-            200: {
-              description: "Stanza eliminata con successo."
-            }
-          }
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+          responses: { 200: { description: "Stanza eliminata." } }
         }
       },
-      "/api/messages/{id}/messages": {
+      "/api/v1/messages/conversations": {
+        get: {
+          tags: ['MessageController'],
+          summary: 'Recupera conversazoni attive',
+          description: 'Conversazioni nella sidebar',
+          security: [{ bearerAuth: [] }],
+          responses: { 200: { description: "Lista interlocutori." } }
+        }
+      },
+      "/api/v1/messages/unread": {
+        get: {
+          tags: ["MessageController"],
+          summary: "Recupera messaggi non letti (Notifiche)",
+          security: [{ bearerAuth: [] }],
+          responses: { 200: { description: "Lista e conteggio messaggi non letti." } }
+        }
+      },
+      "/api/v1/messages/{conChiId}": {
+        get: {
+          tags: ["MessageController"],
+          summary: "Recupera storico chat",
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "conChiId", in: "path", required: true, schema: { type: "string" } }],
+          responses: { 200: { description: "Storico chat recuperato." } }
+        }
+      },
+      "/api/v1/messages": {
         post: {
           tags: ["MessageController"],
-          summary: "Salva messaggio",
-          description: "Registra la transazione del messaggio tra mittente e destinatario.",
-          parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "string" } }
-          ],
+          summary: "Invia nuovo messaggio",
+          security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
             content: {
               "application/json": {
                 schema: {
                   type: "object",
-                  required: ["mittente", "destinatario", "testo"],
+                  required: ["destinatarioId", "testo"],
                   properties: {
-                    mittente: { type: "string", example: "6a12f544c411ee6d0a7b055f" },
-                    destinatario: { type: "string", example: "6a12f623c411ee6d0a7b0560" },
-                    testo: { type: "string", example: "Ciao! La stanza è ancora disponibile?" }
+                    destinatarioId: { type: "string" },
+                    testo: { type: "string" }
                   }
                 }
               }
             }
           },
-          responses: {
-            201: {
-              description: "Messaggio inviato e salvato.",
-              content: {
-                "application/json": {
-                  schema: {
-                    $ref: "#/components/schemas/Message"
-                  }
-                }
-              }
-            }
-          }
+          responses: { 201: { description: "Messaggio inviato." } }
         }
       },
-      "/api/messages/{id}/messages/{conChiId}": {
-        get: {
-          tags: ["MessageController"],
-          summary: "Recupera messaggi",
-          description: "Estrae tutti i messaggi scambiati tra l'utente corrente (mioId) e l'interlocutore (conChiId).",
-          parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "string" }, description: "ID dell'utente" },
-            { name: "conChiId", in: "path", required: true, schema: { type: "string" }, description: "ID dell'altro utente" },
-            { name: "mioId", in: "query", required: true, schema: { type: "string" }, description: "ID utente corrente" }
-          ],
-          responses: {
-            200: {
-              description: "Storico messaggi recuperato con successo.",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "array",
-                    items: {
-                      $ref: "#/components/schemas/Message"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/api/messages/{id}/messages/{mittenteId}": {
+      "/api/v1/messages/read/{mittenteId}": {
         patch: {
           tags: ["MessageController"],
           summary: "Segna messaggi come letti",
-          description: "Aggiorna lo stato di lettura (letto = true) di tutti i messaggi ricevuti in una conversazione.",
-          parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "string" } },
-            { name: "mittenteId", in: "path", required: true, schema: { type: "string" } }
-          ],
-          responses: {
-            200: {
-              description: "Messaggi aggiornati come letti con successo."
-            }
-          }
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "mittenteId", in: "path", required: true, schema: { type: "string" } }],
+          responses: { 200: { description: "Messaggi aggiornati." } }
         }
       },
-      "/api/messages/{id}/messages/{messaggioId}": {
+      "/api/v1/messages/{messaggioId}": {
         delete: {
           tags: ["MessageController"],
           summary: "Elimina messaggio",
-          description: "Rimuove permanentemente un messaggio inviato per errore dal database.",
-          parameters: [
-            { name: "id", in: "path", required: true, schema: { type: "string" } },
-            { name: "messaggioId", in: "path", required: true, schema: { type: "string" } }
-          ],
-          responses: {
-            200: {
-              description: "Messaggio eliminato."
-            },
-            404: {
-              description: "Messaggio non trovato."
-            }
-          }
+          security: [{ bearerAuth: [] }],
+          parameters: [{ name: "messaggioId", in: "path", required: true, schema: { type: "string" } }],
+          responses: { 200: { description: "Messaggio eliminato." } }
         }
       },
       "/health": {
@@ -482,10 +422,7 @@ const swaggerOptions = {
                   schema: {
                     type: "object",
                     properties: {
-                      messagge: {
-                        type: "string",
-                        example: "Server attivo e funzionante!"
-                      }
+                      messagge: { type: "string", example: "Server attivo e funzionante!" }
                     }
                   }
                 }
@@ -513,8 +450,8 @@ const swaggerOptions = {
             cognome: { type: "string" },
             email: { type: "string" },
             eta: { type: "integer" },
-            ruolo: { type: "string", enum: ["studente", "lavoratore", "proprietario"] },
-            tagPreferenze: { type: "array", items: { type: "string" } },
+            ruolo: { type: "string", enum: ["inquilino", "proprietario"] },
+            tagPreferenze: { type: "array", items: { type: "string" }, example: ["ordinato", "non fumatore", "studente"] },
             bio: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" }
@@ -529,9 +466,13 @@ const swaggerOptions = {
             prezzo: { type: "number" },
             citta: { type: "string" },
             indirizzo: { type: "string" },
-            creatoDa: { type: "string", description: "ID dell'utente proprietario" },
-            serviziInclusi: { type: "array", items: { type: "string" } },
-            disponibile: { type: "boolean" },
+            creatoDa: { type: "string" },
+            superficie: { type: "number" },
+            arredamento: { type: "number" },
+            postiLettoTotali: { type: "number" },
+            postiLettoDisponibili: { type: "number" },
+            inquiliniAssegnati: { type: "string" },
+            inquiliniNonRegistrati: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" }
           }
@@ -557,7 +498,7 @@ const swaggerOptions = {
             email: { type: "string", example: "giuseppe.test@poliba.it" },
             password: { type: "string", example: "PasswordSicura123" },
             eta: { type: "integer", example: 22 },
-            ruolo: { type: "string", enum: ["studente", "lavoratore", "proprietario"], example: "studente" },
+            ruolo: { type: "string", enum: ["inquilino", "proprietario"], example: "inquilino" },
             tagPreferenze: { type: "array", items: { type: "string" }, example: ["ordinato", "non-fumatore"] },
             bio: { type: "string", example: "Studente di Ingegneria Informatica." }
           }
@@ -608,8 +549,4 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-function swaggerDocs(app) {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-}
-
-module.exports = swaggerDocs;
+module.exports = swaggerSpec;
