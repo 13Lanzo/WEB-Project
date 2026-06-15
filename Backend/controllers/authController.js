@@ -19,10 +19,25 @@ async function register(req, res) {
             const nuovoUtente = new User({nome, cognome, email, password, eta, ruolo, facolta, tagPreferenze, bio});
             await nuovoUtente.save();
     
+            // Generiamo il token per il login automatico post-registrazione
+            const payload = {id: nuovoUtente._id, ruolo: nuovoUtente.ruolo};
+            const jwtSecretKey = process.env.JWT_SECRET;
+            const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '24h'});
+
             return res.status(201).json({
                 success: true,
                 messaggio: "Utente registrato con successo!",
-                dati: nuovoUtente
+                token: token,
+                utente: {
+                    id: nuovoUtente._id,
+                    nome: nuovoUtente.nome,
+                    email: nuovoUtente.email,
+                    ruolo: nuovoUtente.ruolo,
+                    facolta: nuovoUtente.facolta,
+                    cognome: nuovoUtente.cognome,
+                    bio: nuovoUtente.bio,
+                    tagPreferenze: nuovoUtente.tagPreferenze
+                }
             });
     
     } catch (err) {

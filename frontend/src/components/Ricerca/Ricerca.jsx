@@ -2,6 +2,7 @@ import './Ricerca.css'
 import { useState, useEffect } from 'react';
 import {useNavigate} from 'react-router-dom'
 import {MapPinHouse, Zap} from 'lucide-react'
+import { getRooms } from '../../services/api';
 
 export default function Ricerca() {
     const [rooms, setRooms] = useState([]);
@@ -25,21 +26,16 @@ export default function Ricerca() {
 
     useEffect(()=>{
         const fetchStanze= async()=>{
-        let url=`http://localhost:5000/api/rooms?`;
-        if(citta) url += `citta=${citta}&`;
-        if (prezzoMin) url += `prezzoMin=${prezzoMin}&`;
-        if (prezzoMax) url += `prezzoMax=${prezzoMax}&`;
-        try{
-            const res=await fetch(url);
-            const data=await res.json();
-            if(data.success){
-                setRooms(data.dati);
+            try{
+                const data = await getRooms({ citta, prezzoMin, prezzoMax });
+                if(data.success){
+                    setRooms(data.dati);
+                }
+            }catch (error){
+                console.error('Errore nel recupero stanze:',error);
             }
-        }catch (error){
-            console.error('Errore nel recupero stanze:',error);
-        }
-    };
-    fetchStanze();
+        };
+        fetchStanze();
     }, [citta, prezzoMin, prezzoMax]);
 
 

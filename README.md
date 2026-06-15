@@ -72,7 +72,7 @@ Segui questi passaggi per configurare l'applicazione in locale.
 3. Il file `.env` è già presente e preconfigurato con una stringa di connessione a un database MongoDB Atlas di test chiamato `uniroom_db`. Controlla che le variabili d'ambiente siano definite nel file `Backend/.env`:
    ```env
    MONGODB_URI=Recupera_il_tuo_URI_su_MongoDB_Atlas
-   PORT=5000
+   PORT=3000
    JWT_SECRET=Crea_la_tua_JWT_secret
    ```
    > [!NOTE]
@@ -111,8 +111,8 @@ npm run dev
 Dovresti visualizzare un output di conferma:
 ```text
 Usando DNS pubblici per la risoluzione SRV: [ '8.8.8.8', '1.1.1.1' ]
-Il server è in ascolto sulla porta 5000...
-Testa la rotta su http://localhost:5000/
+Il server è in ascolto sulla porta 3000...
+Testa la rotta su http://localhost:3000/
 Connesso correttamente a MongoDB Atlas!
 ```
 
@@ -133,7 +133,7 @@ Apri [http://localhost:5173/](http://localhost:5173/) nel tuo browser per visual
 
 ### 1. Documentazione e Sandbox API (Swagger UI) 📄
 Il backend espone la documentazione di tutti gli endpoint REST tramite **Swagger**. È possibile effettuare test, esaminare le risposte e chiamare le API direttamente dal browser.
-- **URL di Swagger**: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+- **URL di Swagger**: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 #### Autenticarsi su Swagger con JWT:
 Molte rotte del backend sono protette da JWT. Per testarle da Swagger:

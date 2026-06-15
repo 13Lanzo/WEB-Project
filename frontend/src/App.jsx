@@ -12,8 +12,16 @@ import New from './components/New/New';
 import { useState } from 'react';
 
 function App() {
-  //utente inizialmente null (non loggato)
-  const [currentUser, setCurrentUser]=useState(null)
+  //utente caricato da localStorage per mantenere la sessione al reload
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    try {
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      console.error("Errore durante il parsing dell'utente salvato:", e);
+      return null;
+    }
+  });
   
   const isLoggedIn=!!currentUser;
 

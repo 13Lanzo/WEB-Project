@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis } from 'lucide-react'
 import io from 'socket.io-client'
+import { getConversations, getMessages, createMessage } from '../../services/api';
 
-// Connessione al server Socket.IO
-const socket = io.connect('http://localhost:5000');
+// Connessione al server Socket.IO (relativa per supportare il proxying)
+const socket = io();
 
 export default function Chat({currentUser}) {
     const location=useLocation(); //per avere l'indirizzamento da Dettagli.js
@@ -21,15 +22,10 @@ export default function Chat({currentUser}) {
     // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
     useEffect(() => {
         // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
+        // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
         const caricaConversazioni = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/messages/conversations', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const data = await response.json();
+                const data = await getConversations();
                 if (data.success) {
                     setConversations(data.dati); 
                 }
@@ -42,28 +38,29 @@ export default function Chat({currentUser}) {
             socket.emit('registra_utente', myUserId);
             caricaConversazioni();
         }
-    // Aggiunto 'token' alle dipendenze per far felice ESLint
-    }, [myUserId, token]); 
+    }, [myUserId]); 
 
     // EFFECT 2: Quando cambia l'utente attivo
     useEffect(() => {
-        if (attivoConChiId && token) {
+        if (attivoConChiId) {
             const fetchMessaggi = async () => {
-                const res = await fetch(`http://localhost:5000/api/messages/${attivoConChiId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if (Array.isArray(data)){
-                    setMessageList(data);
-                }else if (data && data.dati){
-                    setMessageList(data.dati);
-                }else{
+                try {
+                    const data = await getMessages(attivoConChiId);
+                    if (Array.isArray(data)){
+                        setMessageList(data);
+                    }else if (data && data.dati){
+                        setMessageList(data.dati);
+                    }else{
+                        setMessageList([]);
+                    }
+                } catch (error) {
+                    console.error("Errore nel caricamento dei messaggi:", error);
                     setMessageList([]);
                 }
             };
             fetchMessaggi();
         }
-    }, [attivoConChiId, token]);
+    }, [attivoConChiId]);
             
 
     // EFFECT 3: Resta in ascolto di nuovi messaggi in arrivo (Real-Time)
@@ -83,19 +80,7 @@ export default function Chat({currentUser}) {
     const sendMessage = async () => {
         if (message.trim() !== '' && attivoConChiId) {
             try {
-                const response = await fetch('http://localhost:5000/api/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ 
-                        destinatarioId: attivoConChiId, 
-                        testo: message 
-                    })
-                });
-
-                const dataModificata = await response.json();
+                const dataModificata = await createMessage(attivoConChiId, message);
                 const messaggioEffettivo = dataModificata.dati || dataModificata;
                 // B. Trasmissione istantanea (Socket.IO) per il destinatario
                 const messageData = {

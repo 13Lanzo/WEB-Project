@@ -2,6 +2,7 @@ import './Dettagli.css'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { MapPinHouse, Zap, SendHorizontal, Dot, ShieldCheck, TriangleRight, BedDouble, HouseWifi, CalendarArrowUp, Lock, Check, UserRound } from 'lucide-react'
+import { getRoom } from '../../services/api';
 
 export default function Dettagli({ isLoggedIn, currentUser }) {
     const { id } = useParams(); // Recupera l'ID della stanza dall'URL (/dettagli/:id)
@@ -30,13 +31,7 @@ export default function Dettagli({ isLoggedIn, currentUser }) {
         const fetchRoomDetails = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`http://localhost:5000/api/rooms/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const data = await res.json();
+                const data = await getRoom(id);
 
                 if (data.success || data._id) {
                     setRoomData(data.dati || data);
@@ -53,7 +48,7 @@ export default function Dettagli({ isLoggedIn, currentUser }) {
         if (id) {
             fetchRoomDetails();
         }
-    }, [id, token]);
+    }, [id]);
 
     // Navigazione verso la chat passando l'ID dell'interlocutore nello stato di navigazione
     const handleStartChat = (destinatarioId, destinatarioNome) => {

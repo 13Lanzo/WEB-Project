@@ -2,6 +2,7 @@ import './Login.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CircleFadingPlus, Globe, CircleCheckBig } from 'lucide-react'
+import { login, register } from '../../services/api';
 
 export default function Login({ onLoginSuccess }) {
     const [activeTab, setActiveTab] = useState('accedi');
@@ -65,17 +66,8 @@ export default function Login({ onLoginSuccess }) {
                     password: password
                 };
 
-                const response = await fetch('http://localhost:5000/api/auth/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const data = await register(payload);
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Errore durante la registrazione.');
-                }
                 const utenteRegistrato = data.user || data.utente;
                 if (data.token) {
                     localStorage.setItem('token', data.token);
@@ -92,19 +84,8 @@ export default function Login({ onLoginSuccess }) {
                 
         } else {
             try {
-                const payload = { email: email, password: password };
+                const data = await login(email, password);
 
-                const response = await fetch('http://localhost:5000/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Email o password errate. Riprova!');
-                }
                 const utenteLoggato = data.utente || data.user;
                 if (data.token) {
                     localStorage.setItem('token', data.token);

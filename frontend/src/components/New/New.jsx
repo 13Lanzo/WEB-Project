@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import './New.css'
 import { Home, ImageDown, Sparkle, MapPinHouse, Eye, UserRound, Search, Plus, X } from 'lucide-react'
+import { searchUsers, createRoom } from "../../services/api";
 
 export default function New() {
     const navigate = useNavigate();
@@ -57,11 +58,7 @@ export default function New() {
     const handleSearchUsers = async () => {
         if (!searchQuery.trim()) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/users/search?q=${searchQuery}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            const data = await res.json();
+            const data = await searchUsers(searchQuery);
             if (data.success) {
                 setSearchResults(data.dati || [])
             }
@@ -95,21 +92,13 @@ export default function New() {
         };
 
         try {
-            const res = await fetch('http://localhost:5000/api/rooms', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
+            const data = await createRoom(payload);
 
-            if (res.ok || data.success) {
+            if (data.success || data._id) {
                 alert('Annuncio pubblicato con successo su Room4U');
                 navigate('/area-riservata');
             } else {
-                alert('Errore durante la pubblicazione: ' + (data.messaggio || data.errore || 'Errore generico'));
+                alert('Errore durante la pubblicazione: ' + (data.messaggio || 'Errore generico'));
             }
 
         } catch (error) {
