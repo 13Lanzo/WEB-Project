@@ -24,7 +24,9 @@ async function request(endpoint, options = {}) {
         let errData = {};
         try {
             errData = await res.json();
-        } catch (_) {}
+        } catch (error) {
+            console.error("Errore durante il parsing della risposta di errore:", error);
+        }
         throw new Error(errData.errore || errData.error || errData.messaggio || errData.message || "Errore del server");
     }
 
