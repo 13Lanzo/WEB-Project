@@ -117,9 +117,12 @@ async function getConversations(req, res) {
         const interlocutoriMap={}
 
         messaggi.forEach(msg=>{
-            const altroUtente =msg.mittente._id.toString()===mioId ? msg.destinatario : msg.mittente;
-            if(altroUtente){
-                interlocutoriMap[altroUtente._id]=altroUtente;
+            // Evitiamo crash se uno degli utenti (mittente o destinatario) è stato eliminato dal database
+            if (!msg.mittente || !msg.destinatario) return;
+
+            const altroUtente = msg.mittente._id.toString() === mioId ? msg.destinatario : msg.mittente;
+            if (altroUtente && altroUtente._id) {
+                interlocutoriMap[altroUtente._id.toString()] = altroUtente;
             }
         });
         res.status(200).json({
