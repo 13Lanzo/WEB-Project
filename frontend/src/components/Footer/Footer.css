@@ -4,17 +4,22 @@
   border-top: 1px solid #eef2f5;
   color: #333333;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  height: 80px;
+  /* FIX: Rimossa l'altezza fissa di 80px per permettere al testo di espandersi liberamente */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .footerContainer {
-  min-width: 1200px;
+  /* FIX: Cambiato da min-width a max-width per renderlo perfettamente responsivo */
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 30px;
+  box-sizing: border-box;
 }
 
 .footerBrand {

@@ -14,32 +14,19 @@
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* FIX: Aggiunto flex per affiancare testo e bottone su desktop */
 .annunci-container {
   width: 100%;
   max-width: 1100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 2rem; /* Spazio sotto l'header */
 }
 
 .test-controls {
   margin-bottom: 2rem;
-}
-
-.test-controls button {
-  background-color: #e5e7eb;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.annunci-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 3rem;
-  gap: 2rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 2rem;
 }
 
 .header-text-block {
@@ -74,7 +61,7 @@
 }
 
 .btn-nuovo-annuncio {
-  background-color: #ff5a00; /* Arancione UniRoom del Mockup */
+  background-color: #ff5a00; /* Arancione UniRoom */
   color: #ffffff;
   border: none;
   border-radius: 2rem;
@@ -85,21 +72,28 @@
   box-shadow: 0 4px 6px -1px rgba(255, 90, 0, 0.3);
   transition: all 0.2s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+/* FIX: Cambiato da verde ad arancione scuro per coerenza cromatica */
 .btn-nuovo-annuncio:hover {
-  background-color: #044e3a;
+  background-color: #cc4800;
   transform: translateY(-2px);
 }
 
 /* ==========================================
    GRIGLIA E CARD DEGLI ANNUNCI
    ========================================== */
+/* FIX: Aggiunto max-width per allineare la griglia all'header sui monitor grandi */
 .rooms-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 32px;
+  width: 100%;
+  max-width: 1100px;
 }
 
 .annuncio-card {
@@ -149,6 +143,9 @@
   font-weight: 700;
   z-index: 2;
   backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 /* Contenuto testuale */
@@ -174,10 +171,9 @@
 }
 
 /* ==========================================
-   STILI MANCANTI: LOADING E EMPTY STATES
+   STILI LOADING E EMPTY STATES
    ========================================== */
 
-/* Container di caricamento centrato a schermo */
 .loading-container {
   min-height: 50vh;
   display: flex;
@@ -188,7 +184,6 @@
   color: #4b5563;
 }
 
-/* Card centrale per l'assenza di annunci */
 .empty-state-box {
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
@@ -205,7 +200,6 @@
   gap: 1rem;
 }
 
-/* Icona della casa grigia/neutra nelle schermate vuote */
 .empty-icon {
   color: #9ca3af;
   margin-bottom: 0.5rem;
@@ -226,7 +220,6 @@
   line-height: 1.5;
 }
 
-/* Pulsante "Crea il tuo primo annuncio" (Arancione coerente con l'header) */
 .btn-nuovo-annuncio-empty {
   background-color: #ff5a00;
   color: #ffffff;
@@ -248,7 +241,6 @@
   transform: translateY(-2px);
 }
 
-/* Pulsante "Cerca Camere" per l'inquilino (Verde Smeraldo UniRoom) */
 .btn-cerca-camere {
   background-color: #065f46;
   color: #ffffff;
@@ -307,7 +299,7 @@
 .btn-dettaglio {
   background: none;
   border: none;
-  color: #ff5a00; /* Arancione */
+  color: #ff5a00;
   font-weight: 800;
   font-size: 0.85rem;
   cursor: pointer;
@@ -329,21 +321,23 @@
 }
 
 .btn-delete:hover {
-  color: #ef4444; /* Diventa rosso al passaggio del mouse */
+  color: #ef4444;
 }
 
 /* ==========================================
    MEDIA QUERIES (Mobile)
    ========================================== */
 @media (max-width: 768px) {
-  .annunci-header {
+  /* FIX: Rinominato in .annunci-container per matchare il JSX ed evitare bug di wrapping */
+  .annunci-container {
     flex-direction: column;
     align-items: flex-start;
   }
   .btn-nuovo-annuncio {
     width: 100%;
+    justify-content: center;
   }
-  .annunci-grid {
+  .rooms-grid {
     grid-template-columns: 1fr;
   }
 }

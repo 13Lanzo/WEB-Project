@@ -6,6 +6,7 @@
   justify-content: center;
   padding: 20px;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 .chat-container {
@@ -25,12 +26,14 @@
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .sidebar-header {
   padding: 20px;
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .search-bar {
@@ -65,12 +68,19 @@
   font-size: 0.9rem;
 }
 
+/* FIX: Definita la classe (mantenendo il refuso del JSX) per abilitare lo scorrimento dei contatti */
+.constacts-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
 .contact-item {
   display: flex;
   padding: 15px 20px;
   gap: 15px;
   cursor: pointer;
   transition: 0.2s;
+  align-items: center;
 }
 
 .contact-item:hover { background: #f9fafb; }
@@ -80,13 +90,17 @@
   background: #d1d5db;
   border-radius: 50%;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
 }
 
 .avatar-small { width: 45px; height: 45px; }
 .avatar-medium { width: 50px; height: 50px; }
 .avatar-msg { width: 35px; height: 35px; margin-top: auto; }
 
-.contact-info { flex: 1; }
+.contact-info { flex: 1; overflow: hidden; }
 .contact-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
 .contact-name { font-weight: 600; color: #1f2937; }
 .contact-time { font-size: 12px; color: #9ca3af; }
@@ -98,23 +112,25 @@
   display: flex;
   flex-direction: column;
   background-color: #f8fafc;
+  height: 100%;
 }
 
 .chat-header {
-  padding:15px 25px;
+  padding: 15px 25px;
   border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: white;
+  flex-shrink: 0;
 }
 
-/* Aggiungi questo per mettere in fila i pulsanti! */
 .header-actions {
   display: flex;
   gap: 0.5rem;
   align-items: center;
 }
+
 .filter-btn,
 .header-actions button {
   background-color: #f3f4f6; /* Sfondo neutro chiarissimo */
@@ -178,7 +194,7 @@
   gap: 20px;
 }
 
-.messages-area::-webkit-scrollbar{
+.messages-area::-webkit-scrollbar {
   display: none;
 }
 
@@ -196,7 +212,8 @@
 .msg-wrapper.sent { 
   align-self: flex-end; 
   margin-left: auto;
-  flex-direction: row-reverse; }
+  flex-direction: row-reverse; 
+}
 
 .msg-bubble {
   padding: 12px 16px;
@@ -205,18 +222,26 @@
   position: relative;
 }
 
+/* FIX: Azzerati i margini di default del tag p interno per salvaguardare la simmetria del padding */
+.msg-bubble p {
+  margin: 0;
+  word-break: break-word;
+}
+
 .received .msg-bubble { background: white; color: #1f2937; border: 1px solid #e5e7eb; }
 .sent .msg-bubble { 
   background: #1e3a8a; 
   color: white;
   border: none;
-  border-bottom-right-radius: 4px; }
+  border-bottom-right-radius: 4px; 
+}
 
 .msg-time {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   font-size: 10px;
   margin-top: 5px;
-  text-align: right;
   opacity: 0.7;
 }
 
@@ -228,6 +253,7 @@
   align-items: center;
   gap: 15px;
   border-top: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .chat-input-container input {
@@ -238,6 +264,7 @@
   border-radius: 25px;
   outline: none;
   color: black;
+  font-size: 0.95rem;
 }
 
 .action-btn, .send-btn {
@@ -246,6 +273,9 @@
   font-size: 20px;
   cursor: pointer;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .send-btn {
@@ -254,7 +284,9 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.send-btn:hover {
+  background-color: #059669;
 }
