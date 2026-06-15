@@ -8,8 +8,8 @@ import { getConversations, getMessages, createMessage } from '../../services/api
 // Connessione al server Socket.IO (relativa per supportare il proxying)
 const socket = io();
 
-export default function Chat({currentUser}) {
-    const location=useLocation(); //per avere l'indirizzamento da Dettagli.js
+export default function Chat({ currentUser }) {
+    const location = useLocation(); //per avere l'indirizzamento da Dettagli.js
     const [message, setMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
     const [conversations, setConversations] = useState([]);
@@ -17,7 +17,7 @@ export default function Chat({currentUser}) {
     const [nomeContattoCorrente, setNomeContattoCorrente] = useState(location.state?.aperturaDirettaNome || "");
 
     // Recupera il token di sicurezza salvato al momento del Login
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token'); --> viene recuperato automaticamente dal server attraverso le API
     const myUserId = currentUser?.id || currentUser?._id;
     // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function Chat({currentUser}) {
             try {
                 const data = await getConversations();
                 if (data.success) {
-                    setConversations(data.dati); 
+                    setConversations(data.dati);
                 }
             } catch (errore) {
                 console.error("Errore nel caricamento delle conversazioni:", errore);
@@ -38,7 +38,7 @@ export default function Chat({currentUser}) {
             socket.emit('registra_utente', myUserId);
             caricaConversazioni();
         }
-    }, [myUserId]); 
+    }, [myUserId]);
 
     // EFFECT 2: Quando cambia l'utente attivo
     useEffect(() => {
@@ -46,11 +46,11 @@ export default function Chat({currentUser}) {
             const fetchMessaggi = async () => {
                 try {
                     const data = await getMessages(attivoConChiId);
-                    if (Array.isArray(data)){
+                    if (Array.isArray(data)) {
                         setMessageList(data);
-                    }else if (data && data.dati){
+                    } else if (data && data.dati) {
                         setMessageList(data.dati);
-                    }else{
+                    } else {
                         setMessageList([]);
                     }
                 } catch (error) {
@@ -61,7 +61,7 @@ export default function Chat({currentUser}) {
             fetchMessaggi();
         }
     }, [attivoConChiId]);
-            
+
 
     // EFFECT 3: Resta in ascolto di nuovi messaggi in arrivo (Real-Time)
     useEffect(() => {
@@ -85,16 +85,16 @@ export default function Chat({currentUser}) {
                 // B. Trasmissione istantanea (Socket.IO) per il destinatario
                 const messageData = {
                     destinatarioId: attivoConChiId,
-                    mittente: myUserId, 
+                    mittente: myUserId,
                     testo: message,
                     createdAt: messaggioEffettivo.createdAt || new Date()
                 };
-                
+
                 socket.emit('invia_messaggio', messageData);
 
                 // C. Aggiorna lo schermo immediatamente per chi scrive
                 setMessageList((list) => [...list, messaggioEffettivo]);
-                setMessage(''); 
+                setMessage('');
 
             } catch (errore) {
                 console.error("Errore durante l'invio del messaggio:", errore);
@@ -108,26 +108,26 @@ export default function Chat({currentUser}) {
                 <aside className='chat-sidebar'>
                     <div className='sidebar-header'>
                         <div className="search-bar">
-                            <span className='icon'><Search/></span>
+                            <span className='icon'><Search /></span>
                             <input type='text' placeholder='Cerca conversazioni...' />
                         </div>
-                        <button className='filter-btn'><GripHorizontal/></button>
+                        <button className='filter-btn'><GripHorizontal /></button>
                     </div>
-                    
+
                     <div className='constacts-list'>
                         {conversations.map((altroUtente) => {
                             const isActive = altroUtente._id === attivoConChiId;
 
                             return (
-                                <div 
-                                    key={altroUtente._id} 
+                                <div
+                                    key={altroUtente._id}
                                     className={`contact-item ${isActive ? 'active' : ''}`}
                                     onClick={() => {
                                         setAttivoConChiId(altroUtente._id);
                                         setNomeContattoCorrente(`${altroUtente.nome} ${altroUtente.cognome}`);
                                     }}
                                 >
-                                    <div className='avatar-small'><User size={40}/></div>
+                                    <div className='avatar-small'><User size={40} /></div>
                                     <div className='contact-info'>
                                         <div className='contact-top'>
                                             <span className='contact-name'>{altroUtente.nome} {altroUtente.cognome}</span>
@@ -145,37 +145,37 @@ export default function Chat({currentUser}) {
                 <main className='chat-main'>
                     <header className='chat-header'>
                         <div className='header-user'>
-                            <div className='avatar-medium'><User size={40}/></div>
+                            <div className='avatar-medium'><User size={40} /></div>
                             <div>
                                 <h4>{nomeContattoCorrente || "Seleziona una chat"}</h4>
                                 {attivoConChiId && <span className='status'>Online</span>}
                             </div>
                         </div>
                         <div className='header-actions'>
-                            <button className='filter-btn header actions'><PhoneForwarded/></button>
-                            <button className='filter-btn header actions'><Video/></button>
-                            <button className='filter-btn header actions'><Ellipsis/></button>
+                            <button className='filter-btn header actions'><PhoneForwarded /></button>
+                            <button className='filter-btn header actions'><Video /></button>
+                            <button className='filter-btn header actions'><Ellipsis /></button>
                         </div>
                     </header>
-                    
+
                     <div className='messages-area'>
                         <div className='date-separator'><span>Cronologia Chat</span></div>
-                        
+
                         {messageList.map((msgContent, index) => {
                             const mittenteId = msgContent.mittente?._id || msgContent.mittente;
                             const myUserId = currentUser?.id || currentUser?._id;
                             const isMe = mittenteId === myUserId;
 
-                            return(
+                            return (
                                 <div key={index} className={`msg-wrapper ${isMe ? 'sent' : 'received'}`}>
-                                    {!isMe && <div className='avatar-msg'><User/></div>}
+                                    {!isMe && <div className='avatar-msg'><User /></div>}
                                     <div className='msg-bubble'>
                                         <p>{msgContent.testo}</p>
                                         <span className='msg-time'>
-                                            {msgContent.createdAt 
-                                                ? new Date(msgContent.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+                                            {msgContent.createdAt
+                                                ? new Date(msgContent.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                                                 : ''}
-                                            {isMe && <CheckCheck size={14} style={{marginLeft: '5px'}}/>}
+                                            {isMe && <CheckCheck size={14} style={{ marginLeft: '5px' }} />}
                                         </span>
                                     </div>
                                 </div>
@@ -185,26 +185,27 @@ export default function Chat({currentUser}) {
 
                     <footer className='chat-input-container'>
                         <div className='input-actions'>
-                            <button className='action-btn'><Plus/></button>
-                            <button className='action-btn'><Laugh/></button>
+                            <button className='action-btn'><Plus /></button>
+                            <button className='action-btn'><Laugh /></button>
                         </div>
-                        <input 
-                            type='text' 
-                            placeholder='Scrivi un messaggio...' 
-                            value={message} 
-                            onChange={(e) => setMessage(e.target.value)} 
-                            onKeyPress={(e) => {e.key === 'Enter' && sendMessage();}}
-                            disabled={!attivoConChiId} 
+                        <input
+                            type='text'
+                            placeholder='Scrivi un messaggio...'
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={(e) => { e.key === 'Enter' && sendMessage(); }}
+                            disabled={!attivoConChiId}
                         />
-                        <button 
-                            className='send-btn' 
+                        <button
+                            className='send-btn'
                             onClick={sendMessage}
                             disabled={!attivoConChiId}
                         >
-                            {message.length > 0 ? <SendHorizonal/> : <Mic />}
+                            {message.length > 0 ? <SendHorizonal /> : <Mic />}
                         </button>
                     </footer>
                 </main>
             </div>
         </div>
-    );}
+    );
+}
