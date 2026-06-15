@@ -2,6 +2,7 @@ import './Annunci.css'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, CirclePlus, MapPinHouse, Trash, Home } from 'lucide-react';
+import { getMyRooms, getRooms, deleteRoom } from '../../services/api';
 
 export default function Annunci() {
     const navigate = useNavigate();
@@ -27,20 +28,14 @@ export default function Annunci() {
         const fetchAnnunci = async () => {
             try {
                 setLoading(true);
-                const headers = {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                };
 
                 if (isProprietario) {
                     // Chiamata per recuperare solo le stanze dal proprietario loggato
-                    const res = await fetch('http://localhost:5000/api/rooms/mine', { headers });
-                    const data = await res.json();
+                    const data = await getMyRooms();
                     setAnnunci(data.dati || data);
                 } else {
                     // Chiamata per tutte le stanze filtrando poi lato client quelle assegnate al conquilino
-                    const res = await fetch('http://localhost:5000/api/rooms', { headers });
-                    const data = await res.json();
+                    const data = await getRooms();
                     const tutteLeStanze = data.dati || data;
 
                     if (Array.isArray(tutteLeStanze)) {
@@ -65,22 +60,12 @@ export default function Annunci() {
         if (!window.confirm("Sei sicuro di voler eliminare permanentemente questo annuncio?")) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/rooms/${id}`, {
-                // Aggiunto host assoluto http://localhost:5000 per eliminare realmente la stanza
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-
-            if (res.ok || data.success) {
-                // Aggiorna lo stato locale rimuovendo l'annuncio eliminato
-                setAnnunci(annunci.filter(annuncio => annuncio._id !== id && annuncio.id !== id));
-            } else {
-                alert("Impossibile eliminare l'annuncio: " + (data.messaggio || 'Errore generico'));
-            }
+            await deleteRoom(id);
+            // Aggiorna lo stato locale rimuovendo l'annuncio eliminato
+            setAnnunci(annunci.filter(annuncio => annuncio._id !== id && annuncio.id !== id));
         } catch (error) {
             console.error("Errore durante l'eliminazione:", error);
-            alert("Si è verificato un errore di rete durante l'eliminazione dell'annuncio.");
+            alert("Si è verificato un errore durante l'eliminazione dell'annuncio: " + error.message);
         }
     };
 

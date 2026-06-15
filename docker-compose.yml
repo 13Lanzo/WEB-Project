@@ -1,0 +1,37 @@
+services:
+  # --- MongoDB database ---
+  mongo:
+    image: mongo:7
+    container_name: uniroom-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  # --- Express API (Node.js) ---
+  backend:
+    build: ./Backend
+    container_name: uniroom-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  # --- React build served by nginx (also reverse-proxies the API) ---
+  frontend:
+    build: ./Frontend
+    container_name: uniroom-frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mongo-data:

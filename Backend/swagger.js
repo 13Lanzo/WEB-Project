@@ -1,5 +1,4 @@
 const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
 
 const swaggerOptions = {
   definition: {
@@ -15,7 +14,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:" + (process.env.PORT || 5000),
+        url: "http://localhost:3000",
         description: "Server di Sviluppo Locale",
       },
     ],
@@ -27,7 +26,7 @@ const swaggerOptions = {
       { name: "default", description: "Health check" }
     ],
     paths: {
-      "/api/auth/register": {
+      "/api/v1/auth/register": {
         post: {
           tags: ["AuthController"],
           summary: "Registrazione nuovo utente",
@@ -59,7 +58,7 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/auth/login": {
+      "/api/v1/auth/login": {
         post: {
           tags: ["AuthController"],
           summary: "Login utente",
@@ -91,7 +90,7 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/users/users": {
+      "/api/v1/users/users": {
         get: {
           tags: ["UserController"],
           summary: "Elenco utenti",
@@ -113,25 +112,28 @@ const swaggerOptions = {
           }
         }
       },
-      "/api/users/search":{
-        get:{
+      "/api/v1/users/search": {
+        get: {
           tags: ['UserController'],
           summary: 'Cerca utenti',
-          description:'Cerca attraverso input i nomi degli utenti nel DB',
-          parameters:[{
-            name:'q', 
+          description: 'Cerca attraverso input i nomi degli utenti nel DB',
+          parameters: [{
+            name: 'q', 
             in: 'query', 
-            required:true, 
-            schema:{type:'string'}, 
-            description: 'Nome, cognome o email da cercare'}],
-            responses:{200:{description:'Risultati ricerca.'}}
-        }, 500: {
-              description: "Errore nella ricerca utenti."}
-    },
-    "/api/users/{id}/user": {
-      get: {
+            required: true, 
+            schema: { type: 'string' }, 
+            description: 'Nome, cognome o email da cercare'
+          }],
+          responses: { 200: { description: 'Risultati ricerca.' } }
+        },
+        500: {
+          description: "Errore nella ricerca utenti."
+        }
+      },
+      "/api/v1/users/{id}/user": {
+        get: {
           tags: ["UserController"],
-          summary: "Dettaglio utente", // Matching screenshot style or description
+          summary: "Dettaglio utente",
           security: [{ bearerAuth: [] }],
           description: "Mostra i dettagli di uno studente o host tramite il suo ID per la pagina del profilo o il matchmaking.",
           parameters: [
@@ -235,47 +237,51 @@ const swaggerOptions = {
           }
         }
       },
-    "/api/rooms":{
-      get:{
-          tags:['RoomsController'],
-          summary:'Elenco stanze',
+      "/api/v1/rooms": {
+        get: {
+          tags: ['RoomsController'],
+          summary: 'Elenco stanze',
           description: 'Cerca stanze in Ricerca.jsx',
-          parameters:[
-            {name: 'citta',
+          parameters: [
+            {
+              name: 'citta',
               in: 'query',
-              schema:{type:'string'}},
-            {name: 'prezzoMin',
-              in: 'query',
-              schema:{type: 'number'}
+              schema: { type: 'string' }
             },
-            {name: 'prezzoMax',
+            {
+              name: 'prezzoMin',
               in: 'query',
-              schema:{type: 'number'}
+              schema: { type: 'number' }
+            },
+            {
+              name: 'prezzoMax',
+              in: 'query',
+              schema: { type: 'number' }
             }
           ],
-          responses: {200:{description:'Elenco stanze'}}
-      },
-      post:{
-          tags:['RoomsController'],
+          responses: { 200: { description: 'Elenco stanze' } }
+        },
+        post: {
+          tags: ['RoomsController'],
           summary: 'Solo il proprietario può creare una nuova stanza',
           description: "creazione della stanza dopo la verifica che l'utente sia proprietario",
           security: [{ bearerAuth: [] }],
-          requestBody:{
-            required:true,
-            content:{
-              'application/json':{
-                schema:{
-                  type:'object',
-                  required:['titolo', 'descrizione','prezzo','citta','indirizzo','superficie','arredamento'],
-                  properties:{
-                    titolo: {type: 'string', example: 'Stanza Luminosa'},
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['titolo', 'descrizione','prezzo','citta','indirizzo','superficie','arredamento'],
+                  properties: {
+                    titolo: { type: 'string', example: 'Stanza Luminosa' },
                     descrizione: { type: "string", example: "Ottima per studenti" },
                     prezzo: { type: "number", example: 300 },
                     citta: { type: "string", example: "Bari" },
                     indirizzo: { type: "string", example: "Via Roma 10" },
                     superficie: { type: "number", example: 20 },
                     arredamento: { type: "number", example: "completo" },
-                    disponibilita:{type:'string', example: '2 giugno'},
+                    disponibilita: { type: 'string', example: '2 giugno' },
                     postiLettoTotali: { type: "number", example: 1 },
                     postiLettoDisponibili: { type: "number", example: 1 },
                     inquiliniAssegnati: { type: "string", example: "" },
@@ -285,14 +291,14 @@ const swaggerOptions = {
               }
             }
           },
-          responses:{
-            201: {description:'Stanza creata'}
+          responses: {
+            201: { description: 'Stanza creata' }
           }
-      }
-    },
-      "/api/rooms/mine":{
-        get:{
-          tags:['RoomsController'],
+        }
+      },
+      "/api/v1/rooms/mine": {
+        get: {
+          tags: ['RoomsController'],
           summary: 'Area Riservata',
           description: 'Cerca le stanze compatibili al mio Id per la mia area riservata',
           security: [{ bearerAuth: [] }],
@@ -300,7 +306,7 @@ const swaggerOptions = {
           responses: { 200: { description: "Elenco stanze del proprietario loggato." } }
         }
       },
-      "/api/rooms/{id}": {
+      "/api/v1/rooms/{id}": {
         get: {
           tags: ["RoomsController"],
           summary: "Dettaglio singola stanza",
@@ -336,16 +342,16 @@ const swaggerOptions = {
           responses: { 200: { description: "Stanza eliminata." } }
         }
       },
-      "/api/messages/conversations":{
-        get:{
-          tags:['MessageController'],
+      "/api/v1/messages/conversations": {
+        get: {
+          tags: ['MessageController'],
           summary: 'Recupera conversazoni attive',
           description: 'Conversazioni nella sidebar',
           security: [{ bearerAuth: [] }],
           responses: { 200: { description: "Lista interlocutori." } }
         }
       },
-      "/api/messages/unread": {
+      "/api/v1/messages/unread": {
         get: {
           tags: ["MessageController"],
           summary: "Recupera messaggi non letti (Notifiche)",
@@ -353,7 +359,7 @@ const swaggerOptions = {
           responses: { 200: { description: "Lista e conteggio messaggi non letti." } }
         }
       },
-      "/api/messages/{conChiId}": {
+      "/api/v1/messages/{conChiId}": {
         get: {
           tags: ["MessageController"],
           summary: "Recupera storico chat",
@@ -362,7 +368,7 @@ const swaggerOptions = {
           responses: { 200: { description: "Storico chat recuperato." } }
         }
       },
-      "/api/messages": {
+      "/api/v1/messages": {
         post: {
           tags: ["MessageController"],
           summary: "Invia nuovo messaggio",
@@ -385,7 +391,7 @@ const swaggerOptions = {
           responses: { 201: { description: "Messaggio inviato." } }
         }
       },
-      "/api/messages/read/{mittenteId}": {
+      "/api/v1/messages/read/{mittenteId}": {
         patch: {
           tags: ["MessageController"],
           summary: "Segna messaggi come letti",
@@ -394,7 +400,7 @@ const swaggerOptions = {
           responses: { 200: { description: "Messaggi aggiornati." } }
         }
       },
-      "/api/messages/{messaggioId}": {
+      "/api/v1/messages/{messaggioId}": {
         delete: {
           tags: ["MessageController"],
           summary: "Elimina messaggio",
@@ -445,7 +451,7 @@ const swaggerOptions = {
             email: { type: "string" },
             eta: { type: "integer" },
             ruolo: { type: "string", enum: ["inquilino", "proprietario"] },
-            tagPreferenze: { type: "array", items: { type: "string" }, example: ["ordinato", "non fumatore", "studente"]},
+            tagPreferenze: { type: "array", items: { type: "string" }, example: ["ordinato", "non fumatore", "studente"] },
             bio: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" }
@@ -543,8 +549,4 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-function swaggerDocs(app) {
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-}
-
-module.exports = swaggerDocs;
+module.exports = swaggerSpec;

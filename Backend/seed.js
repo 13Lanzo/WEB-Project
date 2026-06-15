@@ -3,8 +3,17 @@
 const mongoose = require("mongoose");
 const path = require("path");
 
+const dns = require("dns");
+
 // 1. Carichiamo le variabili d'ambiente dal file .env nella radice del backend
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
+// Configurazione DNS per supportare la risoluzione dei record SRV di Atlas in ambienti locali
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (dnsErr) {
+  console.warn("Impossibile impostare DNS pubblici per SRV:", dnsErr.message);
+}
 
 // 2. Importiamo i modelli User, Room e Message
 const User = require("./models/User");
@@ -18,7 +27,11 @@ async function seed() {
         if (!MONGODB_URI) {
             throw new Error("MONGODB_URI non è definita nel file .env!");
         }
-        await mongoose.connect(MONGODB_URI);
+        await mongoose.connect(MONGODB_URI, {
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 10000,
+            family: 4,
+        });
         console.log("Connesso a MongoDB Atlas!");
 
         // Pulizia dei dati esistenti
