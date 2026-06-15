@@ -41,21 +41,28 @@
 /* Inputs, Selezioni, Icone */
 .input-with-icon {
   position: relative;
-  display:flex;
+  display: flex;
   align-items: center;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .input-icon {
   position: absolute;
   left: 12px;
-  font-size: 0.9rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 }
 
+/* FIX: Creata classe dedicata ed evitato il conflitto con .filters-sidebar del JSX */
 .filters-sidebar input[type="text"],
+.filter-input,
 .filters-sidebar select {
   width: 100%;
-  padding: 10px 12px 10px 36px;
+  padding: 10px 12px 10px 38px !important; /* Spazio per l'icona a sinistra */
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   box-sizing: border-box;
@@ -66,14 +73,13 @@
 }
 
 .filters-sidebar select {
-  padding-left: 12px;
+  padding-left: 12px !important;
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 14px;
 }
-
 
 .price-range-inputs {
   display: flex;
@@ -169,6 +175,11 @@
   font-size: 0.95rem;
 }
 
+.header-left {
+  display: flex;
+  flex-direction: column;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -206,16 +217,15 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Gestione dell'immagine e del badge sovrapposto */
+.room-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
 .room-image-wrapper {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-}
-
-.room-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .room-img {
@@ -224,6 +234,7 @@
   object-fit: cover;
 }
 
+/* FIX: Aggiunto flex per allineare l'icona del fulmine Zap al testo */
 .match-badge {
   position: absolute;
   top: 12px;
@@ -235,6 +246,14 @@
   font-size: 0.75rem;
   font-weight: 700;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.match-badge svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* Informazioni Interne della Card */
@@ -254,17 +273,32 @@
   margin-bottom: 12px;
 }
 
+.title-and-geo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .room-card-content h3 {
   font-size: 1.05rem;
-  margin: 0 0 4px 0;
+  margin: 0;
   color: #0f172a;
   font-weight: 700;
 }
 
+/* FIX: Aggiunto flex per allineare l'icona della casa all'indirizzo */
 .room-location {
   margin: 0;
   font-size: 0.8rem;
   color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.room-location svg {
+  width: 14px;
+  height: 14px;
 }
 
 .room-price-box {
@@ -336,7 +370,7 @@
   border-color: #1e3a8a;
 }
 
-/* Responsività su schermi intermedi */
+/* Responsività */
 @media (max-width: 1024px) {
   .rooms-grid {
     grid-template-columns: repeat(2, 1fr);
