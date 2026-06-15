@@ -18,11 +18,11 @@
 .annunci-container {
   width: 100%;
   max-width: 1100px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1.5rem;
-  margin-bottom: 2rem; /* Spazio sotto l'header */
+  display: flex;                /* Attiva il Flexbox per affiancare testo e bottone */
+  justify-content: space-between; /* Spinge il testo a sinistra e il bottone a destra */
+  align-items: flex-end;        /* Allinea perfettamente la base del testo con la base del bottone */
+  gap: 2rem;
+  margin-bottom: 2rem;          /* Crea spazio sotto l'header prima della griglia */
 }
 
 .test-controls {
@@ -33,13 +33,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  text-align: left;             /* Forza l'allineamento a sinistra per bilanciare il bottone a destra */
 }
 
 .area-badge {
   display: flex;
   align-items: center;
+  justify-content: center; /* Centra l'icona e il testo nel badge */
   gap: 0.4rem;
-  color: #065f46; /* Verde Smeraldo Scuro */
+  color: #065f46;
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -89,11 +91,14 @@
 /* FIX: Aggiunto max-width per allineare la griglia all'header sui monitor grandi */
 .rooms-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 32px;
+  /* Al posto di 3 colonne fisse, lasciamo che le colonne si creino dinamicamente */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 360px));
+  /* QUESTO COMPONENTE CENTRA LE CARD SULLO SCHERMO */
+  justify-content: center; 
+  gap: 24px;
+  margin: 2rem auto 32px auto;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1100px; /* Allineato alla larghezza massima dell'header container */
 }
 
 .annuncio-card {
@@ -328,15 +333,19 @@
    MEDIA QUERIES (Mobile)
    ========================================== */
 @media (max-width: 768px) {
-  /* FIX: Rinominato in .annunci-container per matchare il JSX ed evitare bug di wrapping */
+  /* FIX: Cambiato da .annunci-header (che non esiste nel JSX) a .annunci-container */
   .annunci-container {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: column;     /* Su mobile il bottone va sotto il testo */
+    align-items: flex-start;    /* Allinea tutto a sinistra su smartphone */
+    gap: 1.5rem;
   }
+  
   .btn-nuovo-annuncio {
-    width: 100%;
+    width: 100%;                /* Il bottone prende tutta la larghezza su mobile */
+    display: flex;
     justify-content: center;
   }
+  
   .rooms-grid {
     grid-template-columns: 1fr;
   }
