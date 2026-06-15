@@ -74,12 +74,6 @@ const server = http.createServer(app);
 mongoose
   .connect(MONGODB_URI, mongooseOptions)
   .then(() => {
-    const PORT = process.env.PORT || 3000;
-    server.listen(PORT, () => {
-      console.log(`Il server è in ascolto sulla porta ${PORT}...`);
-      console.log(`Testa la rotta su http://localhost:${PORT}/`);
-      console.log(`API documentation available at http://localhost:${PORT}/api-docs`);
-    });
     console.log("Connesso correttamente a MongoDB!");
   })
   .catch((err) => {
@@ -128,3 +122,9 @@ io.on("connection", (socket) => {
     }
   });
 });
+const PORT = process.env.PORT || 3000;
+    server.listen(PORT, () => {
+      console.log(`Il server è in ascolto sulla porta ${PORT}...`);
+      console.log(`Testa la rotta su http://localhost:${PORT}/`);
+      console.log(`API documentation available at http://localhost:${PORT}/api-docs`);
+    });
