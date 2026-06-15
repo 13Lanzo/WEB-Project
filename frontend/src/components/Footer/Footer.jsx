@@ -10,7 +10,7 @@ const Footer= () => {
         <div className='footerBrand'>
           <h2 className='Title'>Room4U</h2>
           <p className='brandText'>
-            Piattaforma per trovare coinquilini più bella del west
+            L'innovativa piattaforma per trovare la tua stanza ideale in base ai tuoi interessi!
           </p>
         </div>
 
