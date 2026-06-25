@@ -1,4 +1,5 @@
-const API_BASE = "/api/v1";
+const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
+
 
 // Funzione helper per eseguire le richieste HTTP al backend includendo automaticamente
 // l'header Authorization se presente un token JWT nel localStorage.
