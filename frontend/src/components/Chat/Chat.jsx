@@ -5,8 +5,10 @@ import { User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneFor
 import io from 'socket.io-client'
 import { getConversations, getMessages, createMessage } from '../../services/api';
 
-// Connessione al server Socket.IO (supporta configurazione d'ambiente in produzione)
-const socket = io(import.meta.env.VITE_SOCKET_URL || undefined);
+// Connessione al server Socket.IO (supporta configurazione d'ambiente in produzione o ricava dal URL API)
+const socketUrl = import.meta.env.VITE_SOCKET_URL || 
+                  (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace("/api/v1", "") : undefined);
+const socket = io(socketUrl);
 
 export default function Chat({ currentUser }) {
     const location = useLocation(); //per avere l'indirizzamento da Dettagli.js
