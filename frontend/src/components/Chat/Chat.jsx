@@ -23,8 +23,6 @@ export default function Chat({ currentUser }) {
     const myUserId = currentUser?.id || currentUser?._id;
     // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
     useEffect(() => {
-        // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
-        // Spostiamo la funzione DENTRO l'effetto per risolvere il warning di ESLint
         const caricaConversazioni = async () => {
             try {
                 const data = await getConversations();
@@ -37,8 +35,26 @@ export default function Chat({ currentUser }) {
         };
 
         if (myUserId) {
-            socket.emit('registra_utente', myUserId);
+            // Funzione per registrare l'utente sul server Socket
+            const registraUtente = () => {
+                console.log("Registrazione utente su Socket.IO:", myUserId);
+                socket.emit('registra_utente', myUserId);
+            };
+
+            // Se il socket è già connesso, registralo subito
+            if (socket.connected) {
+                registraUtente();
+            }
+
+            // Ascolta l'evento 'connect' per re-registrarsi in caso di riconnessione
+            socket.on('connect', registraUtente);
+            
             caricaConversazioni();
+
+            // Pulizia del listener allo smontaggio
+            return () => {
+                socket.off('connect', registraUtente);
+            };
         }
     }, [myUserId]);
 
