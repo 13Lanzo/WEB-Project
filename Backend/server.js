@@ -14,7 +14,7 @@ app.use(express.json());
 // Configurazione CORS per consentire connessioni dal frontend
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -91,7 +91,7 @@ mongoose
 // Implementazione di Socket.io per la chat real-time
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: ["GET", "POST"]
   }
 });
