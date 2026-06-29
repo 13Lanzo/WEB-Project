@@ -12,7 +12,7 @@ router.get('/', RoomsController.getStanze);
 router.get('/mine',verificaToken, soloProprietario, RoomsController.getMyStanza);
 
 // prendiamo i dettagli della singola stanza
-router.get('/:id', verificaToken, RoomsController.getStanza);
+router.get('/:id', RoomsController.getStanza);
 
 // crea annuncio stanza solo se sei proprietario
 router.post('/', verificaToken, soloProprietario, RoomsController.createStanza);
