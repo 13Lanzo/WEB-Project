@@ -16,8 +16,6 @@ export default function Dettagli({ isLoggedIn, currentUser }) {
     const [loading, setLoading] = useState(true);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
 
-    const token = localStorage.getItem('token')
-
     // Configurazione icone ed etichette dalle specifiche fisiche
     const SPECS_CONFIG = {
         superficie: { icon: <TriangleRight color='green' />, label: "Superficie", suffix: " m²" },

@@ -8,7 +8,6 @@ export default function New() {
     const navigate = useNavigate();
 
     // Recupero dati autenticazione da localStorage
-    const token = localStorage.getItem("token");
     const userStr = localStorage.getItem("user");
     const user = userStr ? JSON.parse(userStr) : null;
     const ruolo = user?.ruolo;
