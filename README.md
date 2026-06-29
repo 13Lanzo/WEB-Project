@@ -1,4 +1,4 @@
-# 🏠 UniRoom — Piattaforma Full-Stack per la Ricerca di Coinquilini
+# 🏠 Room4U — Piattaforma Full-Stack per la Ricerca di Coinquilini
 
 > Una piattaforma web full-stack per la ricerca di coinquilini e l'affitto di stanze che consente agli studenti universitari di trovare coinquilini compatibili e ai proprietari di pubblicare annunci di stanze disponibili. Il progetto è concepito come un esempio didattico end-to-end: dai **concetti teorici** all'**esecuzione locale di ciascun servizio**, fino al **deployment containerizzato** con Docker, Nginx e WebSocket.
 
