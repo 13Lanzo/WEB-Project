@@ -129,107 +129,103 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    {errorMessage && (
-                        <div className='errore'>{errorMessage}</div>
-                    )}
-                    {activeTab === 'registrati' && (
-                        <>
-                        <div className='form-row-double'>
-                            <div className='form-group'>
-                                <label className='form-label'>Nome</label>
-                                <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={nome} onChange={(e)=>setNome(e.target.value)} required/>
-                            </div>
-                            <div className='form-group'>
-                                <label className='form-label'>Cognome</label>
-                                <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={cognome} onChange={(e)=>setCognome(e.target.value)} required/>
-                            </div>
-                        </div>
-                        <div className={ruolo=== 'inquilino' ? 'form-row-double': 'form-group'}>
-                            <div className='form-group'>
-                                <label className='form-label'>Ruolo Utente</label>
-                                <select className='form-input' value={ruolo} onChange={(e) => {setRuolo(e.target.value); if(e.target.value==='proprietario'){setFacolta('');}}} required>
-                                    <option value="inquilino">Inquilino</option>
-                                    <option value="proprietario">Proprietario</option>
-                                </select>
-                            </div>
-                            {ruolo==='inquilino' &&(
-                            <div className='form-group'>
-                                <label className='form-label'>Seleziona Facoltà</label>
-                                <select className='form-input' value={facolta} onChange={(e)=> setFacolta(e.target.value)} required>
-                                    <option value='' disabled>Scegli</option>
-                                    <option value='Ingegneria'>Ingegneria</option>
-                                    <option value='Medicina'>Medicina</option>
-                                    <option value='Lavoro'>Lavoro</option>
-                                    <option value='Disoccupato'>Disoccupato</option>
-                                </select>
-                            </div>
-                            )}
-                        </div>
-
-                        <div className='form-group'>
-                            <label className='fomr-label'>Età</label>
-                            <input type='number' min='0' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=> setEta(e.target.value)} required/>
-                        </div>
-
-                        <div className='form-group'>
-                            <label className='form-label'>Bio</label>
-                            <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
-                        </div>
-
-                        <div>
-                        {ruolo === 'inquilino' && (
-                                <div className='form-group checkboxes-wrapper'>
-                                    <label className='form-label'>Tag e Preferenze</label>
-                                    <div className='checkboxes-grid'>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Non Fumatore' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Pet Friendly' checked={tags.includes('Pet Friendly')} onChange={handleCheckboxChange}/><span>Pet Friendly</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Tranquillo' checked={tags.includes('Tranquillo')} onChange={handleCheckboxChange}/><span>Tranquillo</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Eco-friendly' checked={tags.includes('Eco-friendly')} onChange={handleCheckboxChange}/><span>Eco-friendly</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Luminoso' checked={tags.includes('Luminoso')} onChange={handleCheckboxChange}/><span>Luminoso</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Terrazzo' checked={tags.includes('Terrazzo')} onChange={handleCheckboxChange}/><span>Terrazzo</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Aria Condizionata' checked={tags.includes('Aria Condizionata')} onChange={handleCheckboxChange}/><span>Aria Condizionata</span>
-                                        </label>
-                                        <label className='checkbox-label'>
-                                            <input type='checkbox' value='Lavastoviglie' checked={tags.includes('Lavastoviglie')} onChange={handleCheckboxChange}/><span>Lavastoviglie</span>
-                                        </label>
+                        {errorMessage && <div className='errore'>{errorMessage}</div>}
+                        {activeTab === 'registrati' && (
+                            <>
+                                <div className='form-row-double'>
+                                    <div className='form-group'>
+                                        <label className='form-label'>Nome</label>
+                                        <input type='text' placeholder='Inserisci il tuo nome' className='form-input' value={nome} onChange={(e)=>setNome(e.target.value)} required/>
                                     </div>
-                                </div>)}
-                            </div>
-                        </>
-                    )}
-                    <div className='form-group'>
-                        <label className='form-label'>Email</label>
-                        <input type="email" placeholder='inserisci emali' className='form-input' value={email} onChange={(e)=> setEmail(e.target.value)} required/>
-                    </div>
-                    <div className='form-group'>
-                        <label className='form-label'>Password</label>
-                        <input type='password' placeholder='........' className='form-input' value={password} onChange={(e)=> setPassword(e.target.value)} required/>
-                    </div>
-                    {activeTab === 'registrati' && (
-                        <>
+                                    <div className='form-group'>
+                                        <label className='form-label'>Cognome</label>
+                                        <input type='text' placeholder='Inserisci il tuo cognome' className='form-input' value={cognome} onChange={(e)=>setCognome(e.target.value)} required/>
+                                    </div>
+                                </div>
+                                <div className={ruolo === 'inquilino' ? 'form-row-double': 'form-group'}>
+                                    <div className='form-group'>
+                                        <label className='form-label'>Ruolo Utente</label>
+                                        <select className='form-input' value={ruolo} onChange={(e) => {setRuolo(e.target.value); if(e.target.value==='proprietario'){setFacolta('');}}} required>
+                                            <option value="inquilino">Inquilino</option>
+                                            <option value="proprietario">Proprietario</option>
+                                        </select>
+                                    </div>
+                                    {ruolo === 'inquilino' && (
+                                        <div className='form-group'>
+                                            <label className='form-label'>Seleziona Facoltà</label>
+                                            <select className='form-input' value={facolta} onChange={(e)=> setFacolta(e.target.value)} required>
+                                                <option value='' disabled>Scegli</option>
+                                                <option value='Ingegneria'>Ingegneria</option>
+                                                <option value='Medicina'>Medicina</option>
+                                                <option value='Lavoro'>Lavoro</option>
+                                                <option value='Disoccupato'>Disoccupato</option>
+                                            </select>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className='form-group'>
+                                    <label className='fomr-label'>Età</label>
+                                    <input type='number' min='0' placeholder='Inserisci la tua età' className='form-input' value={eta} onChange={(e)=> setEta(e.target.value)} required/>
+                                </div>
+                                
+                                <div className='form-group'>
+                                    <label className='form-label'>Bio</label>
+                                    <input type='text' placeholder='Inserisci una breve descrizione di te' className='form-input' value={bio} onChange={(e)=> setBio(e.target.value)} required/>
+                                </div>
+                                <div>
+                                {ruolo === 'inquilino' && (
+                                    <div className='form-group checkboxes-wrapper'>
+                                        <label className='form-label'>Tag e Preferenze</label>
+                                        <div className='checkboxes-grid'>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Non Fumatore' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Pet Friendly' checked={tags.includes('Pet Friendly')} onChange={handleCheckboxChange}/><span>Pet Friendly</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Tranquillo' checked={tags.includes('Tranquillo')} onChange={handleCheckboxChange}/><span>Tranquillo</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Eco-friendly' checked={tags.includes('Eco-friendly')} onChange={handleCheckboxChange}/><span>Eco-friendly</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Luminoso' checked={tags.includes('Luminoso')} onChange={handleCheckboxChange}/><span>Luminoso</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Terrazzo' checked={tags.includes('Terrazzo')} onChange={handleCheckboxChange}/><span>Terrazzo</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Aria Condizionata' checked={tags.includes('Aria Condizionata')} onChange={handleCheckboxChange}/><span>Aria Condizionata</span>
+                                            </label>
+                                            <label className='checkbox-label'>
+                                                <input type='checkbox' value='Lavastoviglie' checked={tags.includes('Lavastoviglie')} onChange={handleCheckboxChange}/><span>Lavastoviglie</span>
+                                            </label>
+                                        </div>
+                                    </div>)}
+                                </div>    
+                            </>
+                        )}
+                        
                         <div className='form-group'>
-                            <label className='form-label'>Conferma Password</label>
-                            <input type='password' placeholder='Conferma password' className='form-input' value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} required/>
+                            <label className='form-label'>Email Universitaria</label>
+                            <input type="email" placeholder='inserisci email' className='form-input' value={email} onChange={(e)=> setEmail(e.target.value)} required/>
                         </div>
-                        </>
-                    )}
-                    <button type='submit' className='btn-submit'>
-                        {activeTab === 'registrati' ? 'Crea il tuo profilo' : 'Accedi al tuo profilo'}
-                    </button>
-                </form>
+                        <div className='form-group'>
+                            <label className='form-label'>Password</label>
+                            <input type='password' placeholder='........' className='form-input' value={password} onChange={(e)=> setPassword(e.target.value)} required/>
+                        </div>
+                        {activeTab === 'registrati' && (
+                            <div className='form-group'>
+                                <label className='form-label'>Conferma Password</label>
+                                <input type='password' placeholder='Conferma password' className='form-input' value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} required/>
+                            </div>
+                        )}
+                        <button type='submit' className='btn-submit'>
+                            {activeTab === 'registrati' ? 'Crea il tuo profilo' : 'Accedi al tuo profilo'}
+                        </button>
+                    </form>
                 
                 <div className='divider-container'>
                     <div className='divider-line'></div>
