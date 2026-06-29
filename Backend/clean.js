@@ -1,4 +1,3 @@
-// Import Mongoose library to connect to MongoDB and perform database operations
 const mongoose = require("mongoose");
 const path = require("path");
 const dns = require("dns");
@@ -19,9 +18,6 @@ try {
   console.warn("Impossibile impostare DNS pubblici per SRV:", dnsErr.message);
 }
 
-// This function connects to the MongoDB database, deletes all documents from the User, 
-// Room, and Message collections, and then closes the database connection. It also logs 
-// the number of deleted documents for each collection.
 async function clean() {
   try {
     const MONGODB_URI = process.env.MONGODB_URI;
@@ -29,7 +25,7 @@ async function clean() {
       throw new Error("MONGODB_URI non è definita nel file .env!");
     }
 
-    // Connect to the MongoDB database using the connection string from environment variables
+    // connette a MongoDB con variabili d'ambiente
     await mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 10000,
       connectTimeoutMS: 10000,
@@ -38,14 +34,14 @@ async function clean() {
 
     console.log(`Connesso a: ${mongoose.connection.host} (db: ${mongoose.connection.name})`);
 
-    // Delete all documents from the User, Room, and Message collections
+    // elimina tutti i documenti dai modelli User, Message e Room
     const u = await User.deleteMany({});
     const r = await Room.deleteMany({});
     const m = await Message.deleteMany({});
     console.log(`Eliminati → utenti: ${u.deletedCount}, stanze: ${r.deletedCount}, messaggi: ${m.deletedCount}`);
     console.log("Database svuotato.");
 
-    // Close the database connection after the operations are complete
+    // chiudiamo la connessione al databse dopo la chiusura
     await mongoose.connection.close();
   } catch (error) {
     console.error("Clean error:", error.message);

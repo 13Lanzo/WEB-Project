@@ -16,12 +16,11 @@ const validateObjectId = (id, campo) => {
     return id;
 };
 
-//controllare gedione authMiddleware
+
 async function createMessage(req, res) {
 try {
         const { mittente, destinatario, destinatarioId, testo } = req.body;
 
-        // Validazione semplice: preferiamo ricevere direttamente gli ObjectId
         if (!testo || (!destinatarioId && !destinatario)) {
             return res.status(400).json({
                 errore: 'Il testo e il destinatario (ID o nome/email) sono obbligatori.' });
@@ -77,7 +76,6 @@ try {
 
 async function getMessages(req, res) {
 try {
-        // Leggiamo l'ID dal token JWT decodificato (req.user.id), o facciamo fallback sul parametro query "mioId"
         const mioId = req.user?.id || req.query.mioId;
         const conChiId = req.params.conChiId;
 
@@ -164,7 +162,7 @@ async function updateMessage(req, res) {
             return res.status(erroreVal.status || 400).json({ errore: erroreVal.message });
         }
 
-        // Aggiorna in massa tutti i messaggi letti inviato dall'altro utente verso di me
+        // Aggiorniamo tutti i messaggi letti inviato dall'altro utente verso di me
         const risultato = await Message.updateMany(
             { mittente: mittenteId, destinatario: mioId, letto: false},
             { $set: { letto: true } }
@@ -194,7 +192,7 @@ async function deleteMessage(req, res) {
         // Recuperiamo il messaggio per verificare chi lo ha inviato
         const messaggio = await
         Message.findById(messaggioId);
-        // la delate avviene dopo la verifica che l'utente loggato abbia inviato il messaggio
+        // la delete avviene dopo la verifica che l'utente loggato abbia inviato il messaggio
 
         // Se il messaggio non esiste (o è stato già eliminato), rispondiamo con not found
         if (!messaggio){
@@ -204,7 +202,7 @@ async function deleteMessage(req, res) {
             });
         }
 
-        // Verifica che lutente loggato sia colui che ha inviato il messaggio
+        // Verifica che l'utente loggato sia colui che ha inviato il messaggio
         if (messaggio.mittente.toString() !== req.user.id) {
             return res.status(403).json({
                 success: false,

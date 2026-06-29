@@ -1,4 +1,4 @@
-// Questo script è usato per iniettare dei dati nel database MongoDB Atlas
+// Questo script è usato per iniettare dei dati nel database MongoDB Atlas in modo fittizio
 // con utenti, messaggi e stanze.
 const mongoose = require("mongoose");
 const path = require("path");

@@ -19,7 +19,7 @@ async function createStanza(req, res) {
 
         const creatoDa = req.user.id;
 
-        // 1. Validazione base dei campi obbligatori
+        // Validazione dei campi obbligatori
         if (!titolo || !descrizione || !prezzo || !citta || !indirizzo) {
             return res.status(400).json({
                 success: false,
@@ -27,7 +27,7 @@ async function createStanza(req, res) {
             });
         }
 
-        // 2. CONTROLLO DUPLICATI: Verifichiamo se questo utente ha già creato questo identico annuncio
+        //Verifichiamo se questo utente ha già creato questo identico annuncio
         const stanzaEsistente = await Room.findOne({
             titolo: titolo,
             indirizzo: indirizzo,
@@ -60,7 +60,7 @@ async function createStanza(req, res) {
             immagineUrl
         });
 
-        // 4. Salvataggio della stanza nel DB
+        //Salvataggio della stanza nel DB
         const stanzaSalvata = await nuovaStanza.save();
 
         return res.status(201).json({
@@ -87,7 +87,7 @@ async function getStanze(req, res) {
         }
         if (prezzoMin) {
             queryFiltri.prezzo = { ...queryFiltri.prezzo, $gte: parseFloat(prezzoMin) };
-            // gte = Grater than or equal (maggiore o uguale) - 
+            // gte = Grater than or equal (maggiore o uguale)
             // usiamo parseFloat per convertire la stringa in numero decimale
 
         }
@@ -194,7 +194,6 @@ async function getMyStanza(req, res) {
 
 async function deleteStanza(req, res) {
     try {
-        //const stanzaCancellata = await Room.findByIdAndDelete(req.params.id);
         //cerchiamo la stanza all'interno del DB + relativo controllo 
         const stanza = await Room.findById(req.params.id);
         if (!stanza) {

@@ -1,9 +1,3 @@
-/* deve prevedere:
-- CREATE di un nuovo messaggio (POST --> /messages)
-- READ della cronologia chat tra due utenti (GET --> /messages/:userId)
-- UPDATE per aggiornare lo stato di lettura (booleano) di un messaggio (PATCH --> /messages/:id/read)
-- DELETE (opzionale) per eliminare un messaggio (DELETE --> /messages/:id)
-*/
 const express = require('express');
 const router = express.Router();
 const verificaToken = require('../middleware/authMiddleware');

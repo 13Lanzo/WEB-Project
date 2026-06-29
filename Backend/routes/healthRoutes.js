@@ -1,11 +1,3 @@
-/**
- * Health Routes
- * Queste rotte sono utilizzate per verificare lo stato di salute del server e del database.
- * Possono essere utili per monitoraggio, debugging e test.
- * Fondamentale per la fase di deploy.
- */
-
-// Importiamo la libreria Express per creare un router dedicato alle rotte di salute
 const express = require('express');
 const router = express.Router();
 

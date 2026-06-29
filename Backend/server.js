@@ -1,4 +1,3 @@
-// punto di ingresso dell'applicazione
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const dns = require("dns");
@@ -20,7 +19,7 @@ app.use(
 );
 
 // -------------------------------------------------------------------------------------------------
-// CONFIGURAZIONE SWAGGER (Caricato come da modello Esercitazione4)
+// CONFIGURAZIONE SWAGGER (come in Esercitazione4)
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -106,6 +105,7 @@ io.on("connection", (socket) => {
     console.log(`Utente ${userId} associato al socket ${socket.id}`);
   });
   
+//definiamo la creazione di una stanza verso un singolo utente con io.to
   socket.on("invia_messaggio", (data) => {
     const socketDestinatario = utentiConnessi[data.destinatarioId];
     if (socketDestinatario) {

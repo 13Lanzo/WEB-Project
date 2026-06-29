@@ -1,8 +1,3 @@
-// (Il modello Mongoose dell'utente)
-// //Questo file gestisce i profili degli studenti fuorisede o dei proprietari
-// e include l'array di stringhe per memorizzare i tag di preferenza (es. "non fumatore", "ordinato")
-// che serviranno per la logica di accoppiamento dei coinquilini.
-
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 

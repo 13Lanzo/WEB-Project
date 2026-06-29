@@ -15,7 +15,6 @@ async function register(req, res) {
             } 
             
             //creiamo un nuovo utente 
-    
             const nuovoUtente = new User({nome, cognome, email, password, eta, ruolo, facolta, tagPreferenze, bio});
             await nuovoUtente.save();
     
@@ -74,7 +73,6 @@ try{
         }
 
         //creo le jwt
-
         const payload = {id: utente._id, ruolo: utente.ruolo};
 
         //firmiamo il toker
@@ -82,7 +80,6 @@ try{
         const token = jwt.sign(payload, jwtSecretKey, {expiresIn: '24h'});
 
         //se invece sia email che password sono corretti procediamo
-
         return res.status(200).json({
             success: true,
             messaggio: "Login effettuato con successo!",
