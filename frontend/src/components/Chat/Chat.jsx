@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { User, Search, GripHorizontal, Laugh, Mic, Plus, SendHorizonal, PhoneForwarded, Video, CheckCheck, Ellipsis } from 'lucide-react'
 import io from 'socket.io-client'
-import { getConversations, getMessages, createMessage } from '../../services/api';
+import { getConversations, getMessages, createMessage, markMessagesAsRead } from '../../services/api';
 
 // Connessione al server Socket.IO (supporta configurazione d'ambiente in produzione o ricava dal URL API)
 const socketUrl = import.meta.env.VITE_SOCKET_URL || 
@@ -17,6 +17,7 @@ export default function Chat({ currentUser }) {
     const [conversations, setConversations] = useState([]);
     const [attivoConChiId, setAttivoConChiId] = useState(location.state?.aperturaDirettaConChi || null);
     const [nomeContattoCorrente, setNomeContattoCorrente] = useState(location.state?.aperturaDirettaNome || "");
+
 
     // Recupera il token di sicurezza salvato al momento del Login
     // const token = localStorage.getItem('token'); --> viene recuperato automaticamente dal server attraverso le API
@@ -89,9 +90,19 @@ export default function Chat({ currentUser }) {
                 setMessageList((list) => [...list, data]);
             }
         };
+        //ascolta la doppia spunta blu
+        const gestisciLetturaInTempoReale=(data)=>{
+            if(data.lettoDa===attivoConChiId){
+                setMessageList((currentList)=> currentList.map((msg)=>({...msg, letto: true})));
+            }
+        };
 
         socket.on('ricevi_messaggio', gestisciNuovoMessaggio);
-        return () => socket.off('ricevi_messaggio', gestisciNuovoMessaggio);
+        socket.on('notifica_lettura', gestisciLetturaInTempoReale);
+        return () =>{ 
+            socket.off('ricevi_messaggio', gestisciNuovoMessaggio);
+            socket.off('notifica_lettura', gestisciLetturaInTempoReale);
+        };
     }, [attivoConChiId, myUserId]);
 
     // INVIA IL MESSAGGIO (Salva nel DB + Invia su Socket)
@@ -119,6 +130,28 @@ export default function Chat({ currentUser }) {
             }
         }
     };
+
+    useEffect(()=> {
+        if(attivoConChiId){
+            const fetchMessaggi=async()=>{
+                try{
+                    const data =await getMessages(attivoConChiId);
+                    const messaggi = Array.isArray(data) ? data: (data.dati || []);
+                    setMessageList(messaggi);
+                    //chiamata alla rotta di lettura
+                    await markMessagesAsRead(attivoConChiId);
+                    //comunicazione real time
+                    socket.emit('messaggi_letti',{
+                        mittenteId: attivoConChiId,
+                        lettoreId: myUserId
+                    });
+                }catch(error){
+                    console.error('Errore nel recupero della chat o aggiornamento lettura: ', (error));
+                }
+            };
+            fetchMessaggi();
+        }
+    }, [attivoConChiId, myUserId]);
 
     return (
         <div className='chat-page'>
@@ -193,7 +226,7 @@ export default function Chat({ currentUser }) {
                                             {msgContent.createdAt
                                                 ? new Date(msgContent.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                                                 : ''}
-                                            {isMe && <CheckCheck size={14} style={{ marginLeft: '5px' }} />}
+                                            {isMe && <CheckCheck size={14} style={{ marginLeft: '5px' }} className={msgContent.letto ? 'spunta-blu' : ''} />}
                                         </span>
                                     </div>
                                 </div>

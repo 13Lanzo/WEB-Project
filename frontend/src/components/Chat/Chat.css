@@ -243,6 +243,11 @@
   opacity: 0.7;
 }
 
+.spunta-blu {
+  color: #34b7f1; /* Azzurro luminoso per messaggio letto */
+  transition: color 0.3s ease; /* Effetto dissolvenza al cambio di stato */
+}
+
 /* INPUT */
 .chat-input-container {
   padding: 20px 25px;

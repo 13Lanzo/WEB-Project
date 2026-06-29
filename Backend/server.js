@@ -112,6 +112,16 @@ io.on("connection", (socket) => {
       io.to(socketDestinatario).emit("ricevi_messaggio", data);
     }
   });
+
+  //per la visualizzazione dei messaggi
+  socket.on('messaggi_letti',(data)=>{
+    //prendo l'id del mittente del messaggio
+    const socketMittente=utentiConnessi[data.mittenteId];
+    //se preso correttamente gli comunico che sono stati letti
+    if(socketMittente){
+      io.to(socketMittente).emit('notifica_lettura',{lettoDa: data.lettoreId});
+    }
+  });
   
   socket.on("disconnect", () => {
     for (const userId in utentiConnessi) {
