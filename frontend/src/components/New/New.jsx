@@ -13,7 +13,6 @@ export default function New() {
     const ruolo = user?.ruolo;
     const nomeProprietario = user ? `${user.nome} ${user.cognome || ''}` : "Super Proprietario";
 
-    // 1. PROTEZIONE DELLA PAGINA: se l'utente non è proprietario, redirect a /annunci
     useEffect(() => {
         if (ruolo !== 'proprietario') {
             navigate('/area-riservata');
@@ -41,12 +40,11 @@ export default function New() {
         immagineUrl: defaultImages[0]
     });
 
-    // Stati per la gestione della sezione "Chi vive nella casa"
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [inquiliniAssegnati, setInquiliniAssegnati] = useState([]); // per inquilini registrati sul sito
-    const [nomeFittizioInput, setNomeFittizioInput] = useState(''); // per inquilini non registrati sul sito
-    const [abitantiNonRegistrati, setAbitantiNonRegistrati] = useState([]); // per inquilini non registrati sul sito
+    const [inquiliniAssegnati, setInquiliniAssegnati] = useState([]); 
+    const [nomeFittizioInput, setNomeFittizioInput] = useState(''); 
+    const [abitantiNonRegistrati, setAbitantiNonRegistrati] = useState([]); 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -289,7 +287,6 @@ export default function New() {
                                     <div className="card-specs-row">
                                         <div className="spec-col">
                                             <span className="spac-label">PREZZO</span>
-                                            {/* CORRETTO: Cambiato da superficie a prezzo */}
                                             <span className="spec-value">{formData.prezzo || '0'} €/mese</span>
                                         </div>
                                         <div className="spec-col">
@@ -304,17 +301,6 @@ export default function New() {
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* <div className="card-footer preview-host">
-                                    <div className="host-mini-info">
-                                        <div className="host-avatar-small"><UserRound/></div>
-                                        <div>
-                                            <span className="host-name">{userProprietario.name}</span>
-                                            <span className="host-faculty">{formData.citta}</span>
-                                        </div>
-                                    </div>
-                                </div> */}
-
                                 <div className="card-footer preview-host">
                                     <div className="host-mini-info">
                                         <div className="host-avatar-small"><UserRound /></div>

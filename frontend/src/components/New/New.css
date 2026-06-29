@@ -84,7 +84,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* FIX: Creata la classe per gestire i 6 campi tecnici del form */
 .specs-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -152,9 +151,7 @@
   padding-right: 2.5rem;
 }
 
-/* ==========================================
-   SEZIONE "CHI VIVE NELLA CASA"
-   ========================================== */
+/* selezione di 'chi vive nella casa */
 .chi-vive-section {
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -399,9 +396,7 @@
   color: #ef4444;
 }
 
-/* ==========================================
-   COLONNA DESTRA (Anteprima) & CARD STYLES
-   ========================================== */
+/* Anteprima e stile delle CARD */
 .preview-column {
   position: sticky;
   top: 2rem;
@@ -422,7 +417,6 @@
   pointer-events: none;
 }
 
-/* FIX: Importate le classi strutturali per non rompere il mockup della card */
 .annuncio-card {
   background-color: #ffffff;
   border-radius: 1.25rem;
@@ -560,14 +554,12 @@
   .split-layout {
     grid-template-columns: 1fr;
   }
-  /* FIX: Sostituito .input-row-4 inesistente con .specs-form-grid */
   .specs-form-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 @media (max-width: 600px) {
-  /* FIX: Sostituito .input-row-4 inesistente con .specs-form-grid */
   .input-row-2, .specs-form-grid {
     grid-template-columns: 1fr;
   }

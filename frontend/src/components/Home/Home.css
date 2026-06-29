@@ -33,7 +33,6 @@
   margin-bottom: 24px;
 }
 
-/* FIX: Mappate entrambe le varianti (camelCase e lowercase) per evitare bug con il JSX */
 .homeDescription, .homedescription {
   font-family: var(--sans);
   color: #4a5568; 
@@ -112,7 +111,7 @@
 .card {
   background-color: #ffffff;
   border-radius: 16px;
-  padding: 24px; /* Aumentato il padding interno per dare respiro */
+  padding: 24px; 
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
   border: 1px solid #f1f5f9;
   display: flex;
@@ -157,7 +156,6 @@
   color: #10b981;
 }
 
-/* FIX: Incorporato lo stile .laptopmockup direttamente qui per non rompere il JSX originale */
 .mockupwrapper {
   width: 100%;
   max-width: 280px;
@@ -255,9 +253,7 @@
   align-self: flex-end;
 }
 
-/* ==========================================
-   MEDIA QUERIES (Desktop Overrides)
-   ========================================== */
+/* MEDIA QUERIES (Desktop Overrides) */
 @media (min-width: 768px) {
   .gridcontainer {
     grid-template-columns: repeat(3, 1fr);
@@ -298,11 +294,8 @@
   }
 }
 
-/* ==========================================
-   MEDIA QUERIES (Mobile Specific Overrides)
-   ========================================== */
+/*MEDIA QUERIES (Mobile Specific Overrides)*/
 @media (max-width: 767px) {
-  /* FIX: Spostate qui le regole mobile e rinominate coerentemente con il JSX */
   .heroSection {  
     padding: 40px 5%;
     background: linear-gradient(100deg, rgba(255,255,255,0.95) 100%, rgba(255,255,255,0.9) 100%),

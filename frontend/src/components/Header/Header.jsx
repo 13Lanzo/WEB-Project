@@ -4,13 +4,9 @@ import './Header.css'
 import {HouseHeartIcon, BellRing, CircleFadingPlus, Globe, MoveRight} from 'lucide-react'
 import { login, register } from '../../services/api';
 
-//const socket=io.connect('http://localhost:5000');
-
 function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
-    // Diamo un valore di fallback ('accedi') se initialTab è undefined al primo avvio
     const [activeTab, setActiveTab] = useState(initialTab || 'accedi');
     const navigate=useNavigate();
-    // STATI IN ITALIANO ALLINEATI AL DATABASE MONGOOB
     const [nome, setNome] = useState('');
     const [cognome, setCognome] = useState('');
     const [email, setEmail] = useState('');
@@ -22,7 +18,6 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
     const [tags, setTags] = useState([]);
     const [facolta, setFacolta] = useState('');
     
-    // Ruolo iniziale in minuscolo per evitare conflitti con i controller del server
     const [ruolo, setRuolo] = useState('inquilino');
 
     const LoginGoogle =()=>{
@@ -77,7 +72,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 const utenteRegistrato = data.user || data.utente;
                 if (data.token) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(utenteRegistrato)); // UNIFICATO SU 'user'
+                    localStorage.setItem('user', JSON.stringify(utenteRegistrato));
                 }
 
                 alert('Profilo creato con successo!!');
@@ -96,7 +91,7 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                 const utenteLoggato = data.utente || data.user;
                 if (data.token) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(utenteLoggato)); // UNIFICATO SU 'user'
+                    localStorage.setItem('user', JSON.stringify(utenteLoggato)); 
                 }
 
                 onLoginSuccess(utenteLoggato);
@@ -252,46 +247,11 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
     const location=useLocation();
     const navigate =useNavigate();
 
-    // const [contacts, setContacts] = useState([]);
-
-    // const updateLastMessage = (idMittente, nomeMittente, nuovoTesto, nuovoOrario) => {
-    //     setContacts(prevContacts =>
-    //         prevContacts.map(contact => {
-    //             const exist= prevContacts.some(c=>c._id=== idMittente || c.id=== idMittente);
-    //             if(exist){
-    //                 const updated= prevContacts.map(c=>{
-    //                     const currentCId=c._id|| c.id;
-    //                     if(currentCId===idMittente){
-    //                         return{...c,lastMsg: nuovoTesto, time:nuovoOrario};
-    //                     }
-    //                     return c;
-    //                 });
-    //                 const target=updated.find(c=>(c._id||c.id)===idMittente);
-    //                 const filtered=updated.filter(c=>(c.id ||c._id)!== idMittente);
-    //                 return[target,...filtered];
-    //             }else{
-    //                 return[{
-    //                     _id:idMittente, name: nomeMittente, lastMsg: nuovoTesto, time: nuovoOrario}, ...prevContacts];
-    //             }
-    //         })
-    //     );
-    // };
      useEffect(()=>{
          if(currentUser){
              console.log('Utente loggato:', currentUser?.nome)
          }
-     }, [currentUser]);
-
-    // useEffect(() => {
-    //     socket.on('ricevi_messaggio', (data) => {
-    //         const orarioArrivo = data.createdAt
-    //             ? new Date(data.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    //             : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    //         updateLastMessage(data.testo, orarioArrivo);
-    //     });
-
-    //     return () => socket.off('ricevi_messaggio');
-    // }, []);    
+     }, [currentUser]);  
     
     return (
         <div>
@@ -315,20 +275,6 @@ export default function Header({isLoggedIn, currentUser, onLogout, onLogin}){
                                         <h4>Messaggi Recenti</h4>
                                     </div>
                                     
-                                    {/* <div className='constacts-list'>
-                                        {contacts.map(contact =>(
-                                            <div key={contact.id} className={`contact-item ${contact.active ? 'active':''}`} onClick={()=>{ navigate('/chat'); setIsNotifOpen(false);}}>
-                                                <div className='notif-avatar'><User size={40}/></div>
-                                                <div className='notif-info'>
-                                                    <div className='notif-top'>
-                                                        <span className='notif-name'>{contact.name}</span>
-                                                        <span className='notif-time'>{contact.time}</span>
-                                                    </div>
-                                                    <p className='notif-msg'>{contact.lastMsg}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div> */}
                                     <div className='notif-footer' onClick={()=>{navigate('/chat'); setIsNotifOpen(false);}}>Vai alla Chat <MoveRight size={10}/></div>
                                 </div>
                             )}

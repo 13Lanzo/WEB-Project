@@ -33,7 +33,7 @@
 .auth-left-promo h2 {
   font-size: 2.25rem;
   font-weight: 800;
-  color: #1e3a8a; /* Blu scuro UniRoom */
+  color: #1e3a8a; /* Blu scuro Room4U */
   line-height: 1.25;
   margin: 0 0 1.25rem 0;
   letter-spacing: -0.025em;
@@ -147,7 +147,7 @@
 
 .form-input {
   width: 100%;
-  padding: 0.6rem 0.75rem; /* FIX: Ottimizzato il padding per dare respiro al testo */
+  padding: 0.6rem 0.75rem;
   font-size: 0.9rem;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;

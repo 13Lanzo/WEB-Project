@@ -1,3 +1,4 @@
+/*visualizzazione pagina*/
 .search-page-container {
   display: flex;
   min-height: 100vh;
@@ -6,24 +7,6 @@
   padding: 30px;
   gap: 30px;
   box-sizing: border-box;
-}
-
-.filters-sidebar {
-  width: 280px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  border: 1px solid #f1f5f9;
-  height: fit-content;
-  flex-shrink: 0;
-}
-
-.filters-sidebar h2 {
-  font-size: 1.25rem;
-  color: #1e3a8a;
-  margin: 0 0 24px 0;
-  font-weight: 800;
 }
 
 .filter-group {
@@ -57,12 +40,29 @@
   z-index: 2;
 }
 
-/* FIX: Creata classe dedicata ed evitato il conflitto con .filters-sidebar del JSX */
+.filters-sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f5f9;
+  height: fit-content;
+  flex-shrink: 0;
+}
+
+.filters-sidebar h2 {
+  font-size: 1.25rem;
+  color: #1e3a8a;
+  margin: 0 0 24px 0;
+  font-weight: 800;
+}
+
 .filters-sidebar input[type="text"],
 .filter-input,
 .filters-sidebar select {
   width: 100%;
-  padding: 10px 12px 10px 38px !important; /* Spazio per l'icona a sinistra */
+  padding: 10px 12px 10px 38px !important; /*!important per evitare disallineamenti*/
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   box-sizing: border-box;
@@ -148,9 +148,7 @@
   background-color: #03522c;
 }
 
-/* ==========================================
-   CONTENUTO RISULTATI (DESTRA)
-   ========================================== */
+/*risultati della ricerca (a destra)*/
 .results-container {
   flex-grow: 1;
 }
@@ -234,7 +232,6 @@
   object-fit: cover;
 }
 
-/* FIX: Aggiunto flex per allineare l'icona del fulmine Zap al testo */
 .match-badge {
   position: absolute;
   top: 12px;
@@ -286,7 +283,6 @@
   font-weight: 700;
 }
 
-/* FIX: Aggiunto flex per allineare l'icona della casa all'indirizzo */
 .room-location {
   margin: 0;
   font-size: 0.8rem;
@@ -334,9 +330,7 @@
   background-color: #03522c;
 }
 
-/* ==========================================
-   PAGINAZIONE
-   ========================================== */
+/* paginazione*/
 .pagination-container {
   display: flex;
   justify-content: center;

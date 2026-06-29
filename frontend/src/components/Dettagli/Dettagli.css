@@ -11,7 +11,6 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* FIX: Aggiunta la classe mancante per la schermata di errore */
 .error-container {
   min-height: 50vh;
   display: flex;
@@ -97,9 +96,7 @@
   background-color: #ffffff;
 }
 
-/* ==========================================
-   LAYOUT PRINCIPALE A DUE COLONNE
-   ========================================== */
+/* LAYOUT PRINCIPALE A DUE COLONNE */
 .room-layout-container {
   display: flex;
   gap: 40px;
@@ -127,7 +124,6 @@
   letter-spacing: -0.5px;
 }
 
-/* FIX: Aggiunto flex per allineare l'icona segnaposto all'indirizzo */
 .geo-location {
   color: #64748b;
   font-size: 0.95rem;
@@ -142,7 +138,6 @@
   height: 16px;
 }
 
-/* FIX: Allineate le icone interne al badge di affinità */
 .match-score-badge {
   display: inline-flex;
   align-items: center;
@@ -254,9 +249,7 @@
   margin: 0;
 }
 
-/* ==========================================
-   MAPPA DI POSIZIONE
-   ========================================== */
+/* MAPPA DI POSIZIONE */
 .location-section {
   border-top: 1px solid #f1f5f9;
   padding-top: 30px;
@@ -309,9 +302,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* ==========================================
-   BARRA LATERALE (SIDEBAR PROFILO)
-   ========================================== */
+/* BARRA LATERALE (SIDEBAR PROFILO) */
 .room-sidebar-profile {
   width: 340px;
   flex-shrink: 0;
@@ -361,7 +352,6 @@
   color: #334155;
 }
 
-/* FIX: Allineata l'icona Lucide per gli abitanti fittizi */
 .tenant-fittizio-row {
   padding: 8px 12px;
   font-size: 0.85rem;
@@ -419,7 +409,6 @@
   justify-content: center;
 }
 
-/* FIX: Modellata la classe mancante per il tag hr divisorio della barra laterale */
 .sidebar-divider {
   border: 0;
   border-top: 1px solid #e2e8f0;
@@ -440,7 +429,6 @@
   align-items: center;
 }
 
-/* FIX: Modellata la classe mancante per la citazione bio del proprietario */
 .profile-bio-text {
   font-size: 0.85rem;
   font-style: italic;
@@ -473,7 +461,6 @@
   background-color: #03522c;
 }
 
-/* FIX: Allineate le icone del footer della sidebar trust */
 .host-trust-footer {
   display: flex;
   justify-content: space-between;
@@ -529,16 +516,13 @@
   color: #475569;
 }
 
-/* ==========================================
-   STILI PER LA GALLERIA OVERLAY FOTO
-   ========================================== */
+/* STILI PER LA GALLERIA OVERLAY FOTO */
 .gallery-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999; /* Aumentato per stare sopra a qualunque cosa */
 }
 
-/* FIX: Trasformato il backdrop in un contenitore flex per allineare al centro la modale */
 .gallery-backdrop {
   position: absolute;
   inset: 0;
@@ -617,16 +601,7 @@
   }
 }
 
-/* Animazione Pulsante Radar */
-@keyframes pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3); }
-  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-}
-
-/* ==========================================
-   RESPONSIVITÀ (MEDIA QUERIES)
-   ========================================== */
+/* RESPONSIVITÀ (MEDIA QUERIES) */
 @media (max-width: 992px) {
   .room-layout-container { flex-direction: column; }
   .room-sidebar-profile { width: 100%; }
@@ -634,7 +609,7 @@
 }
 
 @media (max-width: 600px) {
-  .image-gallery-grid { grid-template-columns: 1fr; height: auto; } /* FIX: Sistemata l'altezza della griglia su mobile */
+  .image-gallery-grid { grid-template-columns: 1fr; height: auto; } 
   .sub-images { display: none; }
   .title-header-box { flex-direction: column; align-items: flex-start; }
   .features-specs-grid { grid-template-columns: 1fr; }

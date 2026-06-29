@@ -68,7 +68,6 @@
   font-size: 0.9rem;
 }
 
-/* FIX: Definita la classe (mantenendo il refuso del JSX) per abilitare lo scorrimento dei contatti */
 .constacts-list {
   flex: 1;
   overflow-y: auto;
@@ -146,7 +145,7 @@
   transition: all 0.2s ease;
 }
 
-/* Effetto Hover Tema UniRoom */
+/* Effetto Hover Tema Room4U*/
 .filter-btn:hover,
 .header-actions button:hover {
   background-color: #e0e7ff; /* Sfondo azzurrino chiaro */
@@ -222,7 +221,6 @@
   position: relative;
 }
 
-/* FIX: Azzerati i margini di default del tag p interno per salvaguardare la simmetria del padding */
 .msg-bubble p {
   margin: 0;
   word-break: break-word;

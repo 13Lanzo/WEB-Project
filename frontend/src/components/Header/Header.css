@@ -3,7 +3,7 @@
 }
 
 .site-header {
-  width: 100%; /* FIX: Cambiato da auto a 100% per garantire la consistenza su tutti i monitor */
+  width: 100%; 
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   padding: 1rem 1.5rem;
@@ -26,7 +26,6 @@
 }
 
 /* Raggruppamento icone di destra */
-/* FIX: Aggiunto position: relative per fare da ancora stabile alla tendina delle notifiche */
 .logged-in-actions {
   display: flex;
   align-items: center;
@@ -44,7 +43,7 @@
 
 .notif-dropdown {
   position: absolute;
-  top: 40px; /* FIX: Adattato leggermente per allinearsi perfettamente sotto la campanella */
+  top: 40px;
   right: 0;
   width: 320px;
   background-color: #ffffff;
@@ -262,7 +261,7 @@
   border-color: #1e3a8a;
 }
 
-/* MODALE SINO-IN / REGISTRAZIONE */
+/* MODALE SING-IN / REGISTRAZIONE */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -358,7 +357,7 @@
 
 .form-input {
   width: 100%;
-  padding: 0.6rem 0.75rem; /* FIX: Ottimizzato il padding interno per dare respiro al testo */
+  padding: 0.6rem 0.75rem; 
   font-size: 0.9rem;
   border: 1px solid #d1d5db;
   border-radius: 0.75rem;
@@ -373,7 +372,6 @@
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-/* FIX: Definita ed implementata la classe per i messaggi di errore della modale */
 .errore {
   background-color: #fef2f2;
   border: 1px solid #fee2e2;

@@ -21,7 +21,7 @@ export default function Chat({ currentUser }) {
     // Recupera il token di sicurezza salvato al momento del Login
     // const token = localStorage.getItem('token'); --> viene recuperato automaticamente dal server attraverso le API
     const myUserId = currentUser?.id || currentUser?._id;
-    // EFFECT 1: All'avvio, registra l'utente sul server Socket e carica la sidebar
+    // All'avvio, registra l'utente sul server Socket e carica la sidebar
     useEffect(() => {
         const caricaConversazioni = async () => {
             try {
@@ -58,7 +58,7 @@ export default function Chat({ currentUser }) {
         }
     }, [myUserId]);
 
-    // EFFECT 2: Quando cambia l'utente attivo
+    // Quando cambia l'utente attivo
     useEffect(() => {
         if (attivoConChiId) {
             const fetchMessaggi = async () => {
@@ -81,7 +81,7 @@ export default function Chat({ currentUser }) {
     }, [attivoConChiId]);
 
 
-    // EFFECT 3: Resta in ascolto di nuovi messaggi in arrivo (Real-Time)
+    // Resta in ascolto di nuovi messaggi in arrivo (Real-Time)
     useEffect(() => {
         const gestisciNuovoMessaggio = (data) => {
             const mittenteReale = data.mittente?._id || data.mittente;
@@ -94,13 +94,13 @@ export default function Chat({ currentUser }) {
         return () => socket.off('ricevi_messaggio', gestisciNuovoMessaggio);
     }, [attivoConChiId, myUserId]);
 
-    // 3. INVIA IL MESSAGGIO (Salva nel DB + Invia su Socket)
+    // INVIA IL MESSAGGIO (Salva nel DB + Invia su Socket)
     const sendMessage = async () => {
         if (message.trim() !== '' && attivoConChiId) {
             try {
                 const dataModificata = await createMessage(attivoConChiId, message);
                 const messaggioEffettivo = dataModificata.dati || dataModificata;
-                // B. Trasmissione istantanea (Socket.IO) per il destinatario
+                // Trasmissione istantanea (Socket.IO) per il destinatario
                 const messageData = {
                     destinatarioId: attivoConChiId,
                     mittente: myUserId,
@@ -110,7 +110,7 @@ export default function Chat({ currentUser }) {
 
                 socket.emit('invia_messaggio', messageData);
 
-                // C. Aggiorna lo schermo immediatamente per chi scrive
+                // Aggiorna lo schermo immediatamente per chi scrive
                 setMessageList((list) => [...list, messaggioEffettivo]);
                 setMessage('');
 

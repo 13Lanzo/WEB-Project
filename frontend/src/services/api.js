@@ -34,8 +34,7 @@ async function request(endpoint, options = {}) {
     if (res.status === 204) return null;
     return await res.json();
 }
-
-//! ========= Tag: Authentication =========
+//autentificazione
 export async function login(email, password) {
     return request("/auth/login", {
         method: "POST",
@@ -50,7 +49,7 @@ export async function register(userData) {
     });
 }
 
-//! ========= Tag: Users =========
+//utenti
 export async function getAllUsers() {
     return request("/users/users");
 }
@@ -76,7 +75,7 @@ export async function deleteUser(id) {
     });
 }
 
-//! ========= Tag: Rooms =========
+//stanze
 export async function getRooms(filters = {}) {
     const params = new URLSearchParams();
     if (filters.citta !== undefined && filters.citta !== null && filters.citta !== "") params.set("citta", filters.citta);
@@ -114,7 +113,7 @@ export async function deleteRoom(id) {
     });
 }
 
-//! ========= Tag: Messages =========
+//messaggi
 export async function getConversations() {
     return request("/messages/conversations");
 }

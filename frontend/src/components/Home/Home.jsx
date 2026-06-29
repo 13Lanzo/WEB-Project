@@ -41,6 +41,7 @@ export default function Home({isLoggedIn}) {
             <section className='cardsSection'>
                 <div className='pagecontainer'>
                     <div className='gridcontainer'>
+
                         {/*Prima card */}
                         <div className='card cardfindroom gridcolspan2'>
                             <div className='textside'>
@@ -71,6 +72,7 @@ export default function Home({isLoggedIn}) {
 
                 <div className='pagecontainer'>
                     <div className='gridcontainer'>
+                        
                         {/*Terza carda*/}
                         <div className='card cardchat'>
                             <div>

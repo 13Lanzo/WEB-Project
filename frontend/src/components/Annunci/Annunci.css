@@ -14,7 +14,6 @@
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* FIX: Aggiunto flex per affiancare testo e bottone su desktop */
 .annunci-container {
   width: 100%;
   max-width: 1100px;
@@ -63,7 +62,7 @@
 }
 
 .btn-nuovo-annuncio {
-  background-color: #ff5a00; /* Arancione UniRoom */
+  background-color: #ff5a00; /* Arancione Room4U */
   color: #ffffff;
   border: none;
   border-radius: 2rem;
@@ -79,16 +78,12 @@
   gap: 0.5rem;
 }
 
-/* FIX: Cambiato da verde ad arancione scuro per coerenza cromatica */
 .btn-nuovo-annuncio:hover {
   background-color: #cc4800;
   transform: translateY(-2px);
 }
 
-/* ==========================================
-   GRIGLIA E CARD DEGLI ANNUNCI
-   ========================================== */
-/* FIX: Aggiunto max-width per allineare la griglia all'header sui monitor grandi */
+/* GRIGLIA E CARD DEGLI ANNUNCI*/
 .rooms-grid {
   display: grid;
   /* Al posto di 3 colonne fisse, lasciamo che le colonne si creino dinamicamente */
@@ -175,9 +170,7 @@
   line-height: 1.3;
 }
 
-/* ==========================================
-   STILI LOADING E EMPTY STATES
-   ========================================== */
+/* SSTILI LOADING E EMPTY STATES*/
 
 .loading-container {
   min-height: 50vh;
@@ -329,11 +322,8 @@
   color: #ef4444;
 }
 
-/* ==========================================
-   MEDIA QUERIES (Mobile)
-   ========================================== */
+/* MEDIA QUERIES (Mobile)*/
 @media (max-width: 768px) {
-  /* FIX: Cambiato da .annunci-header (che non esiste nel JSX) a .annunci-container */
   .annunci-container {
     flex-direction: column;     /* Su mobile il bottone va sotto il testo */
     align-items: flex-start;    /* Allinea tutto a sinistra su smartphone */

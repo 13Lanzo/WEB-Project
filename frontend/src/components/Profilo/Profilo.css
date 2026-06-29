@@ -15,7 +15,6 @@
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* FIX: Stile aggiunto per gestire lo stato di caricamento */
 .loading-container {
   min-height: 50vh;
   display: flex;
@@ -46,10 +45,7 @@
   background-color: #d1d5db;
 }
 
-/* ==========================================
-   CARD PRINCIPALE PROFILO
-   ========================================== */
-/* FIX: Rinominato da .profilo-card-container per matchare il JSX */
+/* card principale profilo*/
 .profile-card-container {
   width: 100%;
   max-width: 800px;
@@ -68,12 +64,11 @@
   margin-bottom: 3rem;
 }
 
-/* FIX: Rinominato da .profilo-avatar per matchare il JSX */
 .profile-avatar {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background-color: #eff6ff; /* Blu Scuro UniRoom */
+  background-color: #eff6ff; /* Blu Scuro Room4U */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,7 +124,6 @@
   border-radius: 1rem;
 }
 
-/* FIX: Trasformato in flex per allineare l'icona Mail verticalmente al testo */
 .profilo-email {
   margin: 0;
   color: #6b7280;
@@ -146,10 +140,7 @@
   line-height: 1.6;
 }
 
-/* ==========================================
-   GRIGLIA DETTAGLI (Facoltà & Stato)
-   ========================================== */
-/* FIX: Rinominato da .profilo-details-grid per matchare il JSX */
+/* griglia dettagli (facoltà e stato)*/
 .profile-details-grid {
   display: flex;
   gap: 1.5rem;
@@ -206,9 +197,7 @@
   color: #1f2937;
 }
 
-/* ==========================================
-   BOX CALL TO ACTION
-   ========================================== */
+/* BOX CALL TO ACTION */
 .profilo-cta-box {
   background-color: #f1f5f9;
   border: 1px solid #e5e7eb;
@@ -270,9 +259,7 @@
   background-color: #172554;
 }
 
-/* ==========================================
-   FOOTER ACTIONS
-   ========================================== */
+/* azioni footer */
 .profilo-footer-actions {
   display: flex;
   justify-content: space-between;
@@ -322,17 +309,13 @@
   border-color: #fca5a5;
 }
 
-/* ==========================================
-   MEDIA QUERIES (Mobile)
-   ========================================== */
+/* media queris (Mobile) */
 @media (max-width: 768px) {
   .profilo-header { flex-direction: column; align-items: center; text-align: center; gap: 1.5rem; }
   .profilo-name-row { justify-content: center; }
-  /* FIX: Aggiornato anche qui il nome in .profile-details-grid */
   .profile-details-grid { flex-direction: column; gap: 1rem; }
   .profilo-cta-box { flex-direction: column; text-align: center; gap: 1.5rem; }
   .btn-action { width: 100%; justify-content: center; }
   .profilo-footer-actions { flex-direction: column; gap: 1rem; border-top: none; padding-top: 0; }
   .btn-modifica, .btn-disconnetti { width: 100%; justify-content: center; }
 }
-/* FIX: Rimossa la parentesi graffa orfana finale che rompeva il codice */

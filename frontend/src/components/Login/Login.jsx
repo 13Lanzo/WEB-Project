@@ -8,7 +8,6 @@ export default function Login({ onLoginSuccess }) {
     const [activeTab, setActiveTab] = useState('accedi');
     const navigate = useNavigate();
     
-    // STATI IN ITALIANO ALLINEATI AL DATABASE MONGOOB
     const [nome, setNome] = useState('');
     const [cognome, setCognome] = useState('');
     const [email, setEmail] = useState('');
@@ -20,7 +19,6 @@ export default function Login({ onLoginSuccess }) {
     const [tags, setTags] = useState([]);
     const [facolta, setFacolta] = useState('');
     
-    // Inizializzato in minuscolo per evitare conflitti di validazione sul server
     const [ruolo, setRuolo] = useState('inquilino');
 
     const LoginGoogle = () => { window.open('https://www.google.com'); };
@@ -71,7 +69,7 @@ export default function Login({ onLoginSuccess }) {
                 const utenteRegistrato = data.user || data.utente;
                 if (data.token) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(utenteRegistrato)); // UNIFICATO SU 'user'
+                    localStorage.setItem('user', JSON.stringify(utenteRegistrato)); 
                 }
 
                 alert('Profilo creato con successo!!');
@@ -89,7 +87,7 @@ export default function Login({ onLoginSuccess }) {
                 const utenteLoggato = data.utente || data.user;
                 if (data.token) {
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(utenteLoggato)); // UNIFICATO SU 'user'
+                    localStorage.setItem('user', JSON.stringify(utenteLoggato)); 
                 }
 
                 onLoginSuccess(utenteLoggato);
