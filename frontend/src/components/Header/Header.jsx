@@ -177,37 +177,37 @@ function Modale({ isOpen, onClose, initialTab, onLoginSuccess=false}) {
                         </div>
 
                         <div>
-                                {ruolo === 'inquilino' && (
-                                    <div className='form-group checkboxes-wrapper'>
-                                        <label className='form-label'>Tag e Preferenze</label>
-                                        <div className='checkboxes-grid'>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Non Fumatore' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Pet Friendly' checked={tags.includes('Pet Friendly')} onChange={handleCheckboxChange}/><span>Pet Friendly</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Tranquillo' checked={tags.includes('Tranquillo')} onChange={handleCheckboxChange}/><span>Tranquillo</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Eco-friendly' checked={tags.includes('Eco-friendly')} onChange={handleCheckboxChange}/><span>Eco-friendly</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Luminoso' checked={tags.includes('Luminoso')} onChange={handleCheckboxChange}/><span>Luminoso</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Terrazzo' checked={tags.includes('Terrazzo')} onChange={handleCheckboxChange}/><span>Terrazzo</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Aria Condizionata' checked={tags.includes('Aria Condizionata')} onChange={handleCheckboxChange}/><span>Aria Condizionata</span>
-                                            </label>
-                                            <label className='checkbox-label'>
-                                                <input type='checkbox' value='Lavastoviglie' checked={tags.includes('Lavastoviglie')} onChange={handleCheckboxChange}/><span>Lavastoviglie</span>
-                                            </label>
-                                        </div>
-                                    </div>)}
-                                </div>
+                        {ruolo === 'inquilino' && (
+                                <div className='form-group checkboxes-wrapper'>
+                                    <label className='form-label'>Tag e Preferenze</label>
+                                    <div className='checkboxes-grid'>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Non Fumatore' checked={tags.includes('Non-Fumatori')} onChange={handleCheckboxChange}/><span>Non-Fumatori</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Pet Friendly' checked={tags.includes('Pet Friendly')} onChange={handleCheckboxChange}/><span>Pet Friendly</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Tranquillo' checked={tags.includes('Tranquillo')} onChange={handleCheckboxChange}/><span>Tranquillo</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Eco-friendly' checked={tags.includes('Eco-friendly')} onChange={handleCheckboxChange}/><span>Eco-friendly</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Luminoso' checked={tags.includes('Luminoso')} onChange={handleCheckboxChange}/><span>Luminoso</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Terrazzo' checked={tags.includes('Terrazzo')} onChange={handleCheckboxChange}/><span>Terrazzo</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Aria Condizionata' checked={tags.includes('Aria Condizionata')} onChange={handleCheckboxChange}/><span>Aria Condizionata</span>
+                                        </label>
+                                        <label className='checkbox-label'>
+                                            <input type='checkbox' value='Lavastoviglie' checked={tags.includes('Lavastoviglie')} onChange={handleCheckboxChange}/><span>Lavastoviglie</span>
+                                        </label>
+                                    </div>
+                                </div>)}
+                            </div>
                         </>
                     )}
                     <div className='form-group'>
